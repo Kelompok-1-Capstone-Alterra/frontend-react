@@ -3,6 +3,7 @@ export default function login(params) {
     <>
       <h1>Ini halaman login</h1>
       <p>Fitur sudah selesai</p>
+      <p>Ivan </p>
     </>
   );
 }

@@ -1,6 +1,7 @@
 import Hero from "../assets/Hero.png";
 import Button from "../components/Button";
 import { Link } from "react-router-dom";
+import { APPLICATION_DOWNLOAD_LINK } from "../constants";
 import Landing1 from "../assets/Landing1.png";
 import Landing2 from "../assets/Landing2.png";
 import Landing3 from "../assets/Landing3.png";
@@ -23,7 +24,7 @@ export default function LandingPage() {
                   langkah demi langkah, identifikasi, dan pengukur cahaya untuk
                   membantu menjaga kehidupan tanaman Anda.
                 </p>
-                <Link to={"/login"}>
+                <Link to={APPLICATION_DOWNLOAD_LINK}>
                   <Button variant={"green"} className={"rounded-full"}>
                     Download Sekarang
                   </Button>
@@ -36,7 +37,7 @@ export default function LandingPage() {
           <div className="flex flex-col items-center justify-center gap-4 my-10 lg:flex-row lg:gap-16">
             <img
               src={Landing1}
-              alt=""
+              alt="tanaman"
               className="lg:w-[480px] rounded-[46px]"
             />
             <div>
@@ -48,7 +49,10 @@ export default function LandingPage() {
                 Cukup tambahkan tanaman ke aplikasi dan dapatkan pengingat kapan
                 wakunya untuk menyiram dan pemupukan
               </p>
-              <Link className="font-semibold text-primary hover:text-[#047857]">
+              <Link
+                to={APPLICATION_DOWNLOAD_LINK}
+                className="font-semibold text-primary hover:text-[#047857]"
+              >
                 Download Sekarang {">"}
               </Link>
             </div>
@@ -58,7 +62,7 @@ export default function LandingPage() {
           <div className="flex flex-col items-center justify-center gap-4 my-10 lg:flex-row-reverse lg:gap-16">
             <img
               src={Landing2}
-              alt=""
+              alt="tanaman"
               className="lg:w-[480px] rounded-[46px]"
             />
             <div>
@@ -70,7 +74,10 @@ export default function LandingPage() {
                 Cukup tambahkan tanaman ke aplikasi dan dapatkan pengingat kapan
                 wakunya untuk menyiram dan pemupukan
               </p>
-              <Link className="font-semibold text-primary hover:text-[#047857]">
+              <Link
+                to={APPLICATION_DOWNLOAD_LINK}
+                className="font-semibold text-primary hover:text-[#047857]"
+              >
                 Download Sekarang {">"}
               </Link>
             </div>
@@ -80,7 +87,7 @@ export default function LandingPage() {
           <div className="flex flex-col items-center justify-center gap-4 my-10 lg:flex-row lg:gap-16">
             <img
               src={Landing3}
-              alt=""
+              alt="tanaman"
               className="lg:w-[480px] rounded-[46px]"
             />
             <div>
@@ -92,7 +99,10 @@ export default function LandingPage() {
                 Cukup tambahkan tanaman ke aplikasi dan dapatkan pengingat kapan
                 wakunya untuk menyiram dan pemupukan
               </p>
-              <Link className="font-semibold text-primary hover:text-[#047857]">
+              <Link
+                to={APPLICATION_DOWNLOAD_LINK}
+                className="font-semibold text-primary hover:text-[#047857]"
+              >
                 Download Sekarang {">"}
               </Link>
             </div>

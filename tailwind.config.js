@@ -27,7 +27,7 @@ export default {
 				"0px 4px 20px rgba(0, 0, 0, 0.15)",
 				"0px 0px 3px rgba(0, 0, 0, 0.1)",
 			],
-			"elecation-1": [
+			"elevation-1": [
 				"0px 2px 10px rgba(0, 0, 0, 0.1)",
 				"0px 0px 2px rgba(0, 0, 0, 0.2)",
 			],

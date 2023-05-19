@@ -1,8 +1,8 @@
 export default function Button({
 	children,
 	className,
-	variant,
-	size,
+	variant = "green",
+	size = "l",
 	...props
 }) {
 	const variants = {

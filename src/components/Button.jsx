@@ -12,7 +12,7 @@ export default function Button({ children, className, variant, ...props }) {
 
 	return (
 		<button
-			className={`btn normal-case ${className} ${variants[variant]}`}
+			className={`btn normal-case min-h-max disabled:pointer-events-auto disabled:cursor-not-allowed rounded-[41px] ${className} ${variants[variant]}`}
 			{...props}
 		>
 			{children}

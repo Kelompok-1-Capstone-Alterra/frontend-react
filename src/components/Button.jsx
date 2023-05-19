@@ -1,4 +1,10 @@
-export default function Button({ children, className, variant, ...props }) {
+export default function Button({
+	children,
+	className,
+	variant,
+	size,
+	...props
+}) {
 	const variants = {
 		green:
 			"btn-primary text-neutral-10 hover:bg-primary-hover active:bg-primary-pressed disabled:bg-neutral-20 disabled:text-neutral-40 disabled:hover:bg-neutral-20 disabled:hover:text-neutral-40",
@@ -10,9 +16,15 @@ export default function Button({ children, className, variant, ...props }) {
 		text: "text-primary border-none hover:bg-primary-border disabled:text-neutral-40 disabled:hover:text-neutral-40 focus:bg-primary-surface",
 	};
 
+	const sizes = {
+		l: "px-11 h-14 text-body-l",
+		md: "px-10 h-11 text-body-sm",
+		sm: "px-9 h-9 text-caption-l",
+	};
+
 	return (
 		<button
-			className={`btn normal-case min-h-max disabled:pointer-events-auto disabled:cursor-not-allowed rounded-[41px] ${className} ${variants[variant]}`}
+			className={`btn normal-case min-h-max disabled:pointer-events-auto disabled:cursor-not-allowed rounded-[41px] ${className} ${variants[variant]} ${sizes[size]}`}
 			{...props}
 		>
 			{children}

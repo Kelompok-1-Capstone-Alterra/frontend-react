@@ -7,6 +7,7 @@ export default function Button({ children, className, variant, ...props }) {
 		gray: "bg-neutral-20 hover:bg-neutral-30 text-neutral-40 border-none",
 		lightgreen:
 			"bg-primary-border text-primary hover:bg-primary hover:text-neutral-10 focus:bg-primary-surface isabled:bg-neutral-20 disabled:text-neutral-40 disabled:hover:bg-neutral-20 disabled:hover:text-neutral-40",
+		text: "text-primary border-none hover:bg-primary-border disabled:text-neutral-40 disabled:hover:text-neutral-40 focus:bg-primary-surface",
 	};
 
 	return (

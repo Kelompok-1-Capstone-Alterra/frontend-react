@@ -2,7 +2,7 @@ export default function Button({
 	children,
 	className,
 	variant = "green",
-	size = "l",
+	size = "lg",
 	...props
 }) {
 	const variants = {
@@ -17,9 +17,9 @@ export default function Button({
 	};
 
 	const sizes = {
-		l: "px-11 h-14 text-body-l",
+		lg: "px-11 h-14 text-body-lg",
 		md: "px-10 h-11 text-body-sm",
-		sm: "px-9 h-9 text-caption-l",
+		sm: "px-9 h-9 text-caption-lg",
 	};
 
 	return (

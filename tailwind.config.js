@@ -4,9 +4,9 @@ export default {
 	theme: {
 		fontSize: {
 			"caption-sm": ["12px", "18px"],
-			"caption-l": ["14px", "21px"],
+			"caption-lg": ["14px", "21px"],
 			"body-sm": ["16px", "24px"],
-			"body-l": ["18px", "28px"],
+			"body-lg": ["18px", "28px"],
 			"h-6": ["20px", "28px"],
 			"h-5": ["24px", "36px"],
 			"h-4": ["30px", "40px"],

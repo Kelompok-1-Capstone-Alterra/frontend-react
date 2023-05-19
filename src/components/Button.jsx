@@ -1,18 +1,20 @@
 export default function Button({ children, className, variant, ...props }) {
-  const variants = {
-    green: "btn-primary hover:bg-[#047857] text-white",
-    "outline-green":
-      "border border-primary hover:border-[#047857] hover:text-[#047857] hover:bg-white text-primary",
-    gray: "bg-[#D1D5DB] text-[#6B7280] hover:bg[#9CA3AF]",
-    lightgreen: "bg-[#D1FAE5] hover:bg-[#10B981]",
-  };
+	const variants = {
+		green:
+			"btn-primary text-neutral-10 hover:bg-primary-hover active:bg-primary-pressed disabled:bg-neutral-20 disabled:text-neutral-40 disabled:hover:bg-neutral-20 disabled:hover:text-neutral-40",
+		"outline-green":
+			"border border-primary text-primary hover:bg-primary-border focus:bg-primary-surface disabled:text-neutral-40 disabled:border-neutral-20 disabled:hover:border-neutral-20 disabled:hover:text-neutral-40",
+		gray: "bg-neutral-20 hover:bg-neutral-30 text-neutral-40 border-none",
+		lightgreen:
+			"bg-primary-border text-primary hover:bg-primary hover:text-neutral-10 focus:bg-primary-surface isabled:bg-neutral-20 disabled:text-neutral-40 disabled:hover:bg-neutral-20 disabled:hover:text-neutral-40",
+	};
 
-  return (
-    <button
-      className={`btn normal-case ${className} ${variants[variant]}`}
-      {...props}
-    >
-      {children}
-    </button>
-  );
+	return (
+		<button
+			className={`btn normal-case ${className} ${variants[variant]}`}
+			{...props}
+		>
+			{children}
+		</button>
+	);
 }

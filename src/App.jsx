@@ -30,6 +30,22 @@ function App() {
           path: "/admin",
           element: <h1>Admin Page</h1>,
         },
+        {
+          path: "/admin/tanaman",
+          element: <h1>Tanaman Page</h1>,
+        },
+        {
+          path: "/admin/produk",
+          element: <h1>Produk Page</h1>,
+        },
+        {
+          path: "/admin/manajemen-cuaca",
+          element: <h1>Manajemen Cuaca Page</h1>,
+        },
+        {
+          path: "/admin/manajemen-artikel",
+          element: <h1>Manajemen Artikel Page</h1>,
+        },
       ],
     },
   ]);

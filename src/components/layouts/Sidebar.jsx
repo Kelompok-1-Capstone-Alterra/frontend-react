@@ -8,9 +8,22 @@ import {
 } from "@fluentui/react-icons";
 
 import logoAdmin from "./../../assets/Logo Admin.png";
+import { useEffect, useRef } from "react";
+import { useLocation, Link } from "react-router-dom";
 
 export default function Sidebar({ children }) {
-  const active = "bg-primary-surface text-primary border-e-4 border-e-primary";
+  const { pathname } = useLocation();
+  const itemListRef = useRef(null);
+
+  useEffect(() => {
+    itemListRef.current.childNodes.forEach((item) => {
+      if (item.childNodes[0].pathname === pathname) {
+        item.childNodes[0].classList.add("active");
+      } else {
+        item.childNodes[0].classList.remove("active");
+      }
+    });
+  }, [pathname]);
 
   return (
     <div className="drawer drawer-mobile">
@@ -41,33 +54,51 @@ export default function Sidebar({ children }) {
             alt="Logo Admin"
             className="self-center"
           />
-          <ul className="mt-14 text-neutral-70 text-body-sm">
+          <ul
+            className="mt-14 text-neutral-70 text-body-sm"
+            ref={itemListRef}
+          >
             <li>
-              <a className={`px-8 py-4 hover:bg-primary-surface ${active}`}>
+              <Link
+                className="px-8 py-4 hover:bg-primary-surface"
+                to={"/admin"}
+              >
                 <Grid20Regular /> Overview
-              </a>
+              </Link>
             </li>
             <li>
-              <a className="px-8 py-4 hover:bg-primary-surface">
+              <Link
+                className="px-8 py-4 hover:bg-primary-surface"
+                to={"/admin/tanaman"}
+              >
                 <TreeDeciduous20Regular /> Tanaman
-              </a>
+              </Link>
             </li>
             <li>
-              <a className="px-8 py-4 hover:bg-primary-surface">
+              <Link
+                className="px-8 py-4 hover:bg-primary-surface"
+                to={"/admin/manajemen-cuaca"}
+              >
                 <WeatherCloudy20Regular />
                 Manajemen Cuaca
-              </a>
+              </Link>
             </li>
             <li>
-              <a className="px-8 py-4 hover:bg-primary-surface">
+              <Link
+                className="px-8 py-4 hover:bg-primary-surface"
+                to={"/admin/produk"}
+              >
                 <Box20Regular /> Produk
-              </a>
+              </Link>
             </li>
             <li>
-              <a className="px-8 py-4 hover:bg-primary-surface">
+              <Link
+                className="px-8 py-4 hover:bg-primary-surface"
+                to={"/admin/manajemen-artikel"}
+              >
                 <News20Regular />
                 Manajemen Artikel
-              </a>
+              </Link>
             </li>
           </ul>
         </ul>

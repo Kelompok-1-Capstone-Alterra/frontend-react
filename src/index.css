@@ -4,6 +4,6 @@
 
 @layer utilities {
   .active {
-    @apply bg-primary-surface text-primary border-e-4 border-e-primary;
+    @apply bg-primary-surface text-primary border-e-4 border-e-primary pointer-events-none;
   }
 }

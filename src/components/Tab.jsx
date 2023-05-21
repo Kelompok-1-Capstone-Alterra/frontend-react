@@ -1,9 +1,16 @@
-export default function Tab() {
+export default function Tab({ items }) {
   return (
-    <div className="tabs">
-      <a className="tab tab-bordered">Tab 1</a>
-      <a className="tab tab-bordered tab-active">Tab 2</a>
-      <a className="tab tab-bordered">Tab 3</a>
-    </div>
+    <ul className="tabs gap-3 w-full justify-center">
+      {items.map((item, index) => (
+        <li
+          key={index}
+          className={
+            "tab tab-bordered border-b-0 h-auto py-5 grow text-neutral-70/100 tab-active"
+          }
+        >
+          {item}
+        </li>
+      ))}
+    </ul>
   );
 }

@@ -15,7 +15,7 @@ export default function LandingPage() {
             <div className="flex flex-col items-center justify-between min-w-full lg:gap-2 max-w-7xl lg:flex-row-reverse">
               <img src={Hero} className="flex-1 max-w-sm lg:min-w-[543px]" />
               <div>
-                <h1 className="text-6xl leading-[72px] font-bold lg:-mt-24">
+                <h1 className="text-h-1 font-bold lg:-mt-24">
                   Pantau tanaman anda kapan saja
                 </h1>
                 <p className="text-[#6B7280] my-9 text-lg">
@@ -25,7 +25,11 @@ export default function LandingPage() {
                   membantu menjaga kehidupan tanaman Anda.
                 </p>
                 <Link to={APPLICATION_DOWNLOAD_LINK}>
-                  <Button variant={"green"} className={"rounded-full"}>
+                  <Button
+                    variant={"green"}
+                    size="lg"
+                    className={"rounded-full"}
+                  >
                     Download Sekarang
                   </Button>
                 </Link>
@@ -41,7 +45,7 @@ export default function LandingPage() {
               className="lg:w-[480px] rounded-[46px]"
             />
             <div>
-              <h3 className="text-4xl font-bold leading-[44px]">
+              <h3 className="text-h-3 font-bold">
                 Jaga Tanaman Anda Tetap Segar dengan Agriplan
               </h3>
               <p className="my-4 font-semibold">
@@ -51,7 +55,7 @@ export default function LandingPage() {
               </p>
               <Link
                 to={APPLICATION_DOWNLOAD_LINK}
-                className="font-semibold text-primary hover:text-[#047857]"
+                className="font-semibold text-primary hover:text-primary-hover"
               >
                 Download Sekarang {">"}
               </Link>
@@ -66,7 +70,7 @@ export default function LandingPage() {
               className="lg:w-[480px] rounded-[46px]"
             />
             <div>
-              <h3 className="text-4xl font-bold leading-[44px]">
+              <h3 className="text-h-3 font-bold">
                 Jaga Tanaman Anda Tetap Segar dengan Agriplan
               </h3>
               <p className="my-4 font-semibold">
@@ -76,7 +80,7 @@ export default function LandingPage() {
               </p>
               <Link
                 to={APPLICATION_DOWNLOAD_LINK}
-                className="font-semibold text-primary hover:text-[#047857]"
+                className="font-semibold text-primary hover:text-primary-hover"
               >
                 Download Sekarang {">"}
               </Link>
@@ -91,7 +95,7 @@ export default function LandingPage() {
               className="lg:w-[480px] rounded-[46px]"
             />
             <div>
-              <h3 className="text-4xl font-bold leading-[44px]">
+              <h3 className="text-h-3 font-bold">
                 Jaga Tanaman Anda Tetap Segar dengan Agriplan
               </h3>
               <p className="my-4 font-semibold">
@@ -101,7 +105,7 @@ export default function LandingPage() {
               </p>
               <Link
                 to={APPLICATION_DOWNLOAD_LINK}
-                className="font-semibold text-primary hover:text-[#047857]"
+                className="font-semibold text-primary hover:text-primary-hover"
               >
                 Download Sekarang {">"}
               </Link>

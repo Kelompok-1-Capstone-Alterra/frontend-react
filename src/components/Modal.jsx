@@ -1,4 +1,3 @@
-import React from "react";
 import {
   CheckmarkCircle24Regular,
   Info24Regular,
@@ -49,13 +48,15 @@ const Modal = ({
                 <Button
                   variant="outline-green"
                   className="rounded-full w-[190px] h-[44px]"
-                  onClick={handleCancel}>
+                  onClick={handleCancel}
+                >
                   {cancelText ? cancelText : "Label"}
                 </Button>
                 <Button
                   variant="green"
                   className="rounded-full w-[190px] h-[44px]"
-                  onClick={handleConfirm}>
+                  onClick={handleConfirm}
+                >
                   {confirmText ? confirmText : "Label"}
                 </Button>
               </div>

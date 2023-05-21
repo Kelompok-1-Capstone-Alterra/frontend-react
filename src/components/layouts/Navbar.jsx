@@ -14,7 +14,8 @@ export default function Navbar() {
         <Link to={APPLICATION_DOWNLOAD_LINK}>
           <Button
             variant={"outline-green"}
-            className={"rounded-full btn-sm h-[37px] py-2 px-[10px] w-[105px]"}
+            size="sm"
+            className={"rounded-full h-[37px] py-2 px-[10px] w-[105px]"}
           >
             Download
           </Button>
@@ -22,7 +23,8 @@ export default function Navbar() {
         <Link to="/login">
           <Button
             variant={"green"}
-            className={"rounded-full btn-sm h-[37px] py-2 px-[10px]  w-[105px]"}
+            size="sm"
+            className={"rounded-full h-[37px] py-2 px-[10px]  w-[105px]"}
           >
             Login
           </Button>

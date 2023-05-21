@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import GuestLayout from "./components/layouts/GuestLayout";
+import AdminLayout from "./components/layouts/AdminLayout";
 
 import Login from "./pages/Login";
 import LandingPage from "./pages/LandingPage";
@@ -18,6 +19,32 @@ function App() {
         {
           path: "/login",
           element: <Login />,
+        },
+      ],
+    },
+    {
+      path: "/admin",
+      element: <AdminLayout />,
+      children: [
+        {
+          path: "/admin",
+          element: <h1>Admin Page</h1>,
+        },
+        {
+          path: "/admin/tanaman",
+          element: <h1>Tanaman Page</h1>,
+        },
+        {
+          path: "/admin/produk",
+          element: <h1>Produk Page</h1>,
+        },
+        {
+          path: "/admin/manajemen-cuaca",
+          element: <h1>Manajemen Cuaca Page</h1>,
+        },
+        {
+          path: "/admin/manajemen-artikel",
+          element: <h1>Manajemen Artikel Page</h1>,
         },
       ],
     },

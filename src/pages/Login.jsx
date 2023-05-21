@@ -14,8 +14,8 @@ export default function Login() {
       <p>ini footernya</p>
 
       
-      <TextField label="nama"></TextField>
-      <TextArea label= "Umur" variant="red"></TextArea>
+      <TextField label="nama" variant="green"></TextField>
+      <TextArea label = "Name" variant="green"/>
     </div>
     </>
   );

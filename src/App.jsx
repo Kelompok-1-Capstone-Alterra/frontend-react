@@ -5,6 +5,7 @@ import AdminLayout from "./components/layouts/AdminLayout";
 
 import Login from "./pages/Login";
 import LandingPage from "./pages/LandingPage";
+import AdminPage from "./pages/AdminPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -28,23 +29,71 @@ function App() {
       children: [
         {
           path: "/admin",
-          element: <h1>Admin Page</h1>,
+          element: <AdminPage />,
         },
         {
-          path: "/admin/tanaman",
-          element: <h1>Tanaman Page</h1>,
+          path: "/admin/plants",
+          element: <h1>PlantPage</h1>,
         },
         {
-          path: "/admin/produk",
-          element: <h1>Produk Page</h1>,
+          path: "/admin/plants/create",
+          element: <h1>CreatePlantPage</h1>,
         },
         {
-          path: "/admin/manajemen-cuaca",
-          element: <h1>Manajemen Cuaca Page</h1>,
+          path: "/admin/plants/update/:id",
+          element: <h1>UpdatePlantPage</h1>,
         },
         {
-          path: "/admin/manajemen-artikel",
-          element: <h1>Manajemen Artikel Page</h1>,
+          path: "/admin/plants/:id",
+          element: <h1>DetailPlantPage</h1>,
+        },
+        {
+          path: "/admin/products",
+          element: <h1>ProductPage</h1>,
+        },
+        {
+          path: "/admin/products/create",
+          element: <h1>CreateProductPage</h1>,
+        },
+        {
+          path: "/admin/products/update/:id",
+          element: <h1>UpdateProductPage</h1>,
+        },
+        {
+          path: "/admin/products/:id",
+          element: <h1>DetailProductPage</h1>,
+        },
+        {
+          path: "/admin/weathers",
+          element: <h1>WeatherPage</h1>,
+        },
+        {
+          path: "/admin/weathers/create",
+          element: <h1>CreateWeatherPage</h1>,
+        },
+        {
+          path: "/admin/weathers/update/:id",
+          element: <h1>UpdateWeatherPage</h1>,
+        },
+        {
+          path: "/admin/weathers/:id",
+          element: <h1>DetailWeatherPage</h1>,
+        },
+        {
+          path: "/admin/articles",
+          element: <h1>ArticlePage</h1>,
+        },
+        {
+          path: "/admin/articles/create",
+          element: <h1>CreateArticlePage</h1>,
+        },
+        {
+          path: "/admin/articles/update/:id",
+          element: <h1>UpdateArticlePage</h1>,
+        },
+        {
+          path: "/admin/articles/:id",
+          element: <h1>DetailArticlePage</h1>,
         },
       ],
     },

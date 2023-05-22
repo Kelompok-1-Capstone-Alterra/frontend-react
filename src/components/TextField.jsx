@@ -12,6 +12,7 @@ export default function TextField({
   messageColor,
   bottomOption,
   register,
+  className,
   ...props
 }) {
   return (
@@ -37,7 +38,7 @@ export default function TextField({
           type="text"
           placeholder="Type here"
           {...register}
-          className={`input input-bordered ${
+          className={`${className} input input-bordered ${
             message && messageColor
               ? "border-" + messageColor
               : "border-neutral-20"

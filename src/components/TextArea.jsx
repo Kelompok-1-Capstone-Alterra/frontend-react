@@ -1,33 +1,75 @@
-export default function TextArea({ label, className, variant, register , ...props}) {
-  const variants = {
-    neutral: "text-neutral-40  border-neutral-30 hover:border-neutral-60 active:border-neutral-90",
-    blue: "border-info hover:border-info-hover active:border-info-pressed",
-    red: "border-error hover:border-error-hover active:border-error-pressed",
-    gray: "bg-neutral-30 border-primary-surface  hover:border-primary-hover",
-    green : "border-success hover:border-success-hover active:border-success-pressed"
-  };
-  
-    return (
-      <>
-      {label && (
-        
+import { Info12Regular } from "@fluentui/react-icons";
+
+/*
+  contoh value message color: "error", "success", "warning", "info"
+
+*/
+
+export default function TextArea({
+  label,
+  message,
+  topOption,
+  messageColor,
+  bottomOption,
+  register,
+  ...props
+}) {
+  return (
+    <>
+      <div className="form-control w-full max-w-xs">
         <label
-          className={`text-body-sm font-semibold justify-between`}
+          className={`mb-1 flex items-end w-full ${
+            !label ? "justify-end" : "justify-between"
+          } `}
         >
-          {label}
+          {label && (
+            <span className="text-body-sm font-semibold">
+              {label} <Info12Regular />
+            </span>
+          )}
+          {topOption && (
+            <span className={`text-[#6B7280] text-caption-lg`}>
+              {topOption}
+            </span>
+          )}
         </label>
-      )}
-        <div className="relative mb-3">
-          <textarea
-            className={`border rounded px-2 py-[0.32rem] leading-[1.6] outline-none ${variants[variant]}  ${className} `}
-            placeholder="Your message"           
-            {...register}
-            {...props}
-          />
-
-        </div>
-      </>
-    );
-  }
-
+        <textarea
+          type="text"
+          placeholder="Type here"
+          {...register}
+          className={`textarea textarea-bordered h-24 ${
+            message && messageColor
+              ? "border-" + messageColor
+              : "border-neutral-20"
+          } focus:caret-info w-full h-[40px] rounded-[4px] focus:outline-none  ${
+            message && messageColor
+              ? "focus:border-" + messageColor
+              : "focus:border-info"
+          }`}
+          {...props}
+        />
+        <label
+          className={`mt-1 flex ${
+            !message ? "justify-end" : "justify-between"
+          } w-full"`}
+        >
+          {message && (
+            <span
+              className={`label-text-alt ${
+                messageColor ? "text-" + messageColor : "text-[#6B7280]"
+              } text-caption-lg`}
+            >
+              {message}
+            </span>
+          )}
+          {bottomOption && (
+            <span className={`label-text-alt text-[#6B7280] text-caption-lg`}>
+              {bottomOption}
+            </span>
+          )}
+        </label>
+      </div>
+    </>
+  );
+}
 

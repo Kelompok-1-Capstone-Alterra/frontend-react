@@ -1,29 +1,74 @@
-export default function TextField({ label, type,className, variant, register , ...props}) {
-  const variants = {
-    neutral: "text-neutral-40  border-neutral-30 hover:border-neutral-60 active:border-neutral-90",
-    blue: "border-info hover:border-info-hover active:border-info-pressed",
-    red: "border-error hover:border-error-hover active:border-error-pressed",
-    gray: "bg-neutral-30 border-primary-surface  hover:border-primary-hover active:border-primary-pressed",
-    green : "border-success hover:border-success-hover active:border-success-pressed"
-  };
+import { Info12Regular } from "@fluentui/react-icons";
 
-    return (
-      <>
-      {label && (
+/*
+  contoh value message color: "error", "success", "warning", "info"
 
-        <label className={`text-body-sm font-semibold `}>{label}</label>
-      )}
-        <div className="mt-1">
-          <input
-            type={type}
-            className={`min-w-0 flex-auto rounded border border-solid px-2 py-[0.25rem] outline-none ${variants[variant]} ${className}`}
-            placeholder="Type Value"
-            {...register}
-            {...props}
-          />
-          
-        </div>
-      </>
-    );
-  }
-  
+*/
+
+export default function TextField({
+  label,
+  message,
+  topOption,
+  messageColor,
+  bottomOption,
+  register,
+  ...props
+}) {
+  return (
+    <>
+      <div className="form-control w-full max-w-xs">
+        <label
+          className={`mb-1 flex items-end w-full ${
+            !label ? "justify-end" : "justify-between"
+          } `}
+        >
+          {label && (
+            <span className="text-body-sm font-semibold">
+              {label} <Info12Regular />
+            </span>
+          )}
+          {topOption && (
+            <span className={`text-[#6B7280] text-caption-lg`}>
+              {topOption}
+            </span>
+          )}
+        </label>
+        <input
+          type="text"
+          placeholder="Type here"
+          {...register}
+          className={`input input-bordered ${
+            message && messageColor
+              ? "border-" + messageColor
+              : "border-neutral-20"
+          } focus:caret-info w-full h-[40px] rounded-[4px] focus:outline-none  ${
+            message && messageColor
+              ? "focus:border-" + messageColor
+              : "focus:border-info"
+          }`}
+          {...props}
+        />
+        <label
+          className={`mt-1 flex ${
+            !message ? "justify-end" : "justify-between"
+          } w-full"`}
+        >
+          {message && (
+            <span
+              className={`label-text-alt ${
+                messageColor ? "text-" + messageColor : "text-[#6B7280]"
+              } text-caption-lg`}
+            >
+              {message}
+            </span>
+          )}
+          {bottomOption && (
+            <span className={`label-text-alt text-[#6B7280] text-caption-lg`}>
+              {bottomOption}
+            </span>
+          )}
+        </label>
+      </div>
+    </>
+  );
+}

@@ -19,7 +19,7 @@ export default function Tab({
       {items.map((item, index) => (
         <li
           key={index}
-          className={`tab tab-bordered border-b-0 px-3 text-neutral-70/100 ${
+          className={`tab tab-bordered border-b-0 px-3 text-neutral-70/100 pointer-events-none ${
             widthFull ? "grow" : ""
           } ${sizes[size]} ${activeTab === index ? "tab-active" : ""}`}
         >

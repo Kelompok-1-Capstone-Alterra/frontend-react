@@ -12,6 +12,7 @@ export default function TextArea({
   messageColor,
   bottomOption,
   register,
+  className,
   ...props
 }) {
   return (
@@ -37,7 +38,7 @@ export default function TextArea({
           type="text"
           placeholder="Type here"
           {...register}
-          className={`textarea textarea-bordered h-24 ${
+          className={`${className} textarea textarea-bordered h-24 ${
             message && messageColor
               ? "border-" + messageColor
               : "border-neutral-20"

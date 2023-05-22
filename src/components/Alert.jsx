@@ -10,7 +10,7 @@ export default function Alert({ variant, message, className }) {
 
   return (
     <div
-      className={`alert font-semibold border ${variants[variant]} shadow-lg ${className}`}
+      className={`${className} alert font-semibold border ${variants[variant]} shadow-lg`}
     >
       <div>
         <Info24Filled className="alert-icon" />

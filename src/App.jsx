@@ -5,6 +5,7 @@ import AdminLayout from "./components/layouts/AdminLayout";
 
 import Login from "./pages/Login";
 import LandingPage from "./pages/LandingPage";
+import AdminPage from "./pages/AdminPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -28,7 +29,7 @@ function App() {
       children: [
         {
           path: "/admin",
-          element: <h1>Admin Page</h1>,
+          element: <AdminPage />,
         },
         {
           path: "/admin/tanaman",

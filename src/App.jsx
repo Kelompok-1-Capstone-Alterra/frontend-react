@@ -5,7 +5,6 @@ import AdminLayout from "./components/layouts/AdminLayout";
 
 import Login from "./pages/Login";
 import LandingPage from "./pages/LandingPage";
-import AdminPage from "./pages/AdminPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -29,7 +28,7 @@ function App() {
       children: [
         {
           path: "/admin",
-          element: <AdminPage />,
+          element: <h1>OverviewPage</h1>,
         },
         {
           path: "/admin/plants",

@@ -1,5 +1,3 @@
-import { Info12Regular } from "@fluentui/react-icons";
-
 /*
   contoh value message color: "error", "success", "warning", "info"
 
@@ -17,17 +15,13 @@ export default function TextArea({
 }) {
   return (
     <>
-      <div className="form-control w-full max-w-xs">
+      <div className="form-control w-full">
         <label
           className={`mb-1 flex items-end w-full ${
             !label ? "justify-end" : "justify-between"
           } `}
         >
-          {label && (
-            <span className="text-body-sm font-semibold">
-              {label} <Info12Regular />
-            </span>
-          )}
+          {label && <span className="text-body-sm font-semibold">{label}</span>}
           {topOption && (
             <span className={`text-[#6B7280] text-caption-lg`}>
               {topOption}
@@ -35,8 +29,6 @@ export default function TextArea({
           )}
         </label>
         <textarea
-          type="text"
-          placeholder="Type here"
           {...register}
           className={`${className} textarea textarea-bordered h-24 ${
             message && messageColor
@@ -73,4 +65,3 @@ export default function TextArea({
     </>
   );
 }
-

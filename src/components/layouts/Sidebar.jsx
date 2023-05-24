@@ -69,7 +69,7 @@ export default function Sidebar({ children }) {
             <li>
               <Link
                 className="px-8 py-4 hover:bg-primary-surface"
-                to={"/admin/tanaman"}
+                to={"/admin/plants"}
               >
                 <TreeDeciduous20Regular /> Tanaman
               </Link>
@@ -77,7 +77,7 @@ export default function Sidebar({ children }) {
             <li>
               <Link
                 className="px-8 py-4 hover:bg-primary-surface"
-                to={"/admin/manajemen-cuaca"}
+                to={"/admin/weathers"}
               >
                 <WeatherCloudy20Regular />
                 Manajemen Cuaca
@@ -86,7 +86,7 @@ export default function Sidebar({ children }) {
             <li>
               <Link
                 className="px-8 py-4 hover:bg-primary-surface"
-                to={"/admin/produk"}
+                to={"/admin/products"}
               >
                 <Box20Regular /> Produk
               </Link>
@@ -94,7 +94,7 @@ export default function Sidebar({ children }) {
             <li>
               <Link
                 className="px-8 py-4 hover:bg-primary-surface"
-                to={"/admin/manajemen-artikel"}
+                to={"/admin/articles"}
               >
                 <News20Regular />
                 Manajemen Artikel

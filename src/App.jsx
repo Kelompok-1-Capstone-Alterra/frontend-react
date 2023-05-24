@@ -6,6 +6,8 @@ import AdminLayout from "./components/layouts/AdminLayout";
 import Login from "./pages/Login";
 import LandingPage from "./pages/LandingPage";
 
+import ProductsPage from "./pages/ProductsPage";
+
 function App() {
   const router = createBrowserRouter([
     {
@@ -48,7 +50,7 @@ function App() {
         },
         {
           path: "/admin/products",
-          element: <h1>ProductPage</h1>,
+          element: <ProductsPage />,
         },
         {
           path: "/admin/products/create",

@@ -5,7 +5,9 @@ import AdminLayout from "./components/layouts/AdminLayout";
 
 import Login from "./pages/Login";
 import LandingPage from "./pages/LandingPage";
-import AdminPage from "./pages/AdminPage";
+import Article from "./pages/Article";
+import CreateArticle from "./pages/CreateArticle";
+
 
 function App() {
   const router = createBrowserRouter([
@@ -29,7 +31,7 @@ function App() {
       children: [
         {
           path: "/admin",
-          element: <AdminPage />,
+          element: <h1>OverviewPage</h1>,
         },
         {
           path: "/admin/plants",
@@ -81,11 +83,11 @@ function App() {
         },
         {
           path: "/admin/articles",
-          element: <h1>ArticlePage</h1>,
+          element: <Article/>,
         },
         {
           path: "/admin/articles/create",
-          element: <h1>CreateArticlePage</h1>,
+          element: <CreateArticle/>,
         },
         {
           path: "/admin/articles/update/:id",
@@ -98,6 +100,7 @@ function App() {
       ],
     },
   ]);
+
 
   return <RouterProvider router={router} />;
 }

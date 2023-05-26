@@ -38,8 +38,13 @@ const RenderContent = ({
           size="sm"
           className={"rounded-md"}
         >
-          <Add24Regular className="me-2" />
-          Tambah Produk Baru
+          <Link
+            to={"/admin/products/create"}
+            id="add-product"
+          >
+            <Add24Regular className="me-2" />
+            Tambah Produk Baru
+          </Link>
         </Button>
       </div>
       {isLoading ? (
@@ -72,14 +77,21 @@ const RenderContent = ({
                     <td>
                       <div className="flex gap-1 justify-center">
                         <Link to={`/admin/products/${product.id}`}>
-                          <Eye24Regular className="cursor-pointer hover:text-primary" />
+                          <Eye24Regular
+                            className="cursor-pointer hover:text-info"
+                            id="detail-product"
+                          />
                         </Link>
                         <Delete24Regular
-                          className="cursor-pointer hover:text-primary"
+                          className="cursor-pointer hover:text-info"
                           onClick={() => setConfirmModalId(product.id)}
+                          id="delete-product"
                         />
                         <Link to={`/admin/products/update/${product.id}`}>
-                          <Edit24Regular className="cursor-pointer hover:text-primary" />
+                          <Edit24Regular
+                            className="cursor-pointer hover:text-info"
+                            id="update-product"
+                          />
                         </Link>
                       </div>
                     </td>
@@ -100,6 +112,7 @@ const RenderContent = ({
                 <img
                   src={EmptyProduct}
                   alt="empty product"
+                  id="empty-product"
                 />
                 <p className="text-body-lg text-[#6B7280]">
                   Belum ada produk{" "}
@@ -259,18 +272,20 @@ export default function ProductsPage() {
   return (
     <>
       <div className="w-full">
-        <h4 className="text-h-4 font-bold lg:mt-[78px] lg:ms-7">Produk</h4>
+        <h4 className="text-h-4 font-bold lg:mt-[75px] lg:ms-7"> Produk</h4>
         <div className="lg:px-16 lg:mt-6 lg:mb-16">
           <div className="flex w-full lg:mt-6">
             <TextField
               variant="search"
               label={"Nama Produk"}
+              id={"search"}
               className={"w-full"}
               placeholder={"Ketik Kata Kunci"}
               onChange={(e) =>
                 setFilter({
                   ...filter,
                   search: e.target.value,
+                  currentPage: 1,
                 })
               }
             />
@@ -285,6 +300,11 @@ export default function ProductsPage() {
           </div>
         </div>
       </div>
+      <div
+        className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
+          confirmModalId || notifModal.show ? "block" : "hidden"
+        } cursor-pointer top-0 bottom-0 left-0 right-0`}
+      ></div>
       <ConfirmModal
         icon={"delete"}
         title={"Hapus Produk"}

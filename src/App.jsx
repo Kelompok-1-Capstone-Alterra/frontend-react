@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import LandingPage from "./pages/LandingPage";
 
 import ProductsPage from "./pages/ProductsPage";
+import CreateProductPage from "./pages/CreateProductPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -54,7 +55,7 @@ function App() {
         },
         {
           path: "/admin/products/create",
-          element: <h1>CreateProductPage</h1>,
+          element: <CreateProductPage />,
         },
         {
           path: "/admin/products/update/:id",

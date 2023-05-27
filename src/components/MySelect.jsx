@@ -28,6 +28,16 @@ export default function MySelect({ options, field, errors, ...props }) {
           lineHeight: "20px",
           color: "#4F4F4F",
           boxShadow: "none",
+
+          "&:hover": {
+            border: `${
+              errors?.category?.message
+                ? "1px solid #EF4444"
+                : state.isFocused
+                ? "1px solid #006AFF"
+                : "1px solid #D1D5DB"
+            }`,
+          },
         }),
         menu: (provided) => ({
           ...provided,

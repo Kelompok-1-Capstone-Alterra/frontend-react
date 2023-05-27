@@ -8,7 +8,7 @@
   }
 
   .tab.tab-active {
-    @apply border-b-4;
+    @apply border-b-4 pt-1;
   }
 
   .tab.tab-active:not(.tab-disabled):not([disabled]) {

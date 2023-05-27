@@ -3,6 +3,8 @@ import { Add20Regular } from "@fluentui/react-icons";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import TextField from "../components/TextField";
+import { Link } from "react-router-dom";
+
 
 export default function Article() {
   const [productList, setProductList] = useState([]);
@@ -48,10 +50,13 @@ export default function Article() {
               <h1 className="w-[90rem] text-body-lg mt-[34px] ml-[24px] mb-[33px] ">
                 Artikel Aktif
               </h1>
+              <Link to="/admin/articles/create" className="flex">
+                  
               <Button className="mt-[20px] mr-[44px] mb-[19px] pl-[18px]">
                 <Add20Regular className="mr-[10.5px]" />
                 Tambah
               </Button>
+                </Link>
             </div>
             {/* head */}
             <div className="flex flex-col">

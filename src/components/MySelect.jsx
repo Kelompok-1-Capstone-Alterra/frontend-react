@@ -25,6 +25,7 @@ export default function MySelect({ options, field, errors, ...props }) {
           fontSize: "16px",
           paddingLeft: "8px",
           fontFamily: "Inter",
+          height: "40px",
           lineHeight: "20px",
           color: "#4F4F4F",
           boxShadow: "none",

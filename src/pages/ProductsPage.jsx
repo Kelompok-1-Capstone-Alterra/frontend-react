@@ -2,6 +2,7 @@ import TextField from "../components/TextField";
 import Table from "../components/Table";
 import Tab from "../components/Tab";
 import { useState } from "react";
+import MainContainer from "../components/layouts/MainContainer";
 import Button from "../components/Button";
 import {
   Add24Regular,
@@ -25,6 +26,7 @@ const RenderContent = ({
   currentPage,
   handlePageChange,
   totalPages,
+  search,
   totalProducts,
   setConfirmModalId,
   isLoading,
@@ -51,10 +53,17 @@ const RenderContent = ({
         <p>Loading...</p>
       ) : (
         <>
-          {totalProducts && totalProducts > 0 ? (
+          {totalProducts > 0 && filteredProducts.length > 0 ? (
             <>
               <Table
-                headers={["Gambar", "Nama Produk", "Harga", "Status", "Aksi"]}
+                headers={[
+                  "Gambar",
+                  "Nama Produk",
+                  "Kategori",
+                  "Harga",
+                  "Status",
+                  "Aksi",
+                ]}
                 className={"w-full"}
               >
                 {filteredProducts.map((product) => (
@@ -70,6 +79,7 @@ const RenderContent = ({
                       />
                     </td>
                     <td className="text-caption-lg">{product.name}</td>
+                    <td className="text-caption-lg">{product.category}</td>
                     <td className="text-caption-lg">Rp. {product.price}</td>
                     <td className="text-caption-lg">
                       {product.is_archived ? "Diarsipkan" : "Etalase"}
@@ -104,6 +114,19 @@ const RenderContent = ({
                   handlePageChange={handlePageChange}
                   totalPages={totalPages}
                 />
+              </div>
+            </>
+          ) : totalProducts <= 0 && filteredProducts <= 0 && search ? (
+            <>
+              <div className="flex flex-col items-center justify-center">
+                <img
+                  src={EmptyProduct}
+                  alt="empty product"
+                  id="empty-product"
+                />
+                <p className="text-body-lg text-[#6B7280]">
+                  Produk yang kamu cari tidak tersedia
+                </p>
               </div>
             </>
           ) : (
@@ -148,7 +171,7 @@ export default function ProductsPage() {
     "https://6428ef045a40b82da4c9fa2d.mockapi.io/api/products",
     fetcher
   );
-  const totalIsArchived = products?.filter((product) => product.is_archived);
+
   const { search, currentPage } = filter;
 
   let filteredProducts = products;
@@ -157,6 +180,14 @@ export default function ProductsPage() {
 
   filteredProducts = filteredProducts?.filter((product) =>
     product.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const totalIsArchived = filteredProducts?.filter(
+    (product) => product.is_archived
+  );
+  const totalProducts = filteredProducts;
+  const totalNotArchived = filteredProducts?.filter(
+    (product) => !product.is_archived
   );
 
   filteredProducts = filteredProducts?.filter((product) => {
@@ -221,10 +252,11 @@ export default function ProductsPage() {
           <RenderContent
             filteredProducts={filteredProducts}
             currentPage={currentPage}
+            search={search}
             handlePageChange={handlePageChange}
             totalPages={totalPages}
             setConfirmModalId={setConfirmModalId}
-            totalProducts={products?.length}
+            totalProducts={totalProducts?.length}
             isLoading={isLoading}
             tab="semua"
           />
@@ -238,11 +270,12 @@ export default function ProductsPage() {
         <>
           <RenderContent
             filteredProducts={filteredProducts}
+            search={search}
             currentPage={currentPage}
             handlePageChange={handlePageChange}
             setConfirmModalId={setConfirmModalId}
             totalPages={totalPages}
-            totalProducts={products?.length - totalIsArchived?.length}
+            totalProducts={totalNotArchived?.length}
             isLoading={isLoading}
             tab="etalase"
           />
@@ -256,6 +289,7 @@ export default function ProductsPage() {
         <>
           <RenderContent
             filteredProducts={filteredProducts}
+            search={search}
             currentPage={currentPage}
             handlePageChange={handlePageChange}
             setConfirmModalId={setConfirmModalId}
@@ -271,9 +305,9 @@ export default function ProductsPage() {
 
   return (
     <>
-      <div className="w-full">
-        <h4 className="text-h-4 font-bold lg:mt-[75px] lg:ms-7"> Produk</h4>
-        <div className="lg:px-16 lg:mt-6 lg:mb-16">
+      <MainContainer>
+        <h4 className="text-h-4 font-bold mt-6"> Produk</h4>
+        <div className="lg:mt-6">
           <div className="flex w-full lg:mt-6">
             <TextField
               variant="search"
@@ -299,7 +333,7 @@ export default function ProductsPage() {
             />
           </div>
         </div>
-      </div>
+      </MainContainer>
       <div
         className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
           confirmModalId || notifModal.show ? "block" : "hidden"

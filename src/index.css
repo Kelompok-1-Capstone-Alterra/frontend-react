@@ -23,3 +23,21 @@
     @apply text-primary;
   }
 }
+
+/*reqct-quill class for error and focus*/
+.quill > .ql-container > .ql-editor.ql-blank::before {
+  font-size: 16px;
+  line-height: 24px;
+  color: #9ca3af;
+  font-style: normal;
+}
+
+.quill.ql-error .ql-container {
+  border-left: 1px solid #ef4444;
+  border-right: 1px solid #ef4444;
+  border-bottom: 1px solid #ef4444;
+}
+
+.quill.ql-focus .ql-container {
+  border-color: #3b82f6;
+}

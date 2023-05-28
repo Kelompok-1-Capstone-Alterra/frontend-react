@@ -1,13 +1,10 @@
-/*
-  contoh value message color: "error", "success", "warning", "info"
-
-*/
-
 export default function TextArea({
   label,
   message,
   topOption,
-  messageColor,
+  isError = false,
+  isWarning = false,
+  isSuccess = false,
   bottomOption,
   register,
   className,
@@ -31,13 +28,15 @@ export default function TextArea({
         <textarea
           {...register}
           className={`${className} textarea textarea-bordered h-24 ${
-            message && messageColor
-              ? "border-" + messageColor
-              : "border-neutral-20"
+            isError
+              ? "border-error"
+              : isWarning
+              ? "border-warning"
+              : isSuccess
+              ? "border-success"
+              : "border-neutral-30"
           } focus:caret-info w-full h-[40px] rounded-[4px] focus:outline-none  ${
-            message && messageColor
-              ? "focus:border-" + messageColor
-              : "focus:border-info"
+            isError ? "focus:border-error" : "hover:border-info"
           }`}
           {...props}
         />
@@ -49,7 +48,13 @@ export default function TextArea({
           {message && (
             <span
               className={`label-text-alt ${
-                messageColor ? "text-" + messageColor : "text-[#6B7280]"
+                isError
+                  ? "text-error"
+                  : isWarning
+                  ? "text-warning"
+                  : isSuccess
+                  ? "text-success"
+                  : "text-neutral-30"
               } text-caption-lg`}
             >
               {message}

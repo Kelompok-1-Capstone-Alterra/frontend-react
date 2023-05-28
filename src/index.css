@@ -14,4 +14,12 @@
   .tab.tab-active:not(.tab-disabled):not([disabled]) {
     @apply text-primary border-primary;
   }
+
+  .step-active > div {
+    @apply bg-primary text-neutral-10;
+  }
+
+  .step-active > span {
+    @apply text-primary;
+  }
 }

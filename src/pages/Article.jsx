@@ -1,17 +1,20 @@
 import Button from "../components/Button";
-import { Add20Regular } from "@fluentui/react-icons";
+import { Add20Regular,Info12Regular } from "@fluentui/react-icons";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import TextField from "../components/TextField";
 import { Link } from "react-router-dom";
+import MainContainer from "../components/layouts/MainContainer";
 
 
 export default function Article() {
   const [productList, setProductList] = useState([]);
+  const [filteredList, setFilteredList] = useState(productList);
+
 
   useEffect(() => {
     axios
-      .get("https://64301554b289b1dec4c0e920.mockapi.io/products")
+      .get("https://647348bad784bccb4a3c6bcf.mockapi.io/products")
       .then((response) => {
         setProductList(response.data);
       })
@@ -22,23 +25,16 @@ export default function Article() {
 
   return (
     <>
+    <MainContainer/>
       {/* title */}
-      <div className="ml-[25px] mt-[78px] flex">
+      <div className="ml-[25px] flex">
         <h1 className="font-bold text-h-4 font-bold">Artikel</h1>
       </div>
 
       {/* search */}
       <div className="ml-[45px] mt-[31px] mb-[29px] w-[1121px]">
         <div className="relative mb-4 flex w-full items-stretch">
-          <TextField label="" variant="search" type="search"></TextField>
-          {/* Search icon */}
-          <Button
-            variant={"green"}
-            size="lg"
-            className={"rounded-full ml-[13px] pt-[5px] pr-[24px] pb-[5px] pl-[24px] h-[40px]"}
-          >
-            Cari
-          </Button>
+          <TextField label="" variant="search" type="search" onChange={(event) => setFilteredList(event.target.value)}></TextField>
         </div>
       </div>
 
@@ -83,30 +79,33 @@ export default function Article() {
                             scope="col"
                             className="px-6 py-4 text-xs text-[#667085]"
                           >
-                            First
+                            Ukuran File
                           </th>
                           <th
                             scope="col"
                             className="px-6 py-4 text-xs text-[#667085]"
                           >
-                            Last
+                            Tanggal Upload
                           </th>
                           <th
                             scope="col"
                             className="px-6 py-4 text-xs text-[#667085]"
                           >
-                            Handle
+                            Dilihat
                           </th>
                           <th
                             scope="col"
                             className="px-6 py-4 text-xs text-[#667085]"
                           >
-                            Handle
+                            Disukai
                           </th>
                         </tr>
                       </thead>
                       <tbody>
-                        {productList.map((product, index) => (
+                        {productList.filter(
+                (value) =>
+                  value.name.toLowerCase().includes(filteredList)
+              ).map((product, index) => (
                           <tr
                             key={index}
                             className={index % 2 === 0 ? "bg-white" : "bg-gray-100"}
@@ -130,7 +129,7 @@ export default function Article() {
                                 </div>
                               </div>
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4">Mark</td>
+                            <td className="whitespace-nowrap px-6 py-4">{product.description}</td>
                             <td className="whitespace-nowrap px-6 py-4">Otto</td>
                             <td className="whitespace-nowrap px-6 py-4">@mdo</td>
                             <td className="whitespace-nowrap px-6 py-4">@mdo</td>

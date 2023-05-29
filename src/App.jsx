@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import LandingPage from "./pages/LandingPage";
 import Article from "./pages/Article";
 import CreateArticle from "./pages/CreateArticle";
+import DetailArticle from "./pages/DetailArticle";
 
 
 function App() {
@@ -95,7 +96,7 @@ function App() {
         },
         {
           path: "/admin/articles/:id",
-          element: <h1>DetailArticlePage</h1>,
+          element: <DetailArticle/>,
         },
       ],
     },

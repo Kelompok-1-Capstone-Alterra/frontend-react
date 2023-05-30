@@ -41,3 +41,9 @@
 .quill.ql-focus .ql-container {
   border-color: #3b82f6;
 }
+
+/* Checkbox */
+
+.checkbox {
+  --chkfg: var(--b1);
+}

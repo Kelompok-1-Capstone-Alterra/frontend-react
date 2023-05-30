@@ -1,7 +1,7 @@
 import { Image24Regular, Info12Regular } from "@fluentui/react-icons";
 import SecondaryContainer from "../components/layouts/SecondaryContainer";
 import { NotifModal, ConfirmModal } from "../components/Modal";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLoaderData } from "react-router-dom";
 import { useEffect, useState } from "react";
 import TextField from "../components/TextField";
 import MySelect from "../components/MySelect";
@@ -13,7 +13,9 @@ import ReactQuill from "react-quill";
 import { MODULES } from "../constants";
 import "react-quill/dist/quill.snow.css";
 
-export default function CreateProductPage() {
+export default function UpdateProductPage() {
+  const product = useLoaderData();
+
   const {
     register,
     handleSubmit,
@@ -27,6 +29,7 @@ export default function CreateProductPage() {
   } = useForm();
 
   const [editorFocus, setEditorFocus] = useState(false);
+  const [editorContent, setEditorContent] = useState(product?.description);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [notifModal, setNotifModal] = useState({
     show: false,
@@ -46,16 +49,23 @@ export default function CreateProductPage() {
     });
   }, [register]);
 
+  useEffect(() => {
+    if (product) {
+      setValue("description", product.description);
+    }
+  }, [product, setValue]);
+
   const onEditorStateChange = (editorState) => {
     setValue("description", editorState);
     trigger("description");
+    setEditorContent(editorState);
   };
 
-  let editorContent = watch("description");
+  // let editorContent = watch("description");
 
   const saveProduct = async (data) => {
-    const response = await axios.post(
-      "https://6428ef045a40b82da4c9fa2d.mockapi.io/api/products",
+    const response = await axios.put(
+      `https://6428ef045a40b82da4c9fa2d.mockapi.io/api/products/${product.id}`,
       {
         ...data,
         category: data.category.value,
@@ -63,23 +73,19 @@ export default function CreateProductPage() {
       }
     );
 
-    console.log(data.status);
-
-    if (response.status === 201) {
+    if (response.status === 200) {
       setNotifModal({
         show: true,
         icon: "success",
-        text: `Produk kamu berhasil ditambahkan ke ${
-          data.status === "etalase" ? "etalase" : "arsip"
-        }`,
-        title: "Simpan Produk",
+        title: "Edit Produk",
+        text: "Produk kamu berhasil diedit!",
       });
     } else {
       setNotifModal({
         show: true,
         icon: "info",
-        text: "Simpan Produk",
-        title: "Produk Gagal Disimpan",
+        title: "Edit Produk",
+        text: "Produk gagal diedit!",
       });
     }
   };
@@ -95,10 +101,14 @@ export default function CreateProductPage() {
     { value: "Pupuk", label: "Pupuk" },
   ];
 
+  const defaultOption = options.find(
+    (option) => option.value === product?.category
+  );
+
   return (
     <SecondaryContainer
       backTo="/admin/products"
-      title="Tambah Produk"
+      title="Edit Produk"
       className={"pe-3"}
     >
       <div className="mx-8">
@@ -177,6 +187,7 @@ export default function CreateProductPage() {
                     label={"Nama Produk"}
                     id="name"
                     autoComplete="off"
+                    defaultValue={product.name}
                     placeholder="Tulis nama produk"
                     isError={errors.name}
                     register={{
@@ -221,7 +232,7 @@ export default function CreateProductPage() {
                     )}
                     name="category"
                     control={control}
-                    defaultValue=""
+                    defaultValue={defaultOption}
                     rules={{
                       required: {
                         value: true,
@@ -249,6 +260,7 @@ export default function CreateProductPage() {
                       <input
                         type="radio"
                         id="radio-etalase"
+                        defaultChecked={product.status === true}
                         name="status"
                         value={"etalase"}
                         className={`radio ${
@@ -270,6 +282,7 @@ export default function CreateProductPage() {
                         type="radio"
                         id="radio-arsip"
                         value={"arsip"}
+                        defaultChecked={product.status === false}
                         name="status"
                         className={`radio ${
                           errors?.status?.message
@@ -340,6 +353,7 @@ export default function CreateProductPage() {
                   placeholder="Masukkan harga"
                   name="price"
                   type="number"
+                  defaultValue={product.price}
                   id="product-price"
                   isError={errors.price}
                   register={{
@@ -371,6 +385,7 @@ export default function CreateProductPage() {
                   label={"Isi"}
                   placeholder="Masukkan isi"
                   name="unit"
+                  defaultValue={product.unit}
                   rightIndicator={"Pcs"}
                   type="number"
                   id="product-content"
@@ -399,6 +414,7 @@ export default function CreateProductPage() {
                 <TextField
                   label={"Merek"}
                   placeholder="Masukkan merek"
+                  defaultValue={product.brand}
                   name="brand"
                   type="text"
                   id="product-brand"
@@ -426,6 +442,7 @@ export default function CreateProductPage() {
                 <TextFieldGroup
                   label={"Berat"}
                   placeholder="Masukkan berat"
+                  defaultValue={product.weight}
                   rightIndicator={"Gram"}
                   name="weight"
                   type="number"
@@ -458,6 +475,7 @@ export default function CreateProductPage() {
                 <TextField
                   label={"Kondisi"}
                   placeholder="Masukkan kondisi"
+                  defaultValue={product.condition}
                   name="condition"
                   id="product-condition"
                   isError={errors.condition}
@@ -484,6 +502,7 @@ export default function CreateProductPage() {
                 <TextField
                   label={"Wujud"}
                   placeholder="Masukkan wujud"
+                  defaultValue={product.form}
                   name="form"
                   id="product-form"
                   topOption={"Optional"}
@@ -501,6 +520,7 @@ export default function CreateProductPage() {
                 <TextField
                   label={"Nama Seller"}
                   placeholder="Masukkan nama"
+                  defaultValue={product.sellerName}
                   name="sellerName"
                   id="seller-name"
                   isError={errors.sellerName}
@@ -532,6 +552,7 @@ export default function CreateProductPage() {
                   label={"Nomor Whatsapp"}
                   placeholder="Masukkan nomor"
                   name="sellerPhone"
+                  defaultValue={product.sellerPhone}
                   id="seller-phone-number"
                   isError={errors.sellerPhone}
                   register={{
@@ -569,9 +590,9 @@ export default function CreateProductPage() {
           </div>
           <ConfirmModal
             cancelText={"Kembali"}
-            title={"Simpan Produk"}
-            text={"Apakah Anda yakin ingin menyimpan produk ini?"}
-            confirmText={"Simpan"}
+            title={"Edit Produk"}
+            text={"Apakah Anda yakin ingin mengedit produk ini?"}
+            confirmText={"Edit"}
             icon={"info"}
             isOpen={isConfirmModalOpen}
             onCancel={() => {
@@ -591,7 +612,7 @@ export default function CreateProductPage() {
             onConfirm={() => {
               setNotifModal({
                 show: false,
-                icon: "",
+                isSuccess: false,
                 text: "",
                 title: "",
               });

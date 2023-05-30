@@ -16,8 +16,8 @@ import PaginationButton from "../components/PaginationButton";
 import { ConfirmModal, NotifModal } from "../components/Modal";
 import EmptyProduct from "../assets/EmptyProduct.png";
 import { Link } from "react-router-dom";
-
-const fetcher = (url) => axios.get(url).then((res) => res.data);
+import fetcher from "../utils/fetcher";
+import { toRupiah } from "../utils/functions";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -36,18 +36,18 @@ const RenderContent = ({
     <>
       <div className="lg:my-5 flex justify-between w-full items-center">
         <p className="text-body-lg font-bold">{totalProducts} Produk</p>
-        <Button
-          size="sm"
-          className={"rounded-md"}
+        <Link
+          to={"/admin/products/create"}
+          id="add-product"
         >
-          <Link
-            to={"/admin/products/create"}
-            id="add-product"
+          <Button
+            size="sm"
+            className={"rounded-md"}
           >
             <Add24Regular className="me-2" />
             Tambah Produk Baru
-          </Link>
-        </Button>
+          </Button>
+        </Link>
       </div>
       {isLoading ? (
         <p>Loading...</p>
@@ -73,16 +73,19 @@ const RenderContent = ({
                   >
                     <td>
                       <img
-                        src={product.images}
+                        // src={product.images && product.images[0]}
+                        src={"http://via.placeholder.com/56x48"}
                         alt="gambar"
                         className="w-[56px] h-[48px] mx-auto"
                       />
                     </td>
                     <td className="text-caption-lg">{product.name}</td>
                     <td className="text-caption-lg">{product.category}</td>
-                    <td className="text-caption-lg">Rp. {product.price}</td>
                     <td className="text-caption-lg">
-                      {product.is_archived ? "Diarsipkan" : "Etalase"}
+                      {toRupiah(product.price)}
+                    </td>
+                    <td className="text-caption-lg">
+                      {product.status ? "Etalase" : "Diarsipkan"}
                     </td>
                     <td>
                       <div className="flex gap-1 justify-center">
@@ -183,20 +186,22 @@ export default function ProductsPage() {
   );
 
   const totalIsArchived = filteredProducts?.filter(
-    (product) => product.is_archived
+    (product) => !product.status
   );
+
   const totalProducts = filteredProducts;
+
   const totalNotArchived = filteredProducts?.filter(
-    (product) => !product.is_archived
+    (product) => product.status
   );
 
   filteredProducts = filteredProducts?.filter((product) => {
     if (activeTabIndex === 0) {
       return product;
     } else if (activeTabIndex === 1) {
-      return product.is_archived === false;
+      return product.status === true;
     } else if (activeTabIndex === 2) {
-      return product.is_archived === true;
+      return product.status === false;
     }
   });
 
@@ -231,14 +236,14 @@ export default function ProductsPage() {
       setNotifModal({
         show: true,
         text: "Produk berhasil dihapus",
-        title: "Berhasil",
+        title: "Hapus Produk",
       });
       mutate();
     } else {
       setNotifModal({
         show: true,
         text: "Produk gagal dihapus",
-        title: "Gagal",
+        title: "Hapus Produk",
       });
     }
   };
@@ -340,9 +345,9 @@ export default function ProductsPage() {
         } cursor-pointer top-0 bottom-0 left-0 right-0`}
       ></div>
       <ConfirmModal
-        icon={"delete"}
+        icon={"info"}
         title={"Hapus Produk"}
-        text={"Kamu yakin ingin menghapus produk ini?"}
+        text={"Apakah Anda yakin ingin menghapus produk ini?"}
         cancelText={"Kembali"}
         confirmText={"Hapus"}
         onConfirm={() => handleDelete(confirmModalId)}
@@ -350,7 +355,7 @@ export default function ProductsPage() {
         isOpen={confirmModalId ? true : false}
       />
       <NotifModal
-        icon={"info"}
+        icon={"success"}
         onConfirm={() => {
           setNotifModal({
             ...notifModal,

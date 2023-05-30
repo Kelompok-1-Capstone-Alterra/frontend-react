@@ -92,7 +92,7 @@ function Login() {
           </div>
         </div>
       )}
-      
+
       {/* component */}
       <div
         className="h-screen flex justify-center items-center w-full"
@@ -111,6 +111,7 @@ function Login() {
               </h1>
               <div>
                 <TextField
+                  id="email-input"
                   label="Email"
                   className={`px-4 py-2 outline-none rounded-md w-full border ${
                     showAlert ? "border-red-500" : ""
@@ -128,6 +129,7 @@ function Login() {
                   Kata Sandi
                 </label>
                 <input
+                  id="password-input"
                   type={showPassword ? "text" : "password"}
                   className={`px-4 py-2 outline-none rounded-md w-full border ${
                     showAlert ? "border-red-500" : ""
@@ -135,6 +137,7 @@ function Login() {
                   {...register("password")}
                 />
                 <button
+                  id="eye-button"
                   className="absolute right-3 top-[3rem] transform -translate-y-1/2"
                   type="button"
                   onClick={showEye}
@@ -148,6 +151,7 @@ function Login() {
               </div>
             </div>
             <Button
+              id="submit-button"
               variant={"green"}
               className={"rounded-full mt-10 w-full"}
               onClick={() => {

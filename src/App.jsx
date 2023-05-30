@@ -1,10 +1,15 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import "react-quill/dist/quill.snow.css";
 
 import GuestLayout from "./components/layouts/GuestLayout";
 import AdminLayout from "./components/layouts/AdminLayout";
 
 import Login from "./pages/Login";
 import LandingPage from "./pages/LandingPage";
+import CreatePlantPage from "./pages/CreatePlantPage";
+import PlantPage from "./pages/PlantPage";
+import DetailPlantPage from "./pages/DetailPlantPage";
+import UpdatePlantPage from "./pages/UpdatePlantPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -32,19 +37,19 @@ function App() {
         },
         {
           path: "/admin/plants",
-          element: <h1>PlantPage</h1>,
+          element: <PlantPage />,
         },
         {
           path: "/admin/plants/create",
-          element: <h1>CreatePlantPage</h1>,
+          element: <CreatePlantPage />,
         },
         {
           path: "/admin/plants/update/:id",
-          element: <h1>UpdatePlantPage</h1>,
+          element: <UpdatePlantPage />,
         },
         {
           path: "/admin/plants/:id",
-          element: <h1>DetailPlantPage</h1>,
+          element: <DetailPlantPage />,
         },
         {
           path: "/admin/products",

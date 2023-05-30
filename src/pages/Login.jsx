@@ -1,14 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Button from "../components/Button";
 import gambar from "../assets/Login.png";
 import logo from "../assets/Logo.png";
 import TextField from "../components/TextField";
-import { Eye24Regular,EyeOff24Regular} from "@fluentui/react-icons";
+import { Eye24Regular, EyeOff24Regular } from "@fluentui/react-icons";
 import { useNavigate } from "react-router-dom";
 import Alert from "../components/Alert";
-
-
 
 function Login() {
   const navigate = useNavigate();
@@ -33,7 +31,7 @@ function Login() {
     } else {
       setEmailPasswordError(false);
       setShowAlert(false);
-      navigate(`/admin`)
+      navigate(`/admin`);
     }
   };
   const showEye = () => {
@@ -42,34 +40,37 @@ function Login() {
 
   return (
     <>
-      {/* Alert */}
-      {showAlert && (
-        <div className="alert-overlay fixed z-[5rem] w-[50rem] flex justify-center items-center pt-5 ml-[29rem]">
-            <Alert variant="warning" message="Field Tidak Boleh Kosong"></Alert>
-        </div>
-      )}
-
-      {/* email and password alert */}
-      {emailPasswordError && (
-        <div className="alert-overlay fixed z-[5rem] w-[50rem] flex justify-center items-center pt-5 ml-[29rem]">
-        <Alert variant="warning" message="Email Atau Kata Sandi Salah"></Alert>
-    </div>
-      )}
-
       {/* component */}
       <div
-        className="h-screen flex justify-center items-center w-full"
+        className="h-[calc(100vh-152px)] flex flex-col items-center w-full"
         style={{
           backgroundImage: `url('${gambar}')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
+        <Alert
+          className={`${
+            showAlert || emailPasswordError ? "visible" : "invisible"
+          } lg:w-[971px] mt-12 mb-8`}
+          variant="error"
+          message={
+            showAlert
+              ? "Field Tidak Boleh Kosong"
+              : emailPasswordError
+              ? "Email Atau Kata Sandi Salah"
+              : ""
+          }
+        />
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="bg-white px-10 py-8 rounded-xl w-screen max-w-sm">
+          <div className="bg-white rounded-md p-8">
             <div className="space-y-4">
-              <h1 className="text-center text-2xl font-bold text-[#10B981] flex justify-center items-center">
-                <img src={logo} alt="Logo" className="mr-2 w-10" />
+              <h1 className="text-center text-h-4 font-bold text-[#10B981] flex justify-center items-center">
+                <img
+                  src={logo}
+                  alt="Logo"
+                  className="mr-2 w-10"
+                />
                 Agriplan
               </h1>
               <div>
@@ -105,11 +106,7 @@ function Login() {
                   type="button"
                   onClick={showEye}
                 >
-                  {showPassword ? (
-                    <Eye24Regular/>
-                  ) : (
-                    <EyeOff24Regular/>
-                  )}
+                  {showPassword ? <Eye24Regular /> : <EyeOff24Regular />}
                 </button>
               </div>
             </div>

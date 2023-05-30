@@ -6,10 +6,15 @@ import { APPLICATION_DOWNLOAD_LINK } from "../../constants";
 export default function Navbar() {
   return (
     <nav className="sticky top-0 flex items-center justify-between px-12 py-[18px] bg-white">
-      <div className="flex items-center gap-2">
-        <img src={Logo} className="w-10" />
-        <p className="text-2xl font-bold text-primary">Agriplant</p>
-      </div>
+      <Link to={"/"}>
+        <div className="flex items-center gap-2">
+          <img
+            src={Logo}
+            className="w-10"
+          />
+          <span className="text-h-6 font-bold text-primary">Agriplant</span>
+        </div>
+      </Link>
       <div className="flex gap-[10px]">
         <Link to={APPLICATION_DOWNLOAD_LINK}>
           <Button

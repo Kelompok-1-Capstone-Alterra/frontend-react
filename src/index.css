@@ -42,8 +42,16 @@
   border-color: #3b82f6;
 }
 
-/* Checkbox */
-
 .checkbox {
   --chkfg: var(--b1);
+}
+
+.styled-content ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+}
+
+.styled-content ol {
+  list-style: decimal;
+  padding-left: 1.5rem;
 }

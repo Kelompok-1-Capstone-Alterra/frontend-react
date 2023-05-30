@@ -17,7 +17,16 @@ export default function Sidebar({ children }) {
 
   useEffect(() => {
     itemListRef.current.childNodes.forEach((item) => {
-      if (item.childNodes[0].pathname === pathname) {
+      if (
+        pathname.includes(item.childNodes[0].pathname) &&
+        item.childNodes[0].pathname !== "/admin" &&
+        item.childNodes[0].pathname !== "/admin/"
+      ) {
+        item.childNodes[0].classList.add("active");
+      } else if (
+        item.childNodes[0].pathname === "/admin" &&
+        pathname === "/admin"
+      ) {
         item.childNodes[0].classList.add("active");
       } else {
         item.childNodes[0].classList.remove("active");
@@ -32,7 +41,12 @@ export default function Sidebar({ children }) {
         type="checkbox"
         className="drawer-toggle"
       />
-      <div className="drawer-content flex flex-col items-start justify-start">
+      <div
+        style={{
+          zIndex: 20,
+        }}
+        className="drawer-content flex flex-col items-start justify-start"
+      >
         {/* <!-- Page content here --> */}
         <label
           htmlFor="my-drawer-2"

@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "react-quill/dist/quill.snow.css";
+import axios from "axios";
 
 import GuestLayout from "./components/layouts/GuestLayout";
 import AdminLayout from "./components/layouts/AdminLayout";
@@ -10,6 +11,11 @@ import CreatePlantPage from "./pages/CreatePlantPage";
 import PlantPage from "./pages/PlantPage";
 import DetailPlantPage from "./pages/DetailPlantPage";
 import UpdatePlantPage from "./pages/UpdatePlantPage";
+
+import ProductsPage from "./pages/ProductsPage";
+import CreateProductPage from "./pages/CreateProductPage";
+import DetailProductPage from "./pages/DetailProductPage";
+import UpdateProductPage from "./pages/UpdateProductPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -53,19 +59,31 @@ function App() {
         },
         {
           path: "/admin/products",
-          element: <h1>ProductPage</h1>,
+          element: <ProductsPage />,
         },
         {
           path: "/admin/products/create",
-          element: <h1>CreateProductPage</h1>,
+          element: <CreateProductPage />,
         },
         {
           path: "/admin/products/update/:id",
-          element: <h1>UpdateProductPage</h1>,
+          element: <UpdateProductPage />,
+          loader: async ({ params }) => {
+            const { data } = await axios.get(
+              `https://6428ef045a40b82da4c9fa2d.mockapi.io/api/products/${params.id}`
+            );
+            return data;
+          },
         },
         {
           path: "/admin/products/:id",
-          element: <h1>DetailProductPage</h1>,
+          element: <DetailProductPage />,
+          loader: async ({ params }) => {
+            const { data } = await axios.get(
+              `https://6428ef045a40b82da4c9fa2d.mockapi.io/api/products/${params.id}`
+            );
+            return data;
+          },
         },
         {
           path: "/admin/weathers",

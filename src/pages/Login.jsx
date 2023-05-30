@@ -6,6 +6,8 @@ import logo from "../assets/Logo.png";
 import TextField from "../components/TextField";
 import { Eye24Regular,EyeOff24Regular} from "@fluentui/react-icons";
 import { useNavigate } from "react-router-dom";
+import Alert from "../components/Alert";
+
 
 
 function Login() {
@@ -43,54 +45,15 @@ function Login() {
       {/* Alert */}
       {showAlert && (
         <div className="alert-overlay fixed z-[5rem] w-[50rem] flex justify-center items-center pt-5 ml-[29rem]">
-          <div
-            className="bg-white border-l-4 border-red-500 text-orange-700 pt-4 pb-4 pl-2 pr-[30rem] flex"
-            role="alert"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="stroke-current flex-shrink-0 h-6 w-6 "
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 11c-.55 0-1-.45-1-1V8c0-.55.45-1 1-1s1 .45 1 1v4c0 .55-.45 1-1 1zm1 4h-2v-2h2v2z"
-              />
-                        
-            </svg>
-
-            <p className="font-bold pl-1 ">Field tidak boleh kosong</p>
-          </div>
+            <Alert variant="warning" message="Field Tidak Boleh Kosong"></Alert>
         </div>
       )}
 
-      {/* email alert */}
+      {/* email and password alert */}
       {emailPasswordError && (
         <div className="alert-overlay fixed z-[5rem] w-[50rem] flex justify-center items-center pt-5 ml-[29rem]">
-          <div
-            className="bg-white border-l-4 border-red-500 text-orange-700 pt-4 pb-4 pl-2 pr-[30rem] flex"
-            role="alert"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="stroke-current flex-shrink-0 h-6 w-6 "
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 11c-.55 0-1-.45-1-1V8c0-.55.45-1 1-1s1 .45 1 1v4c0 .55-.45 1-1 1zm1 4h-2v-2h2v2z"
-              />
-                        
-            </svg>
-            <p className="font-bold pl-1 ">Email atau Kata sandi salah</p>
-          </div>
-        </div>
+        <Alert variant="warning" message="Email Atau Kata Sandi Salah"></Alert>
+    </div>
       )}
 
       {/* component */}

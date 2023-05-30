@@ -1,20 +1,17 @@
 import { Search24Regular } from "@fluentui/react-icons";
 import { useState } from "react";
 
-/*
-  contoh value message color: "error", "success", "warning", "info"
-
-*/
-
 export default function TextField({
   label,
   message,
   topOption,
-  messageColor,
   variant = "default",
   bottomOption,
   register,
   className,
+  isError = false,
+  isWarning = false,
+  isSuccess = false,
   ...props
 }) {
   const [isFocus, setIsFocus] = useState(false);
@@ -22,7 +19,7 @@ export default function TextField({
     <>
       <div className="form-control w-full">
         {variant === "search" ? (
-          <div className="form-control">
+          <>
             {label && (
               <label className="label -mb-1 -ml-1">
                 <span className=" text-body-sm font-semibold">{label}</span>
@@ -30,7 +27,7 @@ export default function TextField({
             )}
             <label
               className={`${className} overflow-hidden flex justify-center items-stretch gap-0 rounded-[4px] border ${
-                isFocus ? "border-info" : "border-neutral-20"
+                isFocus ? "border-info" : "border-neutral-30"
               }`}
             >
               <span className={`bg-white px-2 mt-1.5`}>
@@ -39,20 +36,22 @@ export default function TextField({
               <input
                 {...register}
                 className={`${
-                  message && messageColor
-                    ? "border-" + messageColor
-                    : "border-neutral-20"
+                  isError
+                    ? "border-error"
+                    : isWarning
+                    ? "border-warning"
+                    : isSuccess
+                    ? "border-success"
+                    : "border-neutral-30"
                 } focus:caret-info w-full h-[40px] rounded-[4px] focus:outline-none  ${
-                  message && messageColor
-                    ? "focus:border-" + messageColor
-                    : "focus:border-info"
+                  isError ? "focus:border-error" : "focus:border-info"
                 }`}
                 {...props}
                 onFocus={() => setIsFocus(true)}
                 onBlur={() => setIsFocus(false)}
               />
             </label>
-          </div>
+          </>
         ) : (
           <>
             <label
@@ -71,14 +70,17 @@ export default function TextField({
             </label>
             <input
               {...register}
-              className={`${className} input input-bordered ${
-                message && messageColor
-                  ? "border-" + messageColor
-                  : "border-neutral-20"
+              className={`${className} input input-bordered
+              ${
+                isError
+                  ? "border-error"
+                  : isWarning
+                  ? "border-warning"
+                  : isSuccess
+                  ? "border-success"
+                  : "border-neutral-30"
               } focus:caret-info w-full h-[40px] rounded-[4px] focus:outline-none  ${
-                message && messageColor
-                  ? "focus:border-" + messageColor
-                  : "focus:border-info"
+                isError ? "focus:border-error" : "focus:border-info"
               }`}
               {...props}
             />
@@ -90,7 +92,13 @@ export default function TextField({
               {message && (
                 <span
                   className={`label-text-alt ${
-                    messageColor ? "text-" + messageColor : "text-[#6B7280]"
+                    isError
+                      ? "text-error"
+                      : isWarning
+                      ? "text-warning"
+                      : isSuccess
+                      ? "text-success"
+                      : "text-neutral-30"
                   } text-caption-lg`}
                 >
                   {message}

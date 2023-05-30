@@ -40,7 +40,6 @@ function Login() {
 
   return (
     <>
-      {/* component */}
       <div
         className="h-[calc(100vh-152px)] flex flex-col items-center w-full"
         style={{

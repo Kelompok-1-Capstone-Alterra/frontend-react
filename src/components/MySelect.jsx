@@ -15,7 +15,7 @@ export default function MySelect({ options, field, errors, ...props }) {
         control: (provided, state) => ({
           ...provided,
           border: `${
-            errors?.category?.message
+            errors
               ? "1px solid #EF4444"
               : state.isFocused
               ? "1px solid #006AFF"
@@ -32,7 +32,7 @@ export default function MySelect({ options, field, errors, ...props }) {
 
           "&:hover": {
             border: `${
-              errors?.category?.message
+              errors
                 ? "1px solid #EF4444"
                 : state.isFocused
                 ? "1px solid #006AFF"

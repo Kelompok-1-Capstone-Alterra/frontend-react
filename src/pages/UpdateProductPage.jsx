@@ -223,7 +223,7 @@ export default function UpdateProductPage() {
                   <Controller
                     render={({ field }) => (
                       <MySelect
-                        errors={errors}
+                        errors={errors.category}
                         field={field}
                         id="select-kategori"
                         options={options}

@@ -59,8 +59,9 @@ const RenderContent = ({
                 headers={[
                   "Gambar",
                   "Nama Produk",
-                  "Kategori",
+                  "Seller",
                   "Harga",
+                  "Kategori",
                   "Status",
                   "Aksi",
                 ]}
@@ -80,10 +81,11 @@ const RenderContent = ({
                       />
                     </td>
                     <td className="text-caption-lg">{product.name}</td>
-                    <td className="text-caption-lg">{product.category}</td>
+                    <td className="text-caption-lg">{product.sellerName}</td>
                     <td className="text-caption-lg">
                       {toRupiah(product.price)}
                     </td>
+                    <td className="text-caption-lg">{product.category}</td>
                     <td className="text-caption-lg">
                       {product.status ? "Etalase" : "Diarsipkan"}
                     </td>

@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { Controller } from "react-hook-form";
+import { useController } from "react-hook-form";
 
 export default function FileInput({
   id,
@@ -15,9 +14,7 @@ export default function FileInput({
   value,
   ...props
 }) {
-  const [fileName, setFileName] = useState("");
-
-  console.log(value);
+  const { field } = useController({ name, control, rules });
 
   return (
     <div className={`${className} max-w-[480px]`}>
@@ -43,9 +40,7 @@ export default function FileInput({
             isError ? "border-[#EF4444]" : ""
           }`}
         >
-          {fileName && fileName}
-          {value && !fileName && value.name}
-          {!fileName && !value && "Masukkan Gambar"}
+          {value ? value.name : "Masukkan Gambar"}
         </span>
       </div>
       <label
@@ -68,25 +63,17 @@ export default function FileInput({
           </span>
         )}
       </label>
-      <Controller
-        name={name}
-        control={control}
-        rules={rules}
-        render={({ field: { value, onChange, ...field } }) => (
-          <input
-            id={id}
-            {...field}
-            type="file"
-            className=" hidden"
-            accept=".jpg,.jpeg,.png"
-            value={value?.fileName}
-            onChange={(e) => {
-              onChange(e.target.files[0]);
-              setFileName(e.target.files[0].name);
-            }}
-            {...props}
-          />
-        )}
+      <input
+        id={id}
+        {...field}
+        type="file"
+        className=" hidden"
+        accept=".jpg,.jpeg,.png"
+        value={value?.fileName}
+        onChange={(e) => {
+          field.onChange(e.target.files[0]);
+        }}
+        {...props}
       />
     </div>
   );

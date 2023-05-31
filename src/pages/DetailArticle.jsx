@@ -1,23 +1,17 @@
-import Button from "../components/Button";
-import { Add20Regular } from "@fluentui/react-icons";
+import { useParams } from "react-router-dom";
+import SecondaryContainer from "../components/layouts/SecondaryContainer";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { useState, useEffect } from "react";
-import TextField from "../components/TextField";
-import { Link } from "react-router-dom";
-import MainContainer from "../components/layouts/MainContainer";
-import { useLocation } from "react-router-dom";
 
 export default function DetailArticle() {
-  const [product, setProduct] = useState({});
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const id = searchParams.get("id");
+  const [productList, setProductList] = useState("");
+  const { id } = useParams();
 
   useEffect(() => {
     axios
       .get(`https://647348bad784bccb4a3c6bcf.mockapi.io/products/${id}`)
       .then((response) => {
-        setProduct(response.data);
+        setProductList(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -26,9 +20,33 @@ export default function DetailArticle() {
 
   return (
     <>
-      <h1>Detail Artikel</h1>
-      <p>Nama: {product.name}</p>
-      <p>Deskripsi: {product.description}</p>
+      <SecondaryContainer backTo="/admin/articles" title="Tambah Artikel">
+          <div className="mb-[8px]">
+            <label className="flex text-body-lg font-bold mb-3">
+              Judul Artikel
+            </label>
+            <div className="w-[1037px]">{productList.name}</div>
+          </div>
+          <div className="pb-4">
+            <label className="flex text-body-lg font-bold mb-3">
+              Deskripsi
+            </label>
+            <div
+              className="styled-content"
+              dangerouslySetInnerHTML={{ __html: productList.description }}
+            ></div>
+          </div>
+          <div className="pb-4">
+            <label className="flex text-body-lg font-bold mb-3">
+              Gambar Tanaman
+            </label>
+            <img
+              src={"http://via.placeholder.com/130x130"}
+              alt=""
+              className="w-[153px] h-[87px]"
+            />
+          </div>
+      </SecondaryContainer>
     </>
   );
 }

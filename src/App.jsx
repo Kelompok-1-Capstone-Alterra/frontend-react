@@ -8,6 +8,7 @@ import LandingPage from "./pages/LandingPage";
 import Article from "./pages/Article";
 import CreateArticle from "./pages/CreateArticle";
 import DetailArticle from "./pages/DetailArticle";
+import UpdateArticle from "./pages/UpdateArticle";
 
 
 function App() {
@@ -92,7 +93,7 @@ function App() {
         },
         {
           path: "/admin/articles/update/:id",
-          element: <h1>UpdateArticlePage</h1>,
+          element:<UpdateArticle/> ,
         },
         {
           path: "/admin/articles/:id",

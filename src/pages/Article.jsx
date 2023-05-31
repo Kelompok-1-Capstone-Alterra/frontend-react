@@ -1,16 +1,23 @@
 import Button from "../components/Button";
-import { Add20Regular,Info12Regular } from "@fluentui/react-icons";
+import {
+  Add20Regular,
+  Edit24Regular,
+  Eye24Regular,
+  Delete24Regular,
+} from "@fluentui/react-icons";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import TextField from "../components/TextField";
 import { Link } from "react-router-dom";
 import MainContainer from "../components/layouts/MainContainer";
+import Table from "../components/Table";
+import { ConfirmModal } from "../components/Modal";
 
 
 export default function Article() {
   const [productList, setProductList] = useState([]);
   const [filteredList, setFilteredList] = useState(productList);
-
+  const [modalDelete, setModalDelete] = useState(false);
 
   useEffect(() => {
     axios
@@ -23,9 +30,22 @@ export default function Article() {
       });
   }, []);
 
+  const handleDelete = async (id) => {
+    setModalDelete(false)
+    axios
+    .delete(`https://647348bad784bccb4a3c6bcf.mockapi.io/products/${id}`)
+    .then((response) => {
+      const updatedProductList = productList.filter((product) => product.id !== id);
+      setProductList(updatedProductList);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
   return (
     <>
-    <MainContainer/>
+      <MainContainer />
       {/* title */}
       <div className="ml-[25px] flex">
         <h1 className="font-bold text-h-4 font-bold">Artikel</h1>
@@ -34,139 +54,64 @@ export default function Article() {
       {/* search */}
       <div className="ml-[45px] mt-[31px] mb-[29px] w-[1121px]">
         <div className="relative mb-4 flex w-full items-stretch">
-          <TextField label="" variant="search" type="search" onChange={(event) => setFilteredList(event.target.value)}></TextField>
+          <TextField
+            label=""
+            variant="search"
+            type="search"
+            onChange={(event) => setFilteredList(event.target.value)}
+          ></TextField>
         </div>
       </div>
 
+      {/* Modal */}
+      {modalDelete && (
+
+      <ConfirmModal
+        icon={"info"}
+        title={"Hapus Produk"}
+        text={"Apakah Anda yakin ingin menghapus produk ini?"}
+        cancelText={"Kembali"}
+        confirmText={"Hapus"}
+        onConfirm={() => handleDelete(modalDelete)}
+        onCancel={() => setModalDelete(null)}
+        isOpen={modalDelete ? true : false}
+      />
+      )}
+
       {/* Table */}
-      <div className="pl-[45px] pr-[29px] w-full h-[620px] ">
+
+      <div className="pl-[45px] pr-[29px] w-full h-[620px] mb-[10px]  ">
         <div className="border w-full flex">
           <div className="overflow-x-auto">
             <div className="w-full flex">
-              <h1 className="w-[90rem] text-body-lg mt-[34px] ml-[24px] mb-[33px] ">
+              <h1 className="w-[90rem] text-body-lg mt-[34px] ml-[24px] mb-[33px] font-semibold">
                 Artikel Aktif
               </h1>
               <Link to="/admin/articles/create" className="flex">
-                  
-              <Button className="mt-[20px] mr-[44px] mb-[19px] pl-[18px]">
-                <Add20Regular className="mr-[10.5px]" />
-                Tambah
-              </Button>
-                </Link>
+                <Button className="mt-[20px] mr-[44px] mb-[19px] pl-[18px]">
+                  <Add20Regular className="mr-[10.5px]" />
+                  Tambah
+                </Button>
+              </Link>
             </div>
-            {/* head */}
-            <div className="flex flex-col">
-              <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
-                  <div className="overflow-hidden">
-                    <table className="min-w-full text-left text-sm font-light">
-                      <thead className="border-b bg-white font-medium dark:border-neutral-500 dark:bg-neutral-600">
-                        <tr>
-                          <th scope="col" className="px-6 py-4 pr-[40px] flex">
-                            <input
-                              type="checkbox"
-                              className="checkbox mr-[12px]"
-                            />
-                            <div className="flex items-center space-x-3">
-                              <div>
-                                <div className="capitalize text-base text-xs text-[#667085]">
-                                  Nama Artikel
-                                </div>
-                              </div>
-                            </div>
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-4 text-xs text-[#667085]"
-                          >
-                            Ukuran File
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-4 text-xs text-[#667085]"
-                          >
-                            Tanggal Upload
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-4 text-xs text-[#667085]"
-                          >
-                            Dilihat
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-4 text-xs text-[#667085]"
-                          >
-                            Disukai
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {productList.filter(
-                (value) =>
+            <Table
+              headers={[
+                "Judul Artikel",
+                "Ukuran File",
+                "Tanggal Upload",
+                "Dilihat",
+                "Disukai",
+                "Aksi",
+              ]}
+              className="w-full text-center"
+            >
+              {productList
+                .filter((value) =>
                   value.name.toLowerCase().includes(filteredList)
-              ).map((product, index) => (
-                          <tr
-                            key={index}
-                            className={index % 2 === 0 ? "bg-white" : "bg-gray-100"}
-                          >
-                            <td className="whitespace-nowrap px-6 py-4 font-medium flex">
-                              <input
-                                type="checkbox"
-                                className="checkbox mr-[12px] mt-3"
-                              />
-                              <div className="flex items-center space-x-3">
-                                <div className="avatar">
-                                  <div className="mask mask-squircle w-12 h-12 rounded-full">
-                                    <img
-                                      src={product.image}
-                                      alt="Avatar Tailwind CSS Component"
-                                    />
-                                  </div>
-                                </div>
-                                <div>
-                                  <div className="text-sm">{product.name}</div>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="whitespace-nowrap px-6 py-4">{product.description}</td>
-                            <td className="whitespace-nowrap px-6 py-4">Otto</td>
-                            <td className="whitespace-nowrap px-6 py-4">@mdo</td>
-                            <td className="whitespace-nowrap px-6 py-4">@mdo</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* <thead >
-                <tr>
-                  <th className="flex">
-                    <input type="checkbox" className="checkbox mr-[12px]" />
-                    <div className="flex items-center space-x-3">
-                      <div>
-                        <div className="capitalize text-base text-xs text-[#667085]" >Name</div>
-                      </div>
-                    </div>
-                  </th>
-                  <th className="capitalize text-xs text-[#667085]">Ukuran File</th>
-                  <th className="capitalize text-base text-xs text-[#667085]">Tanggal Upload</th>
-                  <th className="capitalize text-base text-xs text-[#667085]">Dilihat</th>
-                  <th className="capitalize text-base text-xs text-[#667085]">Diskusi</th>
-                  <th> </th>
-                </tr>
-              </thead> */}
-            {/* <tbody>
-                {productList.map((product) => (
-                  <tr>
-                    <td className="flex">
-                      <input
-                        type="checkbox"
-                        className="checkbox mr-[12px] mt-3"
-                      />
+                )
+                .map((product, index) => (
+                  <tr key={index} className="text-center border-b">
+                    <td className="whitespace-nowrap px-6 py-4 font-medium flex">
                       <div className="flex items-center space-x-3">
                         <div className="avatar">
                           <div className="mask mask-squircle w-12 h-12 rounded-full">
@@ -181,16 +126,36 @@ export default function Article() {
                         </div>
                       </div>
                     </td>
-                    <td>
-                      Zemlak, Daniel and Leannon
-                      <br />
+                    <td className="text-caption-lg">
+                      {product.name}
                     </td>
-                    <td>Purple</td>
-                    <td>Purple</td>
-                    <td>Purple</td>
+                    <td className="text-caption-lg">Otto</td>
+                    <td className="text-caption-lg">@mdo</td>
+                    <td className="text-caption-lg">@mdo</td>
+                    <td>
+                      <div className="flex gap-1 justify-center">
+                        <Link to={`/admin/articles/${product.id}`}>
+                          <Eye24Regular
+                            className="cursor-pointer hover:text-info"
+                            id="detail-article"
+                          />
+                        </Link>
+                        <Delete24Regular
+                          className="cursor-pointer hover:text-info"
+                          onClick={() => setModalDelete(product.id)}
+                          id="delete-product"
+                        />
+                        <Link to={`/admin/articles/update/${product.id}`}>
+                          <Edit24Regular
+                            className="cursor-pointer hover:text-info"
+                            id="update-product"
+                          />
+                        </Link>
+                      </div>
+                    </td>
                   </tr>
                 ))}
-              </tbody> */}
+            </Table>
           </div>
         </div>
       </div>

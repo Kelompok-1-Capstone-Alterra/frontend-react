@@ -10,6 +10,8 @@ export default function TextField({
   register,
   className,
   isError = false,
+  isWarning = false,
+  isSuccess = false,
   ...props
 }) {
   const [isFocus, setIsFocus] = useState(false);
@@ -34,7 +36,13 @@ export default function TextField({
               <input
                 {...register}
                 className={`${
-                  isError ? "border-error" : "border-neutral-30"
+                  isError
+                    ? "border-error"
+                    : isWarning
+                    ? "border-warning"
+                    : isSuccess
+                    ? "border-success"
+                    : "border-neutral-30"
                 } focus:caret-info w-full h-[40px] rounded-[4px] focus:outline-none  ${
                   isError ? "focus:border-error" : "focus:border-info"
                 }`}
@@ -64,7 +72,13 @@ export default function TextField({
               {...register}
               className={`${className} input input-bordered
               ${
-                isError ? "border-error" : "border-neutral-30"
+                isError
+                  ? "border-error"
+                  : isWarning
+                  ? "border-warning"
+                  : isSuccess
+                  ? "border-success"
+                  : "border-neutral-30"
               } focus:caret-info w-full h-[40px] rounded-[4px] focus:outline-none  ${
                 isError ? "focus:border-error" : "focus:border-info"
               }`}
@@ -78,7 +92,13 @@ export default function TextField({
               {message && (
                 <span
                   className={`label-text-alt ${
-                    isError ? "text-error" : "text-[#6B7280]"
+                    isError
+                      ? "text-error"
+                      : isWarning
+                      ? "text-warning"
+                      : isSuccess
+                      ? "text-success"
+                      : "text-neutral-30"
                   } text-caption-lg`}
                 >
                   {message}
@@ -95,7 +115,6 @@ export default function TextField({
           </>
         )}
       </div>
-          
     </>
   );
 }

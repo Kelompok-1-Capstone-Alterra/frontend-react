@@ -7,58 +7,47 @@ import Button from "../components/Button";
 import TextField from "../components/TextField";
 import { MODULES } from "../constants";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import FileInput from "../components/FileInput";
-import { NotifModal } from "../components/Modal";
+import { useParams } from "react-router-dom";
+import SecondaryContainer from "../components/layouts/SecondaryContainer";
 
-export default function CreateArticle() {
+export default function UpdateArticle() {
   const {
     register,
     handleSubmit,
     formState: { errors },
     getValues,
     control,
-    
   } = useForm();
-  const [description, setDescription] = useState("");
-  const [showModal, setShowModal] = useState({
-    show: false,
-    icon: "",
-    text: "",
-    title: "",
-  });
+  const [productList, setProductList] = useState({});
+  const [editedDescription, setEditedDescription] = useState("");
+  const { id } = useParams();
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    axios
+      .get(`https://647348bad784bccb4a3c6bcf.mockapi.io/products/${id}`)
+      .then((response) => {
+        setProductList(response.data);
+        setEditedDescription(response.data.description)
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [id]);
 
   const onSubmit = async (data) => {
     try {
-      const cleanedDescription = description.replace(/<\/?p>/g, "");
-      
+      const cleanedDescription = editedDescription.replace(/<\/?p>/g, "");
 
-      const response = await axios.post(
-        "https://647348bad784bccb4a3c6bcf.mockapi.io/products",
+      const response = await axios.put(
+        `https://647348bad784bccb4a3c6bcf.mockapi.io/products/${id}`,
         {
           name: data.Judul,
           description: cleanedDescription,
           image: data.Thumbnail[0],
         }
-        );
-      const id = response.data.id; 
-      if (response.status === 201) {
-        setShowModal({
-          show: true,
-          icon: "success",
-          text: "Artikel Telah Berhasil Disimpan",
-          title: "Tambah Artikel",
-        });
-      } else {
-        setShowModal({
-          show: true,
-          icon: "info",
-          text: "Artikel Gagal Disimpan",
-          title: "Tambah Artikel",
-        });
-      }
+      );
+      alert("Data saved successfully!");
     } catch (error) {
       console.log(error);
       alert("Data error");
@@ -66,16 +55,15 @@ export default function CreateArticle() {
   };
 
   const handleDescriptionChange = (content) => {
-    setDescription(content);
+    setEditedDescription(content);
   };
 
   useEffect(() => {
     register("description");
   }, [register]);
 
-  
-
   return (
+    <SecondaryContainer>
     <form onSubmit={handleSubmit(onSubmit)}>
       {/* title */}
       <div className="ml-[103px] mt-[78px] mb-[48px] flex">
@@ -90,6 +78,7 @@ export default function CreateArticle() {
           autoComplete="off"
           isError={errors.Judul}
           placeholder="Tulis Judul Artikel"
+          defaultValue={productList.name}
           className="w-[1142px]"
           register={register("Judul", {
             required: "Judul harus diisi",
@@ -130,10 +119,11 @@ export default function CreateArticle() {
           className="h-[294px]"
           theme="snow"
           modules={MODULES}
-          value={description}
+          value={editedDescription}
           onChange={handleDescriptionChange}
+
         />
-        <input type="hidden" name="description" value={description} required />
+        
       </div>
       {/* button */}
       <div className="flex justify-center items-center mb-5">
@@ -147,23 +137,7 @@ export default function CreateArticle() {
           Simpan
         </Button>
       </div>
-      <NotifModal
-            title={showModal.title}
-            text={showModal.text}
-            icon={showModal.icon}
-            confirmText={"Tutup"}
-            isOpen={showModal.show}
-            onConfirm={() => {
-              setShowModal({
-                show: false,
-                icon: "",
-                text: "",
-                title: "",
-              });
-              reset();
-              navigate("/admin/products");
-            }}
-          />
     </form>
+    </SecondaryContainer>
   );
 }

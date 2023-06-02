@@ -257,7 +257,9 @@ const UpdateWeatherPage = () => {
             </div>
             <div
               className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
-                isConfirmModalOpen ? "block" : "hidden"
+                isConfirmModalOpen || isConfirmModalCancelOut
+                  ? "block"
+                  : "hidden"
               } cursor-pointer top-0 bottom-0 left-0 right-0`}>
               <ConfirmModal
                 isOpen={isConfirmModalOpen}
@@ -268,11 +270,6 @@ const UpdateWeatherPage = () => {
                 onConfirm={handleConfirmModal}
                 onCancel={handleCancelModal}
               />
-            </div>
-            <div
-              className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
-                isConfirmModalCancelOut ? "block" : "hidden"
-              } cursor-pointer top-0 bottom-0 left-0 right-0`}>
               <ConfirmModal
                 isOpen={isConfirmModalCancelOut}
                 text="Kamu yakin ingin keluar tanpa mengirim informasi yang sudah kamu buat?"
@@ -283,7 +280,6 @@ const UpdateWeatherPage = () => {
                 onCancel={handleCancelOut}
               />
             </div>
-
             <div className="flex justify-end gap-x-3.5 pt-5">
               <Button
                 type="button"

@@ -5,10 +5,10 @@ import { useState } from "react";
 import MainContainer from "../components/layouts/MainContainer";
 import Button from "../components/Button";
 import {
-  Add24Regular,
-  Eye24Regular,
-  Delete24Regular,
-  Edit24Regular,
+  Add20Regular,
+  Eye20Regular,
+  Delete20Regular,
+  Edit20Regular,
 } from "@fluentui/react-icons";
 import axios from "axios";
 import useSWR from "swr";
@@ -42,9 +42,9 @@ const RenderContent = ({
         >
           <Button
             size="sm"
-            className={"rounded-md"}
+            className={"rounded-lg px-0 w-[206px] h-[42px]"}
           >
-            <Add24Regular className="me-2" />
+            <Add20Regular className="me-2" />
             Tambah Produk Baru
           </Button>
         </Link>
@@ -70,7 +70,7 @@ const RenderContent = ({
                 {filteredProducts.map((product) => (
                   <tr
                     key={product.id}
-                    className="text-center border-b"
+                    className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
                   >
                     <td>
                       <img
@@ -90,20 +90,20 @@ const RenderContent = ({
                       {product.status ? "Etalase" : "Diarsipkan"}
                     </td>
                     <td>
-                      <div className="flex gap-1 justify-center">
+                      <div className="flex gap-3 justify-center">
                         <Link to={`/admin/products/${product.id}`}>
-                          <Eye24Regular
+                          <Eye20Regular
                             className="cursor-pointer hover:text-info"
                             id="detail-product"
                           />
                         </Link>
-                        <Delete24Regular
+                        <Delete20Regular
                           className="cursor-pointer hover:text-info"
                           onClick={() => setConfirmModalId(product.id)}
                           id="delete-product"
                         />
                         <Link to={`/admin/products/update/${product.id}`}>
-                          <Edit24Regular
+                          <Edit20Regular
                             className="cursor-pointer hover:text-info"
                             id="update-product"
                           />

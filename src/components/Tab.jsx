@@ -20,6 +20,7 @@ export default function Tab({
       >
         {tabs?.map((tab, index) => (
           <li
+            id="tab.id"
             key={tab.id}
             className={`tab tab-bordered border-b-0 px-3 -mb-0.5 h-full text-neutral-70/100 ${
               widthFull ? "grow" : ""

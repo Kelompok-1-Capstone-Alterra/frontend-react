@@ -39,7 +39,10 @@ export default function DetailPlantPage() {
   ];
 
   return (
-    <SecondaryContainer title="Data Tanaman">
+    <SecondaryContainer
+      title="Data Tanaman"
+      backTo="/admin/plants"
+    >
       <div className="ps-10">
         <Tab
           tabs={tabs}

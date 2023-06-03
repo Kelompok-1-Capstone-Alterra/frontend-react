@@ -16,6 +16,8 @@ import PaginationButton from "../components/PaginationButton";
 import { ConfirmModal, NotifModal } from "../components/Modal";
 import Button from "../components/Button";
 import TextField from "../components/TextField";
+import PlantSearchEmpty from "../assets/PlantSearchEmpty.png";
+import EmptyPlant from "../assets/EmptyPlant.png";
 
 const RECIPE_PER_PAGE = 8;
 
@@ -24,7 +26,7 @@ const url = "https://646df4e19c677e23218ab701.mockapi.io";
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
 export default function PlantPage() {
-  const { data, mutate } = useSWR(`${url}/plant`, fetcher);
+  const { data: plant, isLoading, mutate } = useSWR(`${url}/plant`, fetcher);
   const [modalPlantId, setModalPlanttId] = useState(null);
   const [alertOpen, setAlertOpen] = useState(false);
 
@@ -45,10 +47,10 @@ export default function PlantPage() {
 
   const { currentPage, isSort, search } = filterState;
 
-  let filteredPlant = data;
+  let filteredPlant = plant;
 
-  filteredPlant = filteredPlant?.filter((d) =>
-    d.name.toLowerCase().includes(search.toLowerCase())
+  filteredPlant = filteredPlant?.filter((plant) =>
+    plant.name?.toLowerCase().includes(search.toLowerCase())
   );
 
   filteredPlant = filteredPlant?.sort((a, b) => {
@@ -128,66 +130,104 @@ export default function PlantPage() {
           </Button>
         </Link>
       </div>
-      <Table
-        headers={[
-          "Gambar",
-          "Nama Tanaman",
-          "Deskripsi",
-          "Penyiraman",
-          "Pemupukan",
-          "Temperature",
-          "Aksi",
-        ]}
-        className={
-          "overflow-y-scroll mt-7 w-full overflow-x-hidden text-[#030712]"
-        }
-      >
-        {filteredPlant?.map((d, index) => (
-          <tr
-            key={index}
-            className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
-          >
-            <td className="flex justify-center">
-              <img
-                src={`${d.avatar}`}
-                alt=""
-                className="w-14 h-12"
-              />
-            </td>
-            <td className="text-left px-2">{d.name}</td>
-            <td className="max-w-[25ch] text-left px-2">
-              {d.description.slice(0, 40)}
-            </td>
-            <td>{`${d.watering} Kali Sehari`}</td>
-            <td>{`${d.fertilizer} Minggu Sekali`}</td>
-            <td className="text-caption-sm text-[#49454F]">
-              {`${d.min_temp}`}&#8451; {`- ${d.max_temp}`}&#8451;
-            </td>
-            <td>
-              <Eye20Regular
-                id="viewIcon"
-                className="cursor-pointer me-3 hover:text-info"
-              />
-              <Delete20Regular
-                id="deleteIcon"
-                className="cursor-pointer me-3 hover:text-info"
-                onClick={() => setModalPlanttId(d.id)}
-              />
-              <Edit20Regular
-                id="editIcon"
-                className="cursor-pointer hover:text-info"
-              />
-            </td>
-          </tr>
-        ))}
-      </Table>
-      <div className="flex mt-[53px] w-full justify-center">
-        <PaginationButton
-          currentPage={currentPage}
-          totalPages={filteredPlant?.length > 0 ? totalPages : 1}
-          handlePageChange={handlePageChange}
-        />
-      </div>
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          {filteredPlant.length > 0 ? (
+            <>
+              <Table
+                headers={[
+                  "Gambar",
+                  "Nama Tanaman",
+                  "Deskripsi",
+                  "Penyiraman",
+                  "Pemupukan",
+                  "Temperature",
+                  "Aksi",
+                ]}
+                className={
+                  "overflow-y-scroll mt-7 w-full overflow-x-hidden text-[#030712]"
+                }
+              >
+                {filteredPlant?.map((d, index) => (
+                  <tr
+                    key={index}
+                    className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
+                  >
+                    <td className="flex justify-center">
+                      <img
+                        src={`${d.pict}`}
+                        alt=""
+                        className="w-14 h-12"
+                      />
+                    </td>
+                    <td className="text-left ps-3">{d.name}</td>
+                    <td className="max-w-[25ch] text-left px-2">
+                      {d.desc.slice(0, 40)}
+                    </td>
+                    <td>{`${d.watering} kali sehari`}</td>
+                    <td>{`${d.fertilizing} hari sekali`}</td>
+                    <td className="text-caption-sm text-[#49454F]">
+                      {`${d.min}`}&#8451; {`- ${d.max}`}&#8451;
+                    </td>
+                    <td>
+                      <Eye20Regular
+                        id="viewIcon"
+                        className="cursor-pointer me-3 hover:text-info"
+                      />
+                      <Delete20Regular
+                        id="deleteIcon"
+                        className="cursor-pointer me-3 hover:text-info"
+                        onClick={() => setModalPlanttId(d.id)}
+                      />
+                      <Edit20Regular
+                        id="editIcon"
+                        className="cursor-pointer hover:text-info"
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </Table>
+              <div className="flex mt-[53px] w-full justify-center">
+                <PaginationButton
+                  currentPage={currentPage}
+                  totalPages={filteredPlant?.length > 0 ? totalPages : 1}
+                  handlePageChange={handlePageChange}
+                />
+              </div>
+            </>
+          ) : filteredPlant <= 0 && search ? (
+            <>
+              <div className="flex flex-col items-center justify-center mt-44">
+                <img
+                  src={PlantSearchEmpty}
+                  alt="empty search product"
+                  id="empty-search"
+                  className="w-[25%]"
+                />
+                <p className="text-body-lg text-[#6B7280] mt-4">
+                  Tanaman yang kamu cari tidak ada
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex flex-col items-center justify-center mt-44">
+                <img
+                  src={EmptyPlant}
+                  alt="empty plant"
+                  id="empty-plant"
+                  className="w-[25%]"
+                />
+                <p className="text-body-lg text-[#6B7280] mt-4">
+                  Kamu belum menambahkan tanaman
+                </p>
+              </div>
+            </>
+          )}
+        </>
+      )}
       <ConfirmModal
         cancelText={"Batal"}
         confirmText={"Hapus"}

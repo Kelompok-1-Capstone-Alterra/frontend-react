@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { SaveRegular } from "@fluentui/react-icons";
+import { useNavigate } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
 
 import Button from "../components/Button";
 import useMultistepForm from "../hooks/useMultistepForm";
@@ -10,10 +13,7 @@ import PemupukkanForm from "../components/createPlantPage/PemupukkanForm";
 import PenyiramanForm from "../components/createPlantPage/PenyiramanForm";
 import TemperaturForm from "../components/createPlantPage/TemperaturForm";
 import { addPlantDataState } from "../utils/recoil_atoms";
-import { useState } from "react";
 import { NotifModal } from "../components/Modal";
-import { useNavigate } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
 
 export default function CreatePlantPage() {
   const setAddPlantData = useSetRecoilState(addPlantDataState);
@@ -139,7 +139,10 @@ export default function CreatePlantPage() {
   };
 
   return (
-    <SecondaryContainer title="Tambah Tanaman">
+    <SecondaryContainer
+      title="Tambah Tanaman"
+      backTo="/admin/plants"
+    >
       <Step
         steps={steps}
         activeStepIndex={activeStepIndex}

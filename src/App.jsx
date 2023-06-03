@@ -16,6 +16,7 @@ import ProductsPage from "./pages/ProductsPage";
 import CreateProductPage from "./pages/CreateProductPage";
 import DetailProductPage from "./pages/DetailProductPage";
 import UpdateProductPage from "./pages/UpdateProductPage";
+import OverviewPage from "./pages/OverviewPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -39,7 +40,7 @@ function App() {
       children: [
         {
           path: "/admin",
-          element: <h1>OverviewPage</h1>,
+          element: <OverviewPage />,
         },
         {
           path: "/admin/plants",

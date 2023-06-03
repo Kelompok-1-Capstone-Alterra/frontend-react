@@ -172,10 +172,12 @@ export default function PlantPage() {
                       {`${d.min}`}&#8451; {`- ${d.max}`}&#8451;
                     </td>
                     <td>
-                      <Eye20Regular
+                      <Link
                         id="viewIcon"
-                        className="cursor-pointer me-3 hover:text-info"
-                      />
+                        to={`/admin/plants/${d.id}`}
+                      >
+                        <Eye20Regular className="cursor-pointer me-3 hover:text-info" />
+                      </Link>
                       <Delete20Regular
                         id="deleteIcon"
                         className="cursor-pointer me-3 hover:text-info"

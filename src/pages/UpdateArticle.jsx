@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { IosArrowLtr24Filled, Info12Regular } from "@fluentui/react-icons";
+import { Info12Regular } from "@fluentui/react-icons";
 import { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -106,9 +106,12 @@ export default function UpdateArticle() {
       title="Update Artikel"
       className={"pe-3"}
     >
-      <form onSubmit={handleSubmit(notif)}>
+      <form
+        onSubmit={handleSubmit(notif)}
+        className="px-8"
+      >
         {/* judul Artikel */}
-        <div className="ml-[103px] mb-[10px] w-[1142px]">
+        <div className="mb-2.5">
           <TextField
             id="title-article"
             label="Judul Artikel"
@@ -134,7 +137,7 @@ export default function UpdateArticle() {
           ></TextField>
         </div>
         {/* Input File */}
-        <div className="ml-[103px] mb-[30px] w-[1142px]">
+        <div className="mb-7">
           {!selectedImage && (
             <>
               <FileInput
@@ -179,8 +182,8 @@ export default function UpdateArticle() {
             </div>
           )}
         </div>
-        <div className="ml-[103px] mb-[50px] w-[1142px] ">
-        <p className="text-body-sm font-semibold lg:mb-1">Content</p>
+        <div className="mb-20">
+          <p className="text-body-sm font-semibold lg:mb-1">Content</p>
           <ReactQuill
             id="content-input"
             className="h-[294px]"

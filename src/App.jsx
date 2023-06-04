@@ -7,7 +7,7 @@ import AdminLayout from "./components/layouts/AdminLayout";
 
 import Login from "./pages/Login";
 import LandingPage from "./pages/LandingPage";
-import Article from "./pages/Article";
+import ArticlePage from "./pages/ArticlePage";
 import CreateArticle from "./pages/CreateArticle";
 import DetailArticle from "./pages/DetailArticle";
 import UpdateArticle from "./pages/UpdateArticle";
@@ -109,24 +109,23 @@ function App() {
         },
         {
           path: "/admin/articles",
-          element: <Article/>,
+          element: <ArticlePage />,
         },
         {
           path: "/admin/articles/create",
-          element: <CreateArticle/>,
+          element: <CreateArticle />,
         },
         {
           path: "/admin/articles/update/:id",
-          element:<UpdateArticle/> ,
+          element: <UpdateArticle />,
         },
         {
           path: "/admin/articles/:id",
-          element: <DetailArticle/>,
+          element: <DetailArticle />,
         },
       ],
     },
   ]);
-
 
   return <RouterProvider router={router} />;
 }

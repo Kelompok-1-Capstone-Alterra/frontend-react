@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { IosArrowLtr24Filled, Info12Regular } from "@fluentui/react-icons";
+import { Info12Regular } from "@fluentui/react-icons";
 import { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -53,7 +53,6 @@ export default function CreateArticle() {
           image: thumbnail,
         }
       );
-      const id = response.data.id;
       if (response.status === 201) {
         setShowModal({
           show: true,
@@ -93,9 +92,12 @@ export default function CreateArticle() {
       title="Tambah Artikel"
       className={"pe-3"}
     >
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="px-8"
+      >
         {/* judul Artikel */}
-        <div className="ml-[103px] mb-[10px] w-[1142px]">
+        <div className="mb-2.5">
           <TextField
             id="title-article"
             label="Judul Artikel"
@@ -120,7 +122,7 @@ export default function CreateArticle() {
           ></TextField>
         </div>
         {/* Input File */}
-        <div className="ml-[103px] mb-[30px]">
+        <div className="mb-7">
           {!selectedImage && (
             <>
               <FileInput
@@ -165,8 +167,7 @@ export default function CreateArticle() {
             </div>
           )}
         </div>
-
-        <div className="ml-[103px] mb-[50px] w-[1142px] ">
+        <div className="mb-20">
           <p className="text-body-sm font-semibold lg:mb-1">Content</p>
           <ReactQuill
             id="content-input"
@@ -220,7 +221,7 @@ export default function CreateArticle() {
               title: "",
             });
             navigate("/admin/articles");
-          }}          
+          }}
         />
         <div
           className={`fixed bg-black/20 w-[100vw] h-[100vh] ${

@@ -1,9 +1,9 @@
 import Button from "../components/Button";
 import {
   Add20Regular,
-  Edit24Regular,
-  Eye24Regular,
-  Delete24Regular,
+  Edit20Regular,
+  Eye20Regular,
+  Delete20Regular,
 } from "@fluentui/react-icons";
 import axios from "axios";
 import { useState, useEffect } from "react";
@@ -14,7 +14,7 @@ import Table from "../components/Table";
 import { ConfirmModal, NotifModal } from "../components/Modal";
 import PaginationButton from "../components/PaginationButton";
 
-export default function Article() {
+export default function ArticlePage() {
   const [artikelList, setArtikelList] = useState([]);
   const [filteredList, setFilteredList] = useState(artikelList);
   const [currentPage, setCurrentPage] = useState(1);
@@ -59,7 +59,7 @@ export default function Article() {
     setModalDelete(false);
     axios
       .delete(`https://647348bad784bccb4a3c6bcf.mockapi.io/products/${id}`)
-      .then((response) => {
+      .then(() => {
         const updatedArtikelList = artikelList.filter(
           (product) => product.id !== id
         );
@@ -83,25 +83,27 @@ export default function Article() {
   };
 
   return (
-    <>
-      <MainContainer />
+    <MainContainer>
       {/* title */}
-      <div className="ml-[30px] flex">
-        <h4 className="text-h-4 font-bold mt-4">Artikel</h4>
-        <Link to="/admin/articles/create" className="pl-[1000px]">
+      <h4 className="text-h-4 font-bold">Artikel</h4>
+      <div className="flex w-full justify-end my-4">
+        <Link
+          to="/admin/articles/create"
+          className=""
+        >
           <Button
-            className="mt-[20px] mr-[44px] mb-[19px] pl-[18px]"
+            size="md"
             id="add-article"
           >
-            <Add20Regular className="mr-[10.5px]" />
+            <Add20Regular className="mr-2" />
             Tambah
           </Button>
         </Link>
       </div>
 
       {/* search */}
-      <div className="ml-[45px] mt-[31px] mb-[29px] w-[1121px]">
-        <div className="relative mb-4 flex w-full items-stretch">
+      <div className="">
+        <div className="relative mb-3 flex w-full items-stretch">
           <TextField
             id="search-article"
             label=""
@@ -116,8 +118,8 @@ export default function Article() {
       {modalDelete && (
         <ConfirmModal
           icon={"info"}
-          title={"Hapus Produk"}
-          text={"Apakah Anda yakin ingin menghapus produk ini?"}
+          title={"Hapus Artikel"}
+          text={"Apakah Anda yakin ingin menghapus artikel ini?"}
           cancelText={"Kembali"}
           confirmText={"Hapus"}
           onConfirm={() => handleDelete(modalDelete)}
@@ -128,19 +130,20 @@ export default function Article() {
 
       {/* Table */}
 
-      <div className="pl-[45px] pr-[29px] w-full h-[620px] mb-[10px]  ">
+      <div className="w-full">
         <div className="overflow-x-auto">
           <Table
             headers={["Header", "Judul Artikel", "Viewers", "Aksi"]}
             className={
               "overflow-y-scroll mt-7 w-full overflow-x-hidden text-[#030712]"
-            }          >
+            }
+          >
             {filterArtikel.map((artikel, index) => (
               <tr
                 key={index}
                 className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
               >
-                <td className="whitespace-nowrap px-6 py-4 font-medium flex justify-center">
+                <td className="flex justify-center">
                   <img
                     src={artikel.image}
                     className="w-[56px] h-[48px]"
@@ -150,20 +153,20 @@ export default function Article() {
                 <td className="text-caption-lg">{artikel.name}</td>
                 <td className="text-caption-lg">Otto</td>
                 <td>
-                  <div className="flex gap-1 justify-center">
+                  <div className="flex gap-3 justify-center">
                     <Link to={`/admin/articles/${artikel.id}`}>
-                      <Eye24Regular
+                      <Eye20Regular
                         className="cursor-pointer hover:text-info"
                         id="detail-article"
                       />
                     </Link>
-                    <Delete24Regular
+                    <Delete20Regular
                       className="cursor-pointer hover:text-info"
                       onClick={() => setModalDelete(artikel.id)}
                       id="delete-article"
                     />
                     <Link to={`/admin/articles/update/${artikel.id}`}>
-                      <Edit24Regular
+                      <Edit20Regular
                         className="cursor-pointer hover:text-info"
                         id="update-article"
                       />
@@ -202,6 +205,6 @@ export default function Article() {
           showModal.show || modalDelete ? "block" : "hidden"
         } cursor-pointer top-0 bottom-0 left-0 right-0`}
       ></div>
-    </>
+    </MainContainer>
   );
 }

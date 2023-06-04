@@ -25,7 +25,6 @@ export default function DetailArticle() {
         title="Tambah Artikel"
         className={"pe-3 pl-[81px]"}
       >
-
         <div className="mb-[8px]">
           <label className="flex text-body-lg font-bold mb-3">
             Judul Artikel

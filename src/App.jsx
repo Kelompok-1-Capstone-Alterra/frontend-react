@@ -29,7 +29,7 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <GuestLayout />,
+      element: <ProtectedLoginRoute component={GuestLayout} />,
       children: [
         {
           path: "/",
@@ -37,7 +37,7 @@ function App() {
         },
         {
           path: "/login",
-          element: <ProtectedLoginRoute component={Login} />,
+          element: <Login />,
         },
       ],
     },

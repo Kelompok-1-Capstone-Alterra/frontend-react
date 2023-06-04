@@ -21,7 +21,7 @@ export default function MainContainer({ children }) {
 
   return (
     <div className="px-[55px] py-[54px] w-full">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-7">
         <p className="text-body-lg">
           <span className="pe-1.5 border-e border-black">
             {date.toLocaleDateString("id-ID", {

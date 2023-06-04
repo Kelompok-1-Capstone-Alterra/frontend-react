@@ -64,7 +64,7 @@ function Login() {
   return (
     <>
       <div
-        className="min-h-[calc(100vh-152px)] flex flex-col items-center w-full"
+        className="h-[calc(100vh-152px)] py-8 flex flex-col items-center w-full"
         style={{
           backgroundImage: `url('${gambar}')`,
           backgroundSize: "cover",
@@ -72,17 +72,12 @@ function Login() {
         }}
       >
         <Alert
-          className={`${
-            alert.show ? "visible" : "invisible"
-          } lg:w-[971px] mt-12 mb-8`}
+          className={`${alert.show ? "visible" : "invisible"} w-4/6 mb-5`}
           variant="error"
           message={alert.message}
         />
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="mb-10"
-        >
-          <div className="bg-white rounded-md p-8">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="bg-white rounded-md p-7">
             <div className="space-y-4">
               <h1 className="text-center text-h-4 font-bold text-[#10B981] flex justify-center items-center">
                 <img
@@ -97,8 +92,8 @@ function Login() {
                   id="email-input"
                   label="Email"
                   className={`px-4 py-2 outline-none rounded-md w-full border ${
-                    alert.show ? "border-red-500" : ""
-                  }`}
+                    alert.show ? "border-red-500" : "border-neutral-30"
+                  } `}
                   type="text"
                   register={register("email")}
                   error={errors.email}
@@ -115,7 +110,7 @@ function Login() {
                   id="password-input"
                   type={showPassword ? "text" : "password"}
                   className={`px-4 py-2 outline-none rounded-md w-full border ${
-                    alert.show ? "border-red-500" : ""
+                    alert.show ? "border-red-500" : "border-neutral-30"
                   }`}
                   {...register("password")}
                 />

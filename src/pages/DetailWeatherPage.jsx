@@ -21,23 +21,13 @@ const DetailWeatherPage = () => {
 
   const { judul, deskripsi } = weatherData;
 
-  const Preview = (value) => {
-    return (
-      <div>
-        <div
-          className="ql-editor"
-          dangerouslySetInnerHTML={{ __html: value }}
-        />
-      </div>
-    );
-  };
   return (
     <>
       <SecondaryContainer
         backTo="/admin/weathers"
-        title="Edit Informasi cuaca"
+        title="Preview Informasi Cuaca"
         className="pe-3">
-        <div className="mx-8">
+        <div className="mx-5">
           <p className="text-h-5 font-bold mb-5">{judul}</p>
           <div
             className="styled-content"

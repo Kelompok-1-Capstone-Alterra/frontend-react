@@ -109,21 +109,22 @@ const WeatherManagementPage = () => {
             )}
           </div>
         </div>
+        <div
+          className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
+            showConfirmModal ? "block" : "hidden"
+          } cursor-pointer top-0 bottom-0 left-0 right-0`}>
+          <ConfirmModal
+            isOpen={showConfirmModal}
+            title="Hapus Informasi cuaca"
+            text="Yakin ingin menghapus informasi cuaca ini ?"
+            cancelText="Tidak"
+            confirmText="Ya"
+            onConfirm={handleConfirmDelete}
+            onCancel={handleCancelDelete}
+            icon="info"
+          />
+        </div>
       </MainContainer>
-      <div
-        className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
-          showConfirmModal ? "block" : "hidden"
-        } cursor-pointer top-0 bottom-0 left-0 right-0`}>
-        <ConfirmModal
-          isOpen={showConfirmModal}
-          title="Hapus Informasi cuaca"
-          text="Yakin ingin menghapus informasi cuaca ini ?"
-          cancelText="Batal"
-          confirmText="Hapus"
-          onConfirm={handleConfirmDelete}
-          onCancel={handleCancelDelete}
-        />
-      </div>
     </>
   );
 };

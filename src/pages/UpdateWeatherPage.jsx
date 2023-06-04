@@ -7,7 +7,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { ConfirmModal } from "../components/Modal";
+import { ConfirmModal, NotifModal } from "../components/Modal";
 import useSWR from "swr";
 import FileInput from "../components/FileInput";
 import MySelect from "../components/MySelect";
@@ -29,7 +29,7 @@ const UpdateWeatherPage = () => {
   const navigate = useNavigate();
   const [editorFocus, setEditorFocus] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [isConfirmModalCancelOut, setIsConfirmModalCancelOut] = useState(false);
+  const [isNotifModalOpen, setIsNotifModalOpen] = useState(false);
   const [formData, setFormData] = useState(null);
   const [weatherOptions, setWeatherOptions] = useState([]);
   const url = `https://642cdf18bf8cbecdb4f8b260.mockapi.io/weathers/${id}`;
@@ -81,7 +81,7 @@ const UpdateWeatherPage = () => {
     };
 
     register("label", {
-      required: "Harus memilih label",
+      required: "Label cuaca tidak boleh kosong",
     });
 
     fetchWeatherData();
@@ -105,7 +105,6 @@ const UpdateWeatherPage = () => {
 
   const onSubmit = async (data) => {
     setFormData(data);
-    console.log("Data sebelum diubah:", data);
     setIsConfirmModalOpen(true);
   };
 
@@ -119,8 +118,7 @@ const UpdateWeatherPage = () => {
       };
 
       await axios.put(url, requestData);
-
-      console.log("Data berhasil diperbarui");
+      setIsNotifModalOpen(true);
     } catch (error) {
       console.error("Terjadi kesalahan:", error);
     }
@@ -132,14 +130,11 @@ const UpdateWeatherPage = () => {
     setIsConfirmModalOpen(false);
   };
 
-  const handleCancelOut = () => {
-    setIsConfirmModalCancelOut(false);
+  const handleNotifModal = () => {
+    setIsNotifModalOpen(false);
+    navigate("/admin/weathers");
   };
 
-  const handleConfirmCancelModal = () => {
-    navigate("/admin/weathers");
-    setIsConfirmModalCancelOut(false);
-  };
   return (
     <>
       <SecondaryContainer
@@ -151,7 +146,7 @@ const UpdateWeatherPage = () => {
             <TextField
               label="Judul"
               autoComplete="off"
-              placeholder="Masukan Judul Peringatan"
+              placeholder="Masukkan Judul Peringatan"
               isError={errors.judul}
               message={
                 errors.judul && (
@@ -163,10 +158,6 @@ const UpdateWeatherPage = () => {
               register={{
                 ...register("judul", {
                   required: "Judul tidak boleh kosong",
-                  minLength: {
-                    value: 2,
-                    message: "Minimal 2 karakter",
-                  },
                 }),
               }}
               id="judul"
@@ -188,7 +179,7 @@ const UpdateWeatherPage = () => {
                         label: option.label,
                         value: option.value,
                       }))}
-                      placeholder="Pilih label cuaca"
+                      placeholder="Pilih Label"
                       className="w-96"
                     />
                   )}
@@ -231,7 +222,7 @@ const UpdateWeatherPage = () => {
                 theme="snow"
                 id="deskripsi"
                 modules={MODULES}
-                placeholder="Masukan Deskripsi"
+                placeholder="Masukkan Deskripsi"
                 value={content}
                 onChange={onEditorStateChange}
                 className={`h-[306px] ${
@@ -257,9 +248,7 @@ const UpdateWeatherPage = () => {
             </div>
             <div
               className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
-                isConfirmModalOpen || isConfirmModalCancelOut
-                  ? "block"
-                  : "hidden"
+                isConfirmModalOpen || isNotifModalOpen ? "block" : "hidden"
               } cursor-pointer top-0 bottom-0 left-0 right-0`}>
               <ConfirmModal
                 isOpen={isConfirmModalOpen}
@@ -270,24 +259,16 @@ const UpdateWeatherPage = () => {
                 onConfirm={handleConfirmModal}
                 onCancel={handleCancelModal}
               />
-              <ConfirmModal
-                isOpen={isConfirmModalCancelOut}
-                text="Kamu yakin ingin keluar tanpa mengirim informasi yang sudah kamu buat?"
-                title="Informasi belum terkirim"
-                cancelText="Batal"
-                confirmText="Keluar"
-                onConfirm={handleConfirmCancelModal}
-                onCancel={handleCancelOut}
+              <NotifModal
+                isOpen={isNotifModalOpen}
+                text="Informasi cuaca berhasil di ubah"
+                title="Ubah Informasi cuaca"
+                confirmText="Tutup"
+                icon="success"
+                onConfirm={handleNotifModal}
               />
             </div>
             <div className="flex justify-end gap-x-3.5 pt-5">
-              <Button
-                type="button"
-                children="Batal"
-                size="md"
-                variant="outline-green"
-                onClick={() => setIsConfirmModalCancelOut(true)}
-              />
               <Button type="submit" children="Kirim" size="md" />
             </div>
           </form>

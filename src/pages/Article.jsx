@@ -15,8 +15,8 @@ import { ConfirmModal, NotifModal } from "../components/Modal";
 import PaginationButton from "../components/PaginationButton";
 
 export default function Article() {
-  const [productList, setProductList] = useState([]);
-  const [filteredList, setFilteredList] = useState(productList);
+  const [artikelList, setArtikelList] = useState([]);
+  const [filteredList, setFilteredList] = useState(artikelList);
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState({
     show: false,
@@ -28,23 +28,23 @@ export default function Article() {
   const total_item = 8;
 
   // search
-  let filterProduct = productList;
+  let filterArtikel = artikelList;
 
-  filterProduct = filterProduct.filter((value) =>
+  filterArtikel = filterArtikel.filter((value) =>
     value.name.toLowerCase().includes(filteredList)
   );
 
   const startIndex = (currentPage - 1) * total_item;
   const endIndex = currentPage * total_item;
-  filterProduct = filterProduct.slice(startIndex, endIndex);
+  filterArtikel = filterArtikel.slice(startIndex, endIndex);
 
-  const totalPages = Math.ceil(productList.length / total_item);
+  const totalPages = Math.ceil(artikelList.length / total_item);
 
   useEffect(() => {
     axios
       .get("https://647348bad784bccb4a3c6bcf.mockapi.io/products")
       .then((response) => {
-        setProductList(response.data);
+        setArtikelList(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -60,10 +60,10 @@ export default function Article() {
     axios
       .delete(`https://647348bad784bccb4a3c6bcf.mockapi.io/products/${id}`)
       .then((response) => {
-        const updatedProductList = productList.filter(
+        const updatedArtikelList = artikelList.filter(
           (product) => product.id !== id
         );
-        setProductList(updatedProductList);
+        setArtikelList(updatedArtikelList);
         setShowModal({
           show: true,
           icon: "success",
@@ -132,22 +132,26 @@ export default function Article() {
         <div className="overflow-x-auto">
           <Table
             headers={["Header", "Judul Artikel", "Viewers", "Aksi"]}
-            className="w-full text-center"
-          >
-            {filterProduct.map((product, index) => (
-              <tr key={index} className="text-center border-b">
+            className={
+              "overflow-y-scroll mt-7 w-full overflow-x-hidden text-[#030712]"
+            }          >
+            {filterArtikel.map((artikel, index) => (
+              <tr
+                key={index}
+                className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
+              >
                 <td className="whitespace-nowrap px-6 py-4 font-medium flex justify-center">
                   <img
-                    src={product.image}
+                    src={artikel.image}
                     className="w-[56px] h-[48px]"
                     alt="Avatar Tailwind CSS Component"
                   />
                 </td>
-                <td className="text-caption-lg">{product.name}</td>
+                <td className="text-caption-lg">{artikel.name}</td>
                 <td className="text-caption-lg">Otto</td>
                 <td>
                   <div className="flex gap-1 justify-center">
-                    <Link to={`/admin/articles/${product.id}`}>
+                    <Link to={`/admin/articles/${artikel.id}`}>
                       <Eye24Regular
                         className="cursor-pointer hover:text-info"
                         id="detail-article"
@@ -155,10 +159,10 @@ export default function Article() {
                     </Link>
                     <Delete24Regular
                       className="cursor-pointer hover:text-info"
-                      onClick={() => setModalDelete(product.id)}
+                      onClick={() => setModalDelete(artikel.id)}
                       id="delete-article"
                     />
-                    <Link to={`/admin/articles/update/${product.id}`}>
+                    <Link to={`/admin/articles/update/${artikel.id}`}>
                       <Edit24Regular
                         className="cursor-pointer hover:text-info"
                         id="update-article"

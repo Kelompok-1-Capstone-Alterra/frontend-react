@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function DetailArticle() {
-  const [productList, setProductList] = useState("");
+  const [artikelList, setArtikelList] = useState("");
   const { id } = useParams();
 
   useEffect(() => {
     axios
       .get(`https://647348bad784bccb4a3c6bcf.mockapi.io/products/${id}`)
       .then((response) => {
-        setProductList(response.data);
+        setArtikelList(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -30,13 +30,13 @@ export default function DetailArticle() {
           <label className="flex text-body-lg font-bold mb-3">
             Judul Artikel
           </label>
-          <div className="w-[1037px]">{productList.name}</div>
+          <div className="w-[1037px]">{artikelList.name}</div>
         </div>
         <div className="pb-4">
           <label className="flex text-body-lg font-bold mb-3">Deskripsi</label>
           <div
             className="styled-content"
-            dangerouslySetInnerHTML={{ __html: productList.description }}
+            dangerouslySetInnerHTML={{ __html: artikelList.description }}
           ></div>
         </div>
         <div className="pb-4">
@@ -44,7 +44,7 @@ export default function DetailArticle() {
             Gambar Tanaman
           </label>
           <img
-            src={productList.image}
+            src={artikelList.image}
             alt=""
             className="w-[153px] h-[87px]"
           />

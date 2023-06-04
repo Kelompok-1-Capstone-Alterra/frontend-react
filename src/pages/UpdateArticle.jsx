@@ -23,7 +23,7 @@ export default function UpdateArticle() {
     getValues,
     control,
   } = useForm();
-  const [productList, setProductList] = useState({});
+  const [artikelList, setArtikelList] = useState({});
   const [editedDescription, setEditedDescription] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
@@ -45,7 +45,7 @@ export default function UpdateArticle() {
     axios
       .get(`https://647348bad784bccb4a3c6bcf.mockapi.io/products/${id}`)
       .then((response) => {
-        setProductList(response.data);
+        setArtikelList(response.data);
         setEditedDescription(response.data.description);
       })
       .catch((error) => {
@@ -115,7 +115,7 @@ export default function UpdateArticle() {
             autoComplete="off"
             isError={errors.Judul}
             placeholder="Tulis Judul Artikel"
-            defaultValue={productList.name}
+            defaultValue={artikelList.name}
             className="w-[1142px]"
             register={register("Judul", {
               required: "Judul harus diisi",
@@ -182,6 +182,7 @@ export default function UpdateArticle() {
         <div className="ml-[103px] mb-[50px] w-[1142px] ">
         <p className="text-body-sm font-semibold lg:mb-1">Content</p>
           <ReactQuill
+            id="content-input"
             className="h-[294px]"
             theme="snow"
             modules={MODULES}

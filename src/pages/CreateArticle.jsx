@@ -169,6 +169,7 @@ export default function CreateArticle() {
         <div className="ml-[103px] mb-[50px] w-[1142px] ">
           <p className="text-body-sm font-semibold lg:mb-1">Content</p>
           <ReactQuill
+            id="content-input"
             label="Content"
             className="h-[294px]"
             theme="snow"

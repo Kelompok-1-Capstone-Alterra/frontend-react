@@ -40,7 +40,7 @@ export default function FileInput({
             isError ? "border-[#EF4444]" : ""
           }`}
         >
-          {value ? value.name : "Masukkan Gambar"}
+          {value ? value?.name ?? value : "Masukkan Gambar"}
         </span>
       </div>
       <label

@@ -1,13 +1,27 @@
-import AdminImage from "./../../assets/Admin Image.png";
+import { useState, useEffect } from "react";
 import { SignOut24Regular } from "@fluentui/react-icons";
+import { useNavigate } from "react-router-dom";
+
+import AdminImage from "./../../assets/Admin Image.png";
 
 export default function MainContainer({ children }) {
+  const navigate = useNavigate();
+  const [date, setDate] = useState(new Date());
+
+  useEffect(() => {
+    setInterval(() => setDate(new Date()), 30000);
+  }, []);
+
+  const handleLogOut = () => {
+    navigate("/login");
+  };
+
   return (
     <div className="px-[55px] py-[54px] w-full">
       <div className="flex justify-between items-center">
-        <p>
+        <p className="text-body-lg">
           <span className="pe-1.5 border-e border-black">
-            {new Date().toLocaleDateString("id-ID", {
+            {date.toLocaleDateString("id-ID", {
               weekday: "long",
               year: "numeric",
               month: "long",
@@ -15,7 +29,7 @@ export default function MainContainer({ children }) {
             })}
           </span>
           <span className="ps-1.5">
-            {new Date().toLocaleTimeString("id-ID", {
+            {date.toLocaleTimeString("id-ID", {
               hour: "2-digit",
               minute: "2-digit",
             })}
@@ -30,7 +44,10 @@ export default function MainContainer({ children }) {
             />
             <p className="font-semibold text-body-sm">Admin</p>
           </div>
-          <button className="flex items-center gap-2">
+          <button
+            className="flex items-center gap-2"
+            onClick={handleLogOut}
+          >
             <SignOut24Regular />
           </button>
         </div>

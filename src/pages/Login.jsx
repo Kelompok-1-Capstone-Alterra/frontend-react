@@ -64,7 +64,7 @@ function Login() {
   return (
     <>
       <div
-        className="h-[calc(100vh-152px)] flex flex-col items-center w-full"
+        className="min-h-[calc(100vh-152px)] flex flex-col items-center w-full"
         style={{
           backgroundImage: `url('${gambar}')`,
           backgroundSize: "cover",
@@ -78,7 +78,10 @@ function Login() {
           variant="error"
           message={alert.message}
         />
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="mb-10"
+        >
           <div className="bg-white rounded-md p-8">
             <div className="space-y-4">
               <h1 className="text-center text-h-4 font-bold text-[#10B981] flex justify-center items-center">
@@ -87,7 +90,7 @@ function Login() {
                   alt="Logo"
                   className="mr-2 w-10"
                 />
-                Agriplan
+                Agriplant
               </h1>
               <div>
                 <TextField

@@ -5,7 +5,7 @@ import { useState } from "react";
 import MainContainer from "../components/layouts/MainContainer";
 import Button from "../components/Button";
 import {
-  Add20Regular,
+  Add20Filled,
   Eye20Regular,
   Delete20Regular,
   Edit20Regular,
@@ -42,9 +42,9 @@ const RenderContent = ({
         >
           <Button
             size="sm"
-            className={"rounded-lg px-0 w-[206px] h-[42px]"}
+            className={"rounded-lg px-0 w-[243px] h-[42px]"}
           >
-            <Add20Regular className="me-2" />
+            <Add20Filled className="me-2" />
             Tambah Produk Baru
           </Button>
         </Link>
@@ -313,7 +313,7 @@ export default function ProductsPage() {
   return (
     <>
       <MainContainer>
-        <h4 className="text-h-4 font-bold mt-6"> Produk</h4>
+        <h4 className="text-h-4 font-bold"> Produk</h4>
         <div className="lg:mt-6">
           <div className="flex w-full lg:mt-6">
             <TextField

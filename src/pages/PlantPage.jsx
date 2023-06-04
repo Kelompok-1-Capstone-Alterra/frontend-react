@@ -77,7 +77,7 @@ export default function PlantPage() {
 
   return (
     <MainContainer>
-      <h4 className="text-h-4 font-bold mt-4">Penambahan Tanaman</h4>
+      <h4 className="text-h-4 font-bold">Penambahan Tanaman</h4>
       <div className="flex justify-between items-center mt-[70px]">
         <div className="flex w-[770px] justify-between items-stretch h-10">
           <div className="shrink-0 inline-flex">

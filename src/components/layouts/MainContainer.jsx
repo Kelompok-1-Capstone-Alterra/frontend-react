@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { SignOut24Regular } from "@fluentui/react-icons";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 import AdminImage from "./../../assets/Admin Image.png";
 
@@ -13,6 +14,8 @@ export default function MainContainer({ children }) {
   }, []);
 
   const handleLogOut = () => {
+    Cookies.remove("token");
+    Cookies.remove("admin");
     navigate("/login");
   };
 

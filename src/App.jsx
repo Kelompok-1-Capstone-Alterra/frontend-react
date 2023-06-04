@@ -1,6 +1,8 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "react-quill/dist/quill.snow.css";
 import axios from "axios";
+import PrivateRoute from "./components/hoc/PrivateRoute";
+import ProtectedLoginRoute from "./components/hoc/ProtectedLoginRoute";
 
 import GuestLayout from "./components/layouts/GuestLayout";
 import AdminLayout from "./components/layouts/AdminLayout";
@@ -35,13 +37,13 @@ function App() {
         },
         {
           path: "/login",
-          element: <Login />,
+          element: <ProtectedLoginRoute component={Login} />,
         },
       ],
     },
     {
       path: "/admin",
-      element: <AdminLayout />,
+      element: <PrivateRoute component={AdminLayout} />,
       children: [
         {
           path: "/admin",

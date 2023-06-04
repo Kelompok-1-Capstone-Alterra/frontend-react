@@ -1,4 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import "react-quill/dist/quill.snow.css";
 import axios from "axios";
 
 import GuestLayout from "./components/layouts/GuestLayout";
@@ -11,11 +12,16 @@ import CreateArticle from "./pages/CreateArticle";
 import DetailArticle from "./pages/DetailArticle";
 import UpdateArticle from "./pages/UpdateArticle";
 
+import CreatePlantPage from "./pages/CreatePlantPage";
+import PlantPage from "./pages/PlantPage";
+import DetailPlantPage from "./pages/DetailPlantPage";
+import UpdatePlantPage from "./pages/UpdatePlantPage";
 
 import ProductsPage from "./pages/ProductsPage";
 import CreateProductPage from "./pages/CreateProductPage";
 import DetailProductPage from "./pages/DetailProductPage";
 import UpdateProductPage from "./pages/UpdateProductPage";
+import OverviewPage from "./pages/OverviewPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -39,23 +45,23 @@ function App() {
       children: [
         {
           path: "/admin",
-          element: <h1>OverviewPage</h1>,
+          element: <OverviewPage />,
         },
         {
           path: "/admin/plants",
-          element: <h1>PlantPage</h1>,
+          element: <PlantPage />,
         },
         {
           path: "/admin/plants/create",
-          element: <h1>CreatePlantPage</h1>,
+          element: <CreatePlantPage />,
         },
         {
           path: "/admin/plants/update/:id",
-          element: <h1>UpdatePlantPage</h1>,
+          element: <UpdatePlantPage />,
         },
         {
           path: "/admin/plants/:id",
-          element: <h1>DetailPlantPage</h1>,
+          element: <DetailPlantPage />,
         },
         {
           path: "/admin/products",

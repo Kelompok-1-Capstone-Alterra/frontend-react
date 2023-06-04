@@ -87,16 +87,16 @@ export default function Article() {
       <MainContainer />
       {/* title */}
       <div className="ml-[30px] flex">
-        <h1 className="font-bold text-h-4 font-bold">Artikel</h1>
-          <Link to="/admin/articles/create" className="pl-[1000px]">
-            <Button
-              className="mt-[20px] mr-[44px] mb-[19px] pl-[18px]"
-              id="add-article"
-            >
-              <Add20Regular className="mr-[10.5px]" />
-              Tambah
-            </Button>
-          </Link>
+        <h4 className="text-h-4 font-bold mt-4">Artikel</h4>
+        <Link to="/admin/articles/create" className="pl-[1000px]">
+          <Button
+            className="mt-[20px] mr-[44px] mb-[19px] pl-[18px]"
+            id="add-article"
+          >
+            <Add20Regular className="mr-[10.5px]" />
+            Tambah
+          </Button>
+        </Link>
       </div>
 
       {/* search */}

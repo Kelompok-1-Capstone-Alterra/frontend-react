@@ -14,6 +14,14 @@
   .tab.tab-active:not(.tab-disabled):not([disabled]) {
     @apply text-primary border-primary;
   }
+
+  .step-active > div {
+    @apply bg-primary text-neutral-10;
+  }
+
+  .step-active > span {
+    @apply text-primary;
+  }
 }
 
 /*reqct-quill class for error and focus*/
@@ -32,6 +40,10 @@
 
 .quill.ql-focus .ql-container {
   border-color: #3b82f6;
+}
+
+.checkbox {
+  --chkfg: var(--b1);
 }
 
 .styled-content ul {

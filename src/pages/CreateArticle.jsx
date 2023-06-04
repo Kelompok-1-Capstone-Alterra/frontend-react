@@ -58,7 +58,7 @@ export default function CreateArticle() {
         setShowModal({
           show: true,
           icon: "success",
-          text: "Artikel Telah Berhasil Disimpan",
+          text: "Artikel telah berhasil disimpan",
           title: "Tambah Artikel",
         });
       } else {
@@ -175,12 +175,6 @@ export default function CreateArticle() {
             modules={MODULES}
             value={description}
             onChange={handleDescriptionChange}
-          />
-          <input
-            type="hidden"
-            name="description"
-            value={description}
-            required
           />
         </div>
         {/* button */}

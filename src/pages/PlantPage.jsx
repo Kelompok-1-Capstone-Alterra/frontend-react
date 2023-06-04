@@ -183,10 +183,12 @@ export default function PlantPage() {
                         className="cursor-pointer me-3 hover:text-info"
                         onClick={() => setModalPlanttId(d.id)}
                       />
-                      <Edit20Regular
-                        id="editIcon"
-                        className="cursor-pointer hover:text-info"
-                      />
+                      <Link to={`/admin/plants/update/${d.id}`}>
+                        <Edit20Regular
+                          id="editIcon"
+                          className="cursor-pointer hover:text-info"
+                        />
+                      </Link>
                     </td>
                   </tr>
                 ))}

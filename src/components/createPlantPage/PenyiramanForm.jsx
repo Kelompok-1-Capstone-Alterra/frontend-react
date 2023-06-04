@@ -57,8 +57,8 @@ export default function PenyiramanForm({ formId, onSubmit }) {
                 errors={errors.watering?.period}
                 field={field}
                 options={[
-                  { value: "1 Kali Sehari", label: "1 kali sehari" },
-                  { value: "2 Kali Sehari", label: "2 kali sehari" },
+                  { value: 1, label: "1 kali sehari" },
+                  { value: 2, label: "2 kali sehari" },
                 ]}
                 placeholder="Pilih penyiraman"
                 className="max-w-[421px] mt-1"

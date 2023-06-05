@@ -6,12 +6,16 @@ import logo from "../assets/Logo.png";
 import TextField from "../components/TextField";
 import { Eye24Regular, EyeOff24Regular } from "@fluentui/react-icons";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import Alert from "../components/Alert";
+import Cookies from "js-cookie";
 
 function Login() {
   const navigate = useNavigate();
-  const [emailPasswordError, setEmailPasswordError] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
+  const [alert, setAlert] = useState({
+    show: false,
+    message: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
@@ -19,20 +23,39 @@ function Login() {
     formState: { errors },
   } = useForm();
 
+  const login = async (email, password) => {
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/admins/login`,
+        {
+          admin_email: email,
+          admin_password: password,
+        }
+      );
+
+      if (res.status === 200) {
+        Cookies.set("token", res.data.data.token);
+        Cookies.set("admin", res.data.data.admin);
+        navigate("/admin");
+      }
+    } catch (err) {
+      setAlert({
+        show: true,
+        message: "Email atau Password Salah",
+      });
+    }
+  };
+
   const onSubmit = (data) => {
     const { email, password } = data;
-
     if (email === "" || password === "") {
-      setEmailPasswordError(false);
-      setShowAlert(true);
-    } else if (email !== "admin" || password !== "admin") {
-      setEmailPasswordError(true);
-      setShowAlert(false);
-    } else {
-      setEmailPasswordError(false);
-      setShowAlert(false);
-      navigate(`/admin`);
+      setAlert({
+        show: true,
+        message: "Field Tidak Boleh Kosong",
+      });
+      return;
     }
+    login(email, password);
   };
   const showEye = () => {
     setShowPassword(!showPassword);
@@ -41,7 +64,7 @@ function Login() {
   return (
     <>
       <div
-        className="h-[calc(100vh-152px)] flex flex-col items-center w-full"
+        className="h-[calc(100vh-152px)] py-8 flex flex-col items-center w-full"
         style={{
           backgroundImage: `url('${gambar}')`,
           backgroundSize: "cover",
@@ -49,20 +72,12 @@ function Login() {
         }}
       >
         <Alert
-          className={`${
-            showAlert || emailPasswordError ? "visible" : "invisible"
-          } lg:w-[971px] mt-12 mb-8`}
+          className={`${alert.show ? "visible" : "invisible"} w-4/6 mb-5`}
           variant="error"
-          message={
-            showAlert
-              ? "Field Tidak Boleh Kosong"
-              : emailPasswordError
-              ? "Email Atau Kata Sandi Salah"
-              : ""
-          }
+          message={alert.message}
         />
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="bg-white rounded-md p-8">
+          <div className="bg-white rounded-md p-7">
             <div className="space-y-4">
               <h1 className="text-center text-h-4 font-bold text-[#10B981] flex justify-center items-center">
                 <img
@@ -70,15 +85,15 @@ function Login() {
                   alt="Logo"
                   className="mr-2 w-10"
                 />
-                Agriplan
+                Agriplant
               </h1>
               <div>
                 <TextField
                   id="email-input"
                   label="Email"
                   className={`px-4 py-2 outline-none rounded-md w-full border ${
-                    showAlert ? "border-red-500" : ""
-                  } ${emailPasswordError ? "border-red-500" : ""}`}
+                    alert.show ? "border-red-500" : "border-neutral-30"
+                  } `}
                   type="text"
                   register={register("email")}
                   error={errors.email}
@@ -95,8 +110,8 @@ function Login() {
                   id="password-input"
                   type={showPassword ? "text" : "password"}
                   className={`px-4 py-2 outline-none rounded-md w-full border ${
-                    showAlert ? "border-red-500" : ""
-                  } ${emailPasswordError ? "border-red-500" : ""}`}
+                    alert.show ? "border-red-500" : "border-neutral-30"
+                  }`}
                   {...register("password")}
                 />
                 <button

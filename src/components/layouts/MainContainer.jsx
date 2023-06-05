@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { SignOut24Regular } from "@fluentui/react-icons";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 import AdminImage from "./../../assets/Admin Image.png";
 
@@ -13,12 +14,14 @@ export default function MainContainer({ children }) {
   }, []);
 
   const handleLogOut = () => {
+    Cookies.remove("token");
+    Cookies.remove("admin");
     navigate("/login");
   };
 
   return (
     <div className="px-[55px] py-[54px] w-full">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-7">
         <p className="text-body-lg">
           <span className="pe-1.5 border-e border-black">
             {date.toLocaleDateString("id-ID", {

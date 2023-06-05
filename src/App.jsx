@@ -1,12 +1,19 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "react-quill/dist/quill.snow.css";
 import axios from "axios";
+import PrivateRoute from "./components/hoc/PrivateRoute";
+import ProtectedLoginRoute from "./components/hoc/ProtectedLoginRoute";
 
 import GuestLayout from "./components/layouts/GuestLayout";
 import AdminLayout from "./components/layouts/AdminLayout";
 
 import Login from "./pages/Login";
 import LandingPage from "./pages/LandingPage";
+import ArticlePage from "./pages/ArticlePage";
+import CreateArticle from "./pages/CreateArticle";
+import DetailArticle from "./pages/DetailArticle";
+import UpdateArticle from "./pages/UpdateArticle";
+
 import CreatePlantPage from "./pages/CreatePlantPage";
 import PlantPage from "./pages/PlantPage";
 import DetailPlantPage from "./pages/DetailPlantPage";
@@ -26,7 +33,7 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <GuestLayout />,
+      element: <ProtectedLoginRoute component={GuestLayout} />,
       children: [
         {
           path: "/",
@@ -40,7 +47,7 @@ function App() {
     },
     {
       path: "/admin",
-      element: <AdminLayout />,
+      element: <PrivateRoute component={AdminLayout} />,
       children: [
         {
           path: "/admin",
@@ -108,19 +115,19 @@ function App() {
         },
         {
           path: "/admin/articles",
-          element: <h1>ArticlePage</h1>,
+          element: <ArticlePage />,
         },
         {
           path: "/admin/articles/create",
-          element: <h1>CreateArticlePage</h1>,
+          element: <CreateArticle />,
         },
         {
           path: "/admin/articles/update/:id",
-          element: <h1>UpdateArticlePage</h1>,
+          element: <UpdateArticle />,
         },
         {
           path: "/admin/articles/:id",
-          element: <h1>DetailArticlePage</h1>,
+          element: <DetailArticle />,
         },
       ],
     },

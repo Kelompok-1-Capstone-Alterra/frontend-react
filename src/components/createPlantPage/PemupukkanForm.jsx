@@ -59,10 +59,10 @@ export default function PemupukkanForm({ formId, onSubmit }) {
                 field={field}
                 autoFocus
                 options={[
-                  { value: "3 Kali", label: "3 Kali" },
-                  { value: "4 Kali", label: "4 Kali" },
-                  { value: "5 Kali", label: "5 Kali" },
-                  { value: "6 Kali", label: "6 Kali" },
+                  { value: 3, label: "3 Kali" },
+                  { value: 4, label: "4 Kali" },
+                  { value: 5, label: "5 Kali" },
+                  { value: 6, label: "6 Kali" },
                 ]}
                 placeholder="Pilih berapa kali pemupukkan"
                 className="max-w-[421px] mt-1"
@@ -96,10 +96,10 @@ export default function PemupukkanForm({ formId, onSubmit }) {
                 errors={errors.fertilizing?.period}
                 field={field}
                 options={[
-                  { value: "10 Hari Sekali", label: "10 Hari Sekali" },
-                  { value: "15 Hari Sekali", label: "15 Hari Sekali" },
-                  { value: "20 Hari Sekali", label: "20 Hari Sekali" },
-                  { value: "30 Hari Sekali", label: "30 Hari Sekali" },
+                  { value: 10, label: "10 Hari Sekali" },
+                  { value: 15, label: "15 Hari Sekali" },
+                  { value: 20, label: "20 Hari Sekali" },
+                  { value: 30, label: "30 Hari Sekali" },
                 ]}
                 placeholder="Pilih waktu pemupukkan"
                 className="max-w-[421px] mt-1"

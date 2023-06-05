@@ -6,18 +6,32 @@ import {
   Delete20Regular,
 } from "@fluentui/react-icons";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import TextField from "../components/TextField";
 import { Link } from "react-router-dom";
 import MainContainer from "../components/layouts/MainContainer";
 import Table from "../components/Table";
 import { ConfirmModal, NotifModal } from "../components/Modal";
 import PaginationButton from "../components/PaginationButton";
+import useSWR from "swr";
+import fetcher from "../utils/fetcher";
+
+const ITEMS_PER_PAGE = 8;
 
 export default function ArticlePage() {
-  const [artikelList, setArtikelList] = useState([]);
-  const [filteredList, setFilteredList] = useState(artikelList);
-  const [currentPage, setCurrentPage] = useState(1);
+  const {
+    data: articles,
+    isLoading: isArticlesLoading,
+    mutate,
+  } = useSWR(
+    "https://6428ef045a40b82da4c9fa2d.mockapi.io/api/articles",
+    fetcher
+  );
+
+  const [filter, setFilter] = useState({
+    search: "",
+    currentPage: 1,
+  });
   const [showModal, setShowModal] = useState({
     show: false,
     icon: "",
@@ -25,61 +39,54 @@ export default function ArticlePage() {
     title: "",
   });
   const [modalDelete, setModalDelete] = useState(false);
-  const total_item = 8;
+
+  const { search, currentPage } = filter;
 
   // search
-  let filterArtikel = artikelList;
+  let filteredArticles = articles;
 
-  filterArtikel = filterArtikel.filter((value) =>
-    value.name.toLowerCase().includes(filteredList)
+  filteredArticles = filteredArticles?.filter((article) =>
+    article.article_title.toLowerCase().includes(search.toLowerCase())
   );
 
-  const startIndex = (currentPage - 1) * total_item;
-  const endIndex = currentPage * total_item;
-  filterArtikel = filterArtikel.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(filteredArticles?.length / ITEMS_PER_PAGE);
 
-  const totalPages = Math.ceil(artikelList.length / total_item);
-
-  useEffect(() => {
-    axios
-      .get("https://647348bad784bccb4a3c6bcf.mockapi.io/products")
-      .then((response) => {
-        setArtikelList(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+  filteredArticles = filteredArticles?.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   const handlePageChange = (page) => {
-    setCurrentPage(page);
+    setFilter({
+      ...filter,
+      currentPage: page,
+    });
   };
 
   const handleDelete = async (id) => {
     setModalDelete(false);
-    axios
-      .delete(`https://647348bad784bccb4a3c6bcf.mockapi.io/products/${id}`)
-      .then(() => {
-        const updatedArtikelList = artikelList.filter(
-          (product) => product.id !== id
-        );
-        setArtikelList(updatedArtikelList);
+    try {
+      const response = await axios.delete(
+        `https://6428ef045a40b82da4c9fa2d.mockapi.io/api/articles/${id}`
+      );
+      if (response.status === 200) {
+        mutate();
         setShowModal({
           show: true,
           icon: "success",
           text: "Artikel Telah Berhasil Dihapus",
           title: "Hapus Artikel",
         });
-      })
-      .catch((error) => {
-        console.log(error);
-        setShowModal({
-          show: true,
-          icon: "info",
-          text: "Artikel Gagal Dihapus",
-          title: "Hapus Artikel",
-        });
+      }
+    } catch (error) {
+      console.log(error);
+      setShowModal({
+        show: true,
+        icon: "info",
+        text: "Artikel Gagal Dihapus",
+        title: "Hapus Artikel",
       });
+    }
   };
 
   return (
@@ -102,16 +109,21 @@ export default function ArticlePage() {
       </div>
 
       {/* search */}
-      <div className="">
-        <div className="relative mb-3 flex w-full items-stretch">
-          <TextField
-            id="search-article"
-            label=""
-            variant="search"
-            type="search"
-            onChange={(event) => setFilteredList(event.target.value)}
-          ></TextField>
-        </div>
+
+      <div className="relative mb-3 flex w-full items-stretch">
+        <TextField
+          id="search-article"
+          variant="search"
+          placeholder="Ketik Judul Artikel"
+          type="search"
+          onChange={(event) => {
+            setFilter({
+              ...filter,
+              search: event.target.value,
+              currentPage: 1,
+            });
+          }}
+        ></TextField>
       </div>
 
       {/* Modal */}
@@ -131,59 +143,71 @@ export default function ArticlePage() {
       {/* Table */}
 
       <div className="w-full">
-        <div className="overflow-x-auto">
-          <Table
-            headers={["Header", "Judul Artikel", "Viewers", "Aksi"]}
-            className={
-              "overflow-y-scroll mt-7 w-full overflow-x-hidden text-[#030712]"
-            }
-          >
-            {filterArtikel.map((artikel, index) => (
-              <tr
-                key={index}
-                className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
-              >
-                <td className="flex justify-center">
-                  <img
-                    src={artikel.image}
-                    className="w-[56px] h-[48px]"
-                    alt="Avatar Tailwind CSS Component"
+        {isArticlesLoading ? (
+          <p>Loading...</p>
+        ) : (
+          <>
+            {filteredArticles?.length <= 0 ? (
+              <p className="text-center">Tidak ada artikel</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table
+                  headers={["Header", "Judul Artikel", "Viewers", "Aksi"]}
+                  className={
+                    "overflow-y-scroll mt-7 w-full overflow-x-hidden text-[#030712]"
+                  }
+                >
+                  {filteredArticles?.map((article, index) => (
+                    <tr
+                      key={index}
+                      className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
+                    >
+                      <td className="flex justify-center">
+                        <img
+                          src={article.article_pictures}
+                          className="w-[56px] h-[48px]"
+                          alt="Article avatar"
+                        />
+                      </td>
+                      <td className="text-caption-lg">
+                        {article.article_title}
+                      </td>
+                      <td className="text-caption-lg">128</td>
+                      <td>
+                        <div className="flex gap-3 justify-center">
+                          <Link to={`/admin/articles/${article.id}`}>
+                            <Eye20Regular
+                              className="cursor-pointer hover:text-info"
+                              id="detail-article"
+                            />
+                          </Link>
+                          <Delete20Regular
+                            className="cursor-pointer hover:text-info"
+                            onClick={() => setModalDelete(article.id)}
+                            id="delete-article"
+                          />
+                          <Link to={`/admin/articles/update/${article.id}`}>
+                            <Edit20Regular
+                              className="cursor-pointer hover:text-info"
+                              id="update-article"
+                            />
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </Table>
+                <div className="flex w-full justify-center mt-5">
+                  <PaginationButton
+                    currentPage={currentPage}
+                    handlePageChange={handlePageChange}
+                    totalPages={filteredArticles?.length > 0 ? totalPages : 1}
                   />
-                </td>
-                <td className="text-caption-lg">{artikel.name}</td>
-                <td className="text-caption-lg">Otto</td>
-                <td>
-                  <div className="flex gap-3 justify-center">
-                    <Link to={`/admin/articles/${artikel.id}`}>
-                      <Eye20Regular
-                        className="cursor-pointer hover:text-info"
-                        id="detail-article"
-                      />
-                    </Link>
-                    <Delete20Regular
-                      className="cursor-pointer hover:text-info"
-                      onClick={() => setModalDelete(artikel.id)}
-                      id="delete-article"
-                    />
-                    <Link to={`/admin/articles/update/${artikel.id}`}>
-                      <Edit20Regular
-                        className="cursor-pointer hover:text-info"
-                        id="update-article"
-                      />
-                    </Link>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </Table>
-          <div className="flex w-full justify-center mt-5">
-            <PaginationButton
-              currentPage={currentPage}
-              handlePageChange={handlePageChange}
-              totalPages={totalPages}
-            />
-          </div>
-        </div>
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </div>
       <NotifModal
         title={showModal.title}

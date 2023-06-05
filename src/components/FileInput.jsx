@@ -8,6 +8,7 @@ export default function FileInput({
   message,
   bottomOption,
   isError = false,
+  onChange,
   name,
   control,
   rules,
@@ -72,6 +73,7 @@ export default function FileInput({
         value={value?.fileName}
         onChange={(e) => {
           field.onChange(e.target.files[0]);
+          onChange && onChange(e);
         }}
         {...props}
       />

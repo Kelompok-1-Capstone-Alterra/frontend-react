@@ -10,9 +10,9 @@ import AdminLayout from "./components/layouts/AdminLayout";
 import Login from "./pages/Login";
 import LandingPage from "./pages/LandingPage";
 import ArticlePage from "./pages/ArticlePage";
-import CreateArticle from "./pages/CreateArticle";
-import DetailArticle from "./pages/DetailArticle";
-import UpdateArticle from "./pages/UpdateArticle";
+import CreateArticlePage from "./pages/CreateArticlePage";
+import DetailArticlePage from "./pages/DetailArticlePage";
+import UpdateArticlePage from "./pages/UpdateArticlePage";
 
 import CreatePlantPage from "./pages/CreatePlantPage";
 import PlantPage from "./pages/PlantPage";
@@ -115,15 +115,29 @@ function App() {
         },
         {
           path: "/admin/articles/create",
-          element: <CreateArticle />,
+          element: <CreateArticlePage />,
         },
         {
           path: "/admin/articles/update/:id",
-          element: <UpdateArticle />,
+          element: <UpdateArticlePage />,
+          loader: async ({ params }) => {
+            const { data } = await axios.get(
+              `https://6428ef045a40b82da4c9fa2d.mockapi.io/api/articles/${params.id}`
+            );
+            if (data) return data;
+            return null;
+          },
         },
         {
           path: "/admin/articles/:id",
-          element: <DetailArticle />,
+          element: <DetailArticlePage />,
+          loader: async ({ params }) => {
+            const { data } = await axios.get(
+              `https://6428ef045a40b82da4c9fa2d.mockapi.io/api/articles/${params.id}`
+            );
+            if (data) return data;
+            return null;
+          },
         },
       ],
     },

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Info12Regular } from "@fluentui/react-icons";
 import { Controller, useForm } from "react-hook-form";
 import TextField from "../components/TextField";
@@ -23,7 +23,7 @@ const CreateWeatherPage = () => {
     reset,
     trigger,
     control,
-    useWatch,
+    // useWatch,
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
@@ -85,7 +85,7 @@ const CreateWeatherPage = () => {
         deskripsi: content,
       };
 
-      const response = await axios.post(url, requestData);
+      await axios.post(url, requestData);
       reset();
       const updatedLabels = [...existingWeatherLabels, formData.label.label];
       setExistingWeatherLabels(updatedLabels);
@@ -114,7 +114,8 @@ const CreateWeatherPage = () => {
       <SecondaryContainer
         backTo="/admin/weathers"
         title="Upload Informasi cuaca"
-        className={"pe-3"}>
+        className={"pe-3"}
+      >
         <div className="mx-8">
           <div className="form-create">
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -202,7 +203,10 @@ const CreateWeatherPage = () => {
                   isError={errors.gambar}
                 />
               </div>
-              <label htmlFor="deskripsi" className="text-body-lg font-semibold">
+              <label
+                htmlFor="deskripsi"
+                className="text-body-lg font-semibold"
+              >
                 Deskripsi
               </label>
               <div className="mb-6">
@@ -237,7 +241,8 @@ const CreateWeatherPage = () => {
               <div
                 className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
                   isConfirmModalOpen || isNotifModalOpen ? "block" : "hidden"
-                } cursor-pointer top-0 bottom-0 left-0 right-0`}>
+                } cursor-pointer top-0 bottom-0 left-0 right-0`}
+              >
                 <ConfirmModal
                   isOpen={isConfirmModalOpen}
                   text="Pastikan kembali informasi yang akan dikirim sudah sesuai"
@@ -259,11 +264,12 @@ const CreateWeatherPage = () => {
               <div className="flex justify-end gap-x-3.5 pt-5">
                 <Button
                   type="button"
-                  children={"Kirim"}
                   size="md"
                   onClick={handleSubmit(onSubmit)}
                   // disabled={noOptions}
-                />
+                >
+                  Kirim
+                </Button>
               </div>
             </form>
           </div>

@@ -23,6 +23,10 @@ import ProductsPage from "./pages/ProductsPage";
 import CreateProductPage from "./pages/CreateProductPage";
 import DetailProductPage from "./pages/DetailProductPage";
 import UpdateProductPage from "./pages/UpdateProductPage";
+import CreateWeatherPage from "./pages/CreateWeatherPage";
+import DetailWeatherPage from "./pages/DetailWeatherPage";
+import UpdateWeatherPage from "./pages/UpdateWeatherPage";
+import WeatherManagementPage from "./pages/WeatherManagementPage";
 import OverviewPage from "./pages/OverviewPage";
 
 function App() {
@@ -95,19 +99,19 @@ function App() {
         },
         {
           path: "/admin/weathers",
-          element: <h1>WeatherPage</h1>,
+          element: <WeatherManagementPage />,
         },
         {
           path: "/admin/weathers/create",
-          element: <h1>CreateWeatherPage</h1>,
+          element: <CreateWeatherPage />,
         },
         {
           path: "/admin/weathers/update/:id",
-          element: <h1>UpdateWeatherPage</h1>,
+          element: <UpdateWeatherPage />,
         },
         {
           path: "/admin/weathers/:id",
-          element: <h1>DetailWeatherPage</h1>,
+          element: <DetailWeatherPage />,
         },
         {
           path: "/admin/articles",

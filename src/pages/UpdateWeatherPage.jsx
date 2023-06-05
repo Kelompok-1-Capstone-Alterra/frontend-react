@@ -80,13 +80,15 @@ const UpdateWeatherPage = () => {
       }
     };
 
-    register("label", {
-      required: "Label cuaca tidak boleh kosong",
-    });
-
     fetchWeatherData();
     fetchWeatherOptions();
   }, [weatherData]);
+
+  useEffect(() => {
+    register("label", {
+      required: "Label cuaca tidak boleh kosong",
+    });
+  }, [register]);
 
   useEffect(() => {
     register("deskripsi", {
@@ -113,7 +115,7 @@ const UpdateWeatherPage = () => {
       const requestData = {
         judul: formData.judul,
         label: formData.label.label,
-        gambar: formData.gambar,
+        // gambar: formData.gambar,
         deskripsi: content,
       };
 
@@ -175,10 +177,7 @@ const UpdateWeatherPage = () => {
                       errors={errors.label}
                       field={field}
                       id="label"
-                      options={weatherOptions.map((option) => ({
-                        label: option.label,
-                        value: option.value,
-                      }))}
+                      options={weatherOptions}
                       placeholder="Pilih Label"
                       className="w-96"
                     />
@@ -202,7 +201,7 @@ const UpdateWeatherPage = () => {
                   rules={{ required: true }}
                   control={control}
                   name="gambar"
-                  value={gambar}
+                  value={watch("gambar")}
                   message={
                     <span>
                       <Info12Regular className="me-1.5" />

@@ -81,7 +81,7 @@ const CreateWeatherPage = () => {
       const requestData = {
         judul: formData.judul,
         label: formData.label.label,
-        gambar: formData.gambar,
+        // gambar: formData.gambar,
         deskripsi: content,
       };
 
@@ -134,10 +134,6 @@ const CreateWeatherPage = () => {
                 register={{
                   ...register("judul", {
                     required: "Judul tidak boleh kosong",
-                    minLength: {
-                      value: 2,
-                      message: "Minimal 2 karakter",
-                    },
                   }),
                 }}
                 id="judul"
@@ -192,12 +188,10 @@ const CreateWeatherPage = () => {
                 <FileInput
                   id="gambarWeather"
                   label={"Gambar Tanaman"}
-                  // control ={control}
                   value={gambar}
                   rules={{ required: true }}
                   control={control}
                   name="gambar"
-                  // className="mt-10"
                   message={
                     <span>
                       <Info12Regular className="me-1.5" />

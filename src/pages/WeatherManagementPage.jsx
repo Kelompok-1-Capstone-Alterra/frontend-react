@@ -67,26 +67,32 @@ const WeatherManagementPage = () => {
                 {data.map((item, index) => (
                   <tr
                     key={item.id}
-                    className="text-center border-b border-neutral-30 px-2 h-14">
-                    <td>{index + 1}</td>
+                    className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80">
+                    <td className="text-caption-lg">{index + 1}</td>
                     <td>
-                      <div className="flex justify-center">
-                        <img src={item.gambar} alt="Gambar" className="h-14" />
-                      </div>
+                      <img
+                        src={item.gambar}
+                        alt="Gambar"
+                        className="w-[85px] h-[51px] mx-auto"
+                      />
                     </td>
-                    <td>{item.label}</td>
-                    <td>{item.judul}</td>
+                    <td className="text-caption-lg  text-neutral-80">
+                      {item.label}
+                    </td>
+                    <td className="text-caption-lg  text-neutral-80">
+                      {item.judul}
+                    </td>
                     <td className="space-x-2">
                       <Eye24Regular
                         onClick={() => navigate(`/admin/weathers/${item.id}`)}
-                        className="cursor-pointer hover:text-info"
+                        className="cursor-pointer hover:text-info w-5"
                       />
                       <Delete24Regular
                         onClick={() => handleDelete(item.id)}
-                        className="cursor-pointer hover:text-info"
+                        className="cursor-pointer hover:text-info w-5"
                       />
                       <Edit24Regular
-                        className="cursor-pointer hover:text-info"
+                        className="cursor-pointer hover:text-info w-5"
                         onClick={() =>
                           navigate(`/admin/weathers/update/${item.id}`)
                         }

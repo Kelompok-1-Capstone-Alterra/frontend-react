@@ -12,7 +12,7 @@ export default function DetailProductPage() {
         backTo="/admin/products"
         title="Data Produk"
       >
-        <div className="px-20">
+        <div className="ps-10">
           <p className="font-semibold text-h-5">
             {product.name}{" "}
             <span

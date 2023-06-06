@@ -1,8 +1,6 @@
-import React from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import useSWR from "swr";
-import { ChevronLeft48Regular } from "@fluentui/react-icons";
 import SecondaryContainer from "../components/layouts/SecondaryContainer";
 
 const DetailWeatherPage = () => {
@@ -26,12 +24,14 @@ const DetailWeatherPage = () => {
       <SecondaryContainer
         backTo="/admin/weathers"
         title="Preview Informasi Cuaca"
-        className="pe-3">
-        <div className="mx-5">
+        className="pe-3"
+      >
+        <div className="ps-10">
           <p className="text-h-5 font-bold mb-5">{judul}</p>
           <div
             className="styled-content"
-            dangerouslySetInnerHTML={{ __html: deskripsi }}></div>
+            dangerouslySetInnerHTML={{ __html: deskripsi }}
+          ></div>
         </div>
       </SecondaryContainer>
     </>

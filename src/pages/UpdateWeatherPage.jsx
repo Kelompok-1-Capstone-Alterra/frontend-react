@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Info12Regular } from "@fluentui/react-icons";
 import { useForm, Controller } from "react-hook-form";
 import TextField from "../components/TextField";
@@ -21,7 +21,6 @@ const UpdateWeatherPage = () => {
     handleSubmit,
     setValue,
     watch,
-    reset,
     trigger,
     control,
     formState: { errors },
@@ -98,7 +97,7 @@ const UpdateWeatherPage = () => {
     });
   }, [register]);
 
-  let gambar = watch("gambar");
+  // let gambar = watch("gambar");
   let content = watch("deskripsi");
   const onEditorStateChange = (editorState) => {
     setValue("deskripsi", editorState);
@@ -142,7 +141,8 @@ const UpdateWeatherPage = () => {
       <SecondaryContainer
         backTo="/admin/weathers"
         title="Edit Informasi cuaca"
-        className="pe-3">
+        className="pe-3"
+      >
         <div className="mx-8">
           <form onSubmit={handleSubmit(onSubmit)}>
             <TextField
@@ -213,7 +213,10 @@ const UpdateWeatherPage = () => {
                 />
               </div>
             </div>
-            <label htmlFor="deskripsi" className="text-body-lg font-semibold">
+            <label
+              htmlFor="deskripsi"
+              className="text-body-lg font-semibold"
+            >
               Deskripsi
             </label>
             <div className="mb-6">
@@ -248,7 +251,8 @@ const UpdateWeatherPage = () => {
             <div
               className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
                 isConfirmModalOpen || isNotifModalOpen ? "block" : "hidden"
-              } cursor-pointer top-0 bottom-0 left-0 right-0`}>
+              } cursor-pointer top-0 bottom-0 left-0 right-0`}
+            >
               <ConfirmModal
                 isOpen={isConfirmModalOpen}
                 text="Pastikan kembali informasi yang akan dikirim sudah sesuai"
@@ -268,7 +272,12 @@ const UpdateWeatherPage = () => {
               />
             </div>
             <div className="flex justify-end gap-x-3.5 pt-5">
-              <Button type="submit" children="Kirim" size="md" />
+              <Button
+                type="submit"
+                size="md"
+              >
+                Kirim
+              </Button>
             </div>
           </form>
         </div>

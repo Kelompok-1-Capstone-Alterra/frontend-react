@@ -223,7 +223,7 @@ export default function CreateArticlPage() {
             </>
           )}
         </div>
-        <div className="mb-20">
+        <div>
           <p className="text-body-sm font-semibold lg:mb-1">Content</p>
           <ReactQuill
             theme="snow"
@@ -253,13 +253,13 @@ export default function CreateArticlPage() {
           )}
         </div>
         {/* button */}
-        <div className="flex justify-center items-center mb-5">
+        <div className="flex w-full justify-end items-center">
           <Button
             id="save-article"
             type="submit"
             variant={"green"}
-            size="lg"
-            className="rounded-full w-[914px]"
+            size="md"
+            className="rounded-full"
             onClick={handleSubmit(onSubmit)}
           >
             Simpan

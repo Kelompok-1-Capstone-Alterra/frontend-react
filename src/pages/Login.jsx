@@ -35,7 +35,6 @@ function Login() {
 
       if (res.status === 200) {
         Cookies.set("token", res.data.data.token);
-        Cookies.set("admin", res.data.data.admin);
         navigate("/admin");
       }
     } catch (err) {

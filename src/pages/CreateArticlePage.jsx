@@ -1,5 +1,6 @@
 import { useForm, useWatch } from "react-hook-form";
 import { Info12Regular, DismissCircle24Filled } from "@fluentui/react-icons";
+import Cookies from "js-cookie";
 import { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -33,6 +34,7 @@ export default function CreateArticlPage() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [editorFocus, setEditorFocus] = useState(false);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     register("description", {
@@ -57,34 +59,55 @@ export default function CreateArticlPage() {
   const navigate = useNavigate();
 
   const saveData = async (data) => {
+    setIsLoading(true);
     try {
-      /*
-      
-        logic to upload file and get url
+      //upload the image
+      const formData = new FormData();
+      formData.append("pictures", selectedImageFile);
+      const responseUpload = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/pictures`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-      */
+      //save the image url
+      console.log(responseUpload);
+      const imageUrl = responseUpload.data.urls[0];
+      console.log(imageUrl);
 
-      const response = await axios.post(
-        "https://6428ef045a40b82da4c9fa2d.mockapi.io/api/articles",
+      //save the article
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/add`,
         {
           article_title: data.article_title,
           article_pictures: [
             {
-              article_url: "url.com",
+              url: imageUrl,
             },
           ],
           article_description: data.description,
+          article_view: 0,
+          article_like: 0,
+          admin_id: 1,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
         }
       );
-      console.log(response);
-      if (response.status === 201) {
-        setShowModal({
-          show: true,
-          icon: "success",
-          text: "Artikel telah berhasil disimpan",
-          title: "Tambah Artikel",
-        });
-      }
+
+      setShowModal({
+        show: true,
+        icon: "success",
+        text: "Artikel telah berhasil disimpan",
+        title: "Tambah Artikel",
+      });
     } catch (error) {
       console.log(error);
       setShowModal({
@@ -93,6 +116,8 @@ export default function CreateArticlPage() {
         text: "Artikel Gagal Disimpan",
         title: "Tambah Artikel",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -213,7 +238,7 @@ export default function CreateArticlPage() {
             </>
           )}
         </div>
-        <div className="mb-20">
+        <div className="">
           <p className="text-body-sm font-semibold lg:mb-1">Content</p>
           <ReactQuill
             theme="snow"
@@ -242,19 +267,22 @@ export default function CreateArticlPage() {
             </p>
           )}
         </div>
-        {/* button */}
-        <div className="flex justify-center items-center mb-5">
+
+        {/* submit button */}
+        <div className="flex w-full justify-end items-center">
           <Button
             id="save-article"
             type="submit"
             variant={"green"}
-            size="lg"
-            className="rounded-full w-[914px]"
+            size="md"
+            disabled={isLoading}
+            className={"rounded-full"}
             onClick={handleSubmit(onSubmit)}
           >
             Simpan
           </Button>
         </div>
+
         <ConfirmModal
           cancelText={"Kembali"}
           title={"Simpan Artikel"}

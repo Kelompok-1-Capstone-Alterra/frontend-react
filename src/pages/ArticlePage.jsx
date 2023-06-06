@@ -5,6 +5,7 @@ import {
   Eye20Regular,
   Delete20Regular,
 } from "@fluentui/react-icons";
+import Cookies from "js-cookie";
 import axios from "axios";
 import { useState } from "react";
 import TextField from "../components/TextField";
@@ -14,24 +15,32 @@ import Table from "../components/Table";
 import { ConfirmModal, NotifModal } from "../components/Modal";
 import PaginationButton from "../components/PaginationButton";
 import useSWR from "swr";
+import useDebounce from "../hooks/useDebounce";
 import fetcher from "../utils/fetcher";
 
 const ITEMS_PER_PAGE = 8;
+const DEBOUNCE_DELAY = 500;
 
 export default function ArticlePage() {
+  const [filter, setFilter] = useState({
+    currentPage: 1,
+    keyword: "",
+  });
+  const { currentPage, keyword } = filter;
+  const debouncedKeyword = useDebounce(keyword, DEBOUNCE_DELAY);
   const {
-    data: articles,
+    data,
     isLoading: isArticlesLoading,
     mutate,
   } = useSWR(
-    "https://6428ef045a40b82da4c9fa2d.mockapi.io/api/articles",
-    fetcher
+    debouncedKeyword
+      ? `${
+          import.meta.env.VITE_API_BASE_URL
+        }/auth/admins/articles/search?keyword=${debouncedKeyword}`
+      : `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles`,
+    (url) => fetcher(url, Cookies.get("token"))
   );
 
-  const [filter, setFilter] = useState({
-    search: "",
-    currentPage: 1,
-  });
   const [showModal, setShowModal] = useState({
     show: false,
     icon: "",
@@ -40,14 +49,16 @@ export default function ArticlePage() {
   });
   const [modalDelete, setModalDelete] = useState(false);
 
-  const { search, currentPage } = filter;
+  const handleInputChange = (event) => {
+    const newKeyword = event.target.value;
+    setFilter({
+      ...filter,
+      keyword: newKeyword,
+    });
+  };
 
-  // search
+  const articles = data?.data;
   let filteredArticles = articles;
-
-  filteredArticles = filteredArticles?.filter((article) =>
-    article.article_title.toLowerCase().includes(search.toLowerCase())
-  );
 
   const totalPages = Math.ceil(filteredArticles?.length / ITEMS_PER_PAGE);
 
@@ -67,17 +78,16 @@ export default function ArticlePage() {
     setModalDelete(false);
     try {
       const response = await axios.delete(
-        `https://6428ef045a40b82da4c9fa2d.mockapi.io/api/articles/${id}`
+        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/${id}`
       );
-      if (response.status === 200) {
-        mutate();
-        setShowModal({
-          show: true,
-          icon: "success",
-          text: "Artikel Telah Berhasil Dihapus",
-          title: "Hapus Artikel",
-        });
-      }
+      console.log(response);
+      mutate();
+      setShowModal({
+        show: true,
+        icon: "success",
+        text: "Artikel Berhasil Dihapus",
+        title: "Hapus Artikel",
+      });
     } catch (error) {
       console.log(error);
       setShowModal({
@@ -93,10 +103,22 @@ export default function ArticlePage() {
     <MainContainer>
       {/* title */}
       <h4 className="text-h-4 font-bold">Artikel</h4>
-      <div className="flex w-full justify-end my-4">
+
+      {/* search */}
+      <div className="grid grid-cols-2 w-full mt-12">
+        <div className="relative mb-3 flex w-3/4 items-stretch">
+          <TextField
+            id="search-article"
+            variant="search"
+            placeholder="Ketik Judul Artikel"
+            type="search"
+            className={"pe-2"}
+            onChange={handleInputChange}
+          ></TextField>
+        </div>
         <Link
           to="/admin/articles/create"
-          className=""
+          className="justify-self-end"
         >
           <Button
             size="md"
@@ -106,24 +128,6 @@ export default function ArticlePage() {
             Tambah
           </Button>
         </Link>
-      </div>
-
-      {/* search */}
-
-      <div className="relative mb-3 flex w-full items-stretch">
-        <TextField
-          id="search-article"
-          variant="search"
-          placeholder="Ketik Judul Artikel"
-          type="search"
-          onChange={(event) => {
-            setFilter({
-              ...filter,
-              search: event.target.value,
-              currentPage: 1,
-            });
-          }}
-        ></TextField>
       </div>
 
       {/* Modal */}
@@ -152,7 +156,7 @@ export default function ArticlePage() {
             ) : (
               <div className="overflow-x-auto">
                 <Table
-                  headers={["Header", "Judul Artikel", "Viewers", "Aksi"]}
+                  headers={["Gambar", "Judul", "Dilihat", "Disukai", "Aksi"]}
                   className={
                     "overflow-y-scroll mt-7 w-full overflow-x-hidden text-[#030712]"
                   }
@@ -164,7 +168,11 @@ export default function ArticlePage() {
                     >
                       <td className="flex justify-center">
                         <img
-                          src={article.article_pictures}
+                          src={
+                            article.article_pictures[0].url
+                              ? `https://34.128.85.215:8080/pictures/${article.article_pictures[0].url}`
+                              : "http://via.placeholder.com/56x48"
+                          }
                           className="w-[56px] h-[48px]"
                           alt="Article avatar"
                         />
@@ -172,10 +180,15 @@ export default function ArticlePage() {
                       <td className="text-caption-lg">
                         {article.article_title}
                       </td>
-                      <td className="text-caption-lg">128</td>
+                      <td className="text-caption-lg">
+                        {article.article_view}
+                      </td>
+                      <td className="text-caption-lg">
+                        {article.article_like}
+                      </td>
                       <td>
                         <div className="flex gap-3 justify-center">
-                          <Link to={`/admin/articles/${article.id}`}>
+                          <Link to={`/admin/articles/${article.ID}`}>
                             <Eye20Regular
                               className="cursor-pointer hover:text-info"
                               id="detail-article"
@@ -183,10 +196,10 @@ export default function ArticlePage() {
                           </Link>
                           <Delete20Regular
                             className="cursor-pointer hover:text-info"
-                            onClick={() => setModalDelete(article.id)}
+                            onClick={() => setModalDelete(article.ID)}
                             id="delete-article"
                           />
-                          <Link to={`/admin/articles/update/${article.id}`}>
+                          <Link to={`/admin/articles/update/${article.ID}`}>
                             <Edit20Regular
                               className="cursor-pointer hover:text-info"
                               id="update-article"

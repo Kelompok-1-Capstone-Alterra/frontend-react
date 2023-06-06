@@ -5,6 +5,7 @@ import {
   Eye20Regular,
   Delete20Regular,
 } from "@fluentui/react-icons";
+import Cookies from "js-cookie";
 import axios from "axios";
 import { useState } from "react";
 import TextField from "../components/TextField";
@@ -37,8 +38,7 @@ export default function ArticlePage() {
           import.meta.env.VITE_API_BASE_URL
         }/auth/admins/articles/search?keyword=${debouncedKeyword}`
       : `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles`,
-    fetcher,
-    {}
+    (url) => fetcher(url, Cookies.get("token"))
   );
 
   const [showModal, setShowModal] = useState({

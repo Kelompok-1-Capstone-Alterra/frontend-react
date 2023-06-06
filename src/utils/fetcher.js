@@ -1,13 +1,9 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 
-const token = Cookies.get("token");
-const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
-const fetcher = (url) =>
+const fetcher = (url, token) =>
   axios
     .get(url, {
-      headers: headers,
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
     })
     .then((res) => res.data);
 

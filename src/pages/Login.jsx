@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Button from "../components/Button";
-import gambar from "../assets/Login.png";
+import gambar from "../assets/Login.webp";
 import logo from "../assets/Logo.png";
 import TextField from "../components/TextField";
 import { Eye24Regular, EyeOff24Regular } from "@fluentui/react-icons";

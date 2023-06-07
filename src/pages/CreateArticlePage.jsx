@@ -1,17 +1,17 @@
 import { useForm, useWatch } from "react-hook-form";
 import { Info12Regular, DismissCircle24Filled } from "@fluentui/react-icons";
-import Cookies from "js-cookie";
 import { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Button from "../components/Button";
 import TextField from "../components/TextField";
 import { MODULES } from "../constants";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import FileInput from "../components/FileInput";
 import { NotifModal, ConfirmModal } from "../components/Modal";
 import SecondaryContainer from "../components/layouts/SecondaryContainer";
+import useImages from "../hooks/useImage";
+import useArticle from "../hooks/useArticle";
 
 export default function CreateArticlPage() {
   const {
@@ -34,7 +34,8 @@ export default function CreateArticlPage() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [editorFocus, setEditorFocus] = useState(false);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const { uploadImage, isLoading: isUploading } = useImages();
+  const { createArticle, isLoading: isSaving } = useArticle();
 
   useEffect(() => {
     register("description", {
@@ -59,66 +60,51 @@ export default function CreateArticlPage() {
   const navigate = useNavigate();
 
   const saveData = async (data) => {
-    setIsLoading(true);
-    try {
-      //upload the image
-      const formData = new FormData();
-      formData.append("pictures", selectedImageFile);
-      const responseUpload = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/pictures`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+    const formData = new FormData();
+    formData.append("pictures", selectedImageFile);
+    const upload = await uploadImage(formData);
 
-      //save the image url
-      console.log(responseUpload);
-      const imageUrl = responseUpload.data.urls[0];
-      console.log(imageUrl);
-
-      //save the article
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/add`,
-        {
-          article_title: data.article_title,
-          article_pictures: [
-            {
-              url: imageUrl,
-            },
-          ],
-          article_description: data.description,
-          article_view: 0,
-          article_like: 0,
-          admin_id: 1,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("token")}`,
-          },
-        }
-      );
-
-      setShowModal({
-        show: true,
-        icon: "success",
-        text: "Artikel telah berhasil disimpan",
-        title: "Tambah Artikel",
-      });
-    } catch (error) {
-      console.log(error);
+    if (upload.status !== 200) {
       setShowModal({
         show: true,
         icon: "info",
-        text: "Artikel Gagal Disimpan",
-        title: "Tambah Artikel",
+        text: "Data artikel kamu gagal ditambahkan",
+        title: "Aksi Gagal",
       });
-    } finally {
-      setIsLoading(false);
+      return;
     }
+
+    const imageUrl = upload.data.urls[0];
+
+    const save = await createArticle({
+      article_title: data.article_title,
+      article_pictures: [
+        {
+          url: imageUrl,
+        },
+      ],
+      article_description: data.description,
+      article_view: 0,
+      article_like: 0,
+      admin_id: 1,
+    });
+
+    if (save.status !== 200) {
+      setShowModal({
+        show: true,
+        icon: "info",
+        text: "Data artikel kamu gagal ditambahkan",
+        title: "Aksi Gagal",
+      });
+      return;
+    }
+
+    setShowModal({
+      show: true,
+      icon: "success",
+      text: "Artikel telah berhasil disimpan",
+      title: "Tambah Artikel",
+    });
   };
 
   const onSubmit = () => {
@@ -275,7 +261,7 @@ export default function CreateArticlPage() {
             type="submit"
             variant={"green"}
             size="md"
-            disabled={isLoading}
+            disabled={isUploading || isSaving}
             className={"rounded-full"}
             onClick={handleSubmit(onSubmit)}
           >

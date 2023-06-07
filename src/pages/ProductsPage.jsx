@@ -177,7 +177,7 @@ export default function ProductsPage() {
 
   const [notifModal, setNotifModal] = useState({
     show: false,
-    isSuccess: false,
+    icon: "",
     text: "",
     title: "",
   });
@@ -250,8 +250,9 @@ export default function ProductsPage() {
       if (result.status === 200) {
         setNotifModal({
           show: true,
-          text: "Produk berhasil dihapus",
-          title: "Hapus Produk",
+          icon: "success",
+          text: "Data produk kamu berhasil dihapus",
+          title: "Hapus Data Produk",
         });
         mutate();
       }
@@ -259,8 +260,9 @@ export default function ProductsPage() {
       console.log(error);
       setNotifModal({
         show: true,
-        text: "Produk gagal dihapus",
-        title: "Hapus Produk",
+        icon: "info",
+        text: "Aksi Gagal",
+        title: "Data produk kamu gagal dihapus",
       });
     }
   };
@@ -363,8 +365,8 @@ export default function ProductsPage() {
       ></div>
       <ConfirmModal
         icon={"info"}
-        title={"Hapus Produk"}
-        text={"Apakah Anda yakin ingin menghapus produk ini?"}
+        title={"Konfirmasi Hapus Data Produk"}
+        text={"Yakin ingin menghapus data produk ini?"}
         cancelText={"Kembali"}
         confirmText={"Hapus"}
         onConfirm={() => handleDelete(confirmModalId)}
@@ -372,7 +374,7 @@ export default function ProductsPage() {
         isOpen={confirmModalId ? true : false}
       />
       <NotifModal
-        icon={"success"}
+        icon={notifModal.icon}
         onConfirm={() => {
           setNotifModal({
             ...notifModal,

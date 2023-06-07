@@ -18,17 +18,17 @@ export default function PlantingWithoutPotForm() {
   } = useFormContext();
 
   const [editorFocus, setEditorFocus] = useState({
-    "in-ground_method": false,
-    "in-ground_tools": false,
+    ground_instruction: false,
+    ground_materials: false,
   });
 
   useEffect(() => {
-    register("planting.in-ground_method", {
+    register("planting_info.ground_info.ground_instruction", {
       required: true,
       validate: (value) => value !== "<p><br></p>",
       shouldUnregister: true,
     });
-    register("planting.in-ground_tools", {
+    register("planting_info.ground_info.ground_materials", {
       required: true,
       validate: (value) => value !== "<p><br></p>",
       shouldUnregister: true,
@@ -36,17 +36,21 @@ export default function PlantingWithoutPotForm() {
   }, [register]);
 
   const onInGroundMethodStateChange = (state) => {
-    setValue("planting.in-ground_method", state);
-    trigger("planting.in-ground_method");
+    setValue("planting_info.ground_info.ground_instruction", state);
+    trigger("planting_info.ground_info.ground_instruction");
   };
 
   const onInGroundToolsStateChange = (state) => {
-    setValue("planting.in-ground_tools", state);
-    trigger("planting.in-ground_tools");
+    setValue("planting_info.ground_info.ground_materials", state);
+    trigger("planting_info.ground_info.ground_materials");
   };
 
-  let inGroundMethodContent = watch("planting.in-ground_method");
-  let inGroundToolsContent = watch("planting.in-ground_tools");
+  let inGroundMethodContent = watch(
+    "planting_info.ground_info.ground_instruction"
+  );
+  let inGroundToolsContent = watch(
+    "planting_info.ground_info.ground_materials"
+  );
 
   return (
     <div className="flex flex-col gap-10 ps-10">
@@ -67,25 +71,29 @@ export default function PlantingWithoutPotForm() {
           modules={MODULES}
           className={`h-[306px] mt-1 ${
             editorFocus["in-ground_method"] &&
-            !errors.planting?.["in-ground_method"]
+            !errors.planting_info?.ground_info?.ground_instruction
               ? "ql-focus"
               : null
-          } ${errors.planting?.["in-ground_method"] ? "ql-error" : null}`}
+          } ${
+            errors.planting_info?.ground_info?.ground_instruction
+              ? "ql-error"
+              : null
+          }`}
           onFocus={() => {
             setEditorFocus((prev) => ({
               ...prev,
-              "in-ground_method": true,
+              ground_instruction: true,
             }));
           }}
           onBlur={() => {
             setEditorFocus((prev) => ({
               ...prev,
-              "in-ground_method": false,
+              ground_instruction: false,
             }));
           }}
         />
         <div className="mt-12"></div>
-        {errors.planting?.["in-ground_method"] && (
+        {errors.planting_info?.ground_info?.ground_instruction && (
           <p
             className="text-error text-caption-lg"
             id="error-image-message"
@@ -110,25 +118,29 @@ export default function PlantingWithoutPotForm() {
           modules={MODULES}
           className={`h-[306px] mt-1 ${
             editorFocus["in-ground_tools"] &&
-            !errors.planting?.["in-ground_tools"]
+            !errors.planting_info?.ground_info?.ground_materials
               ? "ql-focus"
               : null
-          } ${errors.planting?.["in-ground_tools"] ? "ql-error" : null}`}
+          } ${
+            errors.planting_info?.ground_info?.ground_materials
+              ? "ql-error"
+              : null
+          }`}
           onFocus={() => {
             setEditorFocus((prev) => ({
               ...prev,
-              "in-ground_tools": true,
+              ground_materials: true,
             }));
           }}
           onBlur={() => {
             setEditorFocus((prev) => ({
               ...prev,
-              "in-ground_tools": false,
+              ground_materials: false,
             }));
           }}
         />
         <div className="mt-12"></div>
-        {errors.planting?.["in-ground_tools"] && (
+        {errors.planting_info?.ground_info?.ground_materials && (
           <p
             className="text-error text-caption-lg"
             id="error-image-message"
@@ -142,18 +154,18 @@ export default function PlantingWithoutPotForm() {
         label={"Link Vidio Cara Penanaman"}
         autoComplete="off"
         placeholder="Masukkan link vidio cara penanaman"
-        isError={errors.planting?.url_inground}
+        isError={errors.planting_info?.ground_info?.ground_video}
         register={{
-          ...register("planting.url_inground", {
+          ...register("planting_info.ground_info.ground_video", {
             shouldUnregister: true,
             required: "Link tidak boleh kosong",
           }),
         }}
         message={
-          errors.planting?.url_inground && (
+          errors.planting_info?.ground_info?.ground_video && (
             <span>
               <Info12Regular className="-mt-0.5" />{" "}
-              {errors.planting?.url_inground.message}
+              {errors.planting_info?.ground_info?.ground_video.message}
             </span>
           )
         }
@@ -161,7 +173,10 @@ export default function PlantingWithoutPotForm() {
       <FileInput
         id="withoutPotImageField"
         label={"Gambar Penanaman tanpa pot"}
-        value={useWatch({ name: "planting.inground_pict", control: control })}
+        value={useWatch({
+          name: "planting_info.ground_info.ground_pictures",
+          control: control,
+        })}
         rules={{
           required: true,
           shouldUnregister: true,
@@ -172,14 +187,14 @@ export default function PlantingWithoutPotForm() {
           },
         }}
         control={control}
-        name="planting.inground_pict"
+        name="planting_info.ground_info.ground_pictures"
         message={
           <span>
             <Info12Regular className="me-1.5" />
             Maksimal 1MB, Hanya file berformat .JPG, .JPEG, .PNG
           </span>
         }
-        isError={errors.planting?.inground_pict}
+        isError={errors.planting_info?.ground_info?.ground_pictures}
       />
     </div>
   );

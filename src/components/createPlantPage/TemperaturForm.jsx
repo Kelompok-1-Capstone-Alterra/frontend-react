@@ -23,18 +23,20 @@ export default function TemperaturForm({ formId, onSubmit }) {
   } = useForm({ defaultValues: addPlantData });
 
   useEffect(() => {
-    register("temperature.desc", {
+    register("temperature_info.temperature_description", {
       required: "Wajib diisi",
       validate: (value) => value !== "<p><br></p>",
     });
   }, [register]);
 
   const onTemperatureDescriptionStateChange = (state) => {
-    setValue("temperature.desc", state);
-    trigger("temperature.desc");
+    setValue("temperature_info.temperature_description", state);
+    trigger("temperature_info.temperature_description");
   };
 
-  let temperatureDescriptionContent = watch("temperature.desc");
+  let temperatureDescriptionContent = watch(
+    "temperature_info.temperature_description"
+  );
 
   return (
     <form
@@ -56,12 +58,13 @@ export default function TemperaturForm({ formId, onSubmit }) {
               label={<span className="text-caption-lg">Suhu minimal</span>}
               placeholder="Min"
               autoComplete="off"
-              name="temperature.ideal_temp.min"
+              name="temperature_info.temperature_min"
               type="number"
-              isError={errors.temperature?.ideal_temp?.min}
+              isError={errors.temperature_info?.temperature_min}
               register={{
-                ...register("temperature.ideal_temp.min", {
+                ...register("temperature_info.temperature_min", {
                   required: "Temperatur tidak boleh kosong",
+                  valueAsNumber: true,
                 }),
               }}
               rightIndicator="&#x2103;"
@@ -71,24 +74,25 @@ export default function TemperaturForm({ formId, onSubmit }) {
               label={<span className="text-caption-lg">Suhu maksimal</span>}
               placeholder="Max"
               autoComplete="off"
-              name="temperature.ideal_temp.max"
+              name="temperature_info.temperature_max"
               type="number"
-              isError={errors.temperature?.ideal_temp?.max}
+              isError={errors.temperature_info?.temperature_max}
               register={{
-                ...register("temperature.ideal_temp.max", {
+                ...register("temperature_info.temperature_max", {
                   required: "Temperatur tidak boleh kosong",
+                  valueAsNumber: true,
                 }),
               }}
               rightIndicator="&#x2103;"
             />
           </div>
-          {(errors.temperature?.ideal_temp?.min ||
-            errors.temperature?.ideal_temp?.max) && (
+          {(errors.temperature_info?.temperature_min ||
+            errors.temperature_info?.temperature_max) && (
             <div>
               <p className={`label-text-alt text-error text-caption-lg`}>
                 <Info12Regular className="-mt-0.5" />{" "}
-                {errors.temperature?.ideal_temp?.min?.message ??
-                  errors.temperature?.ideal_temp?.max?.message}
+                {errors.temperature_info?.temperature_min?.message ??
+                  errors.temperature_info?.temperature_max?.message}
               </p>
             </div>
           )}
@@ -108,8 +112,14 @@ export default function TemperaturForm({ formId, onSubmit }) {
             onChange={onTemperatureDescriptionStateChange}
             modules={MODULES}
             className={`h-[306px] mt-1 ${
-              editorFocus && !errors.temperature?.desc ? "ql-focus" : null
-            } ${errors.temperature?.desc ? "ql-error" : null}`}
+              editorFocus && !errors.temperature_info?.temperature_description
+                ? "ql-focus"
+                : null
+            } ${
+              errors.temperature_info?.temperature_description
+                ? "ql-error"
+                : null
+            }`}
             onFocus={() => {
               setEditorFocus(true);
             }}
@@ -118,7 +128,7 @@ export default function TemperaturForm({ formId, onSubmit }) {
             }}
           />
           <div className="mt-12"></div>
-          {errors.temperature?.desc && (
+          {errors.temperature_info?.temperature_description && (
             <p
               className="text-error text-caption-lg"
               id="error-image-message"
@@ -130,7 +140,10 @@ export default function TemperaturForm({ formId, onSubmit }) {
         <FileInput
           id="temperatureImageField"
           label={"Gambar  temperature tanaman"}
-          value={useWatch({ name: "temperature.pict", control: control })}
+          value={useWatch({
+            name: "temperature_info.temperature_pictures",
+            control: control,
+          })}
           rules={{
             required: true,
             shouldUnregister: true,
@@ -141,14 +154,14 @@ export default function TemperaturForm({ formId, onSubmit }) {
             },
           }}
           control={control}
-          name="temperature.pict"
+          name="temperature_info.temperature_pictures"
           message={
             <span>
               <Info12Regular className="me-1.5" />
               Maksimal 1MB, Hanya file berformat .JPG, .JPEG, .PNG
             </span>
           }
-          isError={errors.temperature?.pict}
+          isError={errors.temperature_info?.temperature_pictures}
         />
       </div>
     </form>

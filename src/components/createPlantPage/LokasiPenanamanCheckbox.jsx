@@ -1,19 +1,36 @@
 import { Info12Regular } from "@fluentui/react-icons";
-import { useController } from "react-hook-form";
+import { useCallback } from "react";
+import { useController, useFormContext } from "react-hook-form";
 
 export default function LokasiPenanamanCheckbox({
   checkedCheckboxes,
   setCheckedCheckboxes,
-  control,
-  name,
-  rules,
   errorMessage,
   ...props
 }) {
-  const { field } = useController({
+  const { getValues, control } = useFormContext();
+
+  const atLeastOneChecked = useCallback(() => {
+    const errorMessage = "Pilih lokasi tanaman tidak boleh kosong";
+    const values = getValues([
+      "planting_info.planting_container",
+      "planting_info.planting_ground",
+    ]);
+
+    const isValid = values.some((v) => v);
+    return isValid || errorMessage;
+  }, []);
+
+  const { field: containerField } = useController({
     control,
-    name,
-    rules,
+    name: "planting_info.planting_container",
+    rules: { validate: atLeastOneChecked },
+  });
+
+  const { field: groundField } = useController({
+    control,
+    name: "planting_info.planting_ground",
+    rules: { deps: ["planting_info.planting_container"] },
   });
 
   return (
@@ -27,27 +44,16 @@ export default function LokasiPenanamanCheckbox({
           id="plantingWithPotCheckbox"
           autoFocus
           onChange={(e) => {
-            let checkedCheckboxesCopy = [...checkedCheckboxes];
+            containerField.onChange(e.target.checked);
 
-            // checkedCheckboxesCopy[0] = e.target.checked ? e.target.value : null;
-            if (e.target.checked) {
-              checkedCheckboxesCopy = [
-                ...checkedCheckboxesCopy,
-                e.target.value,
-              ];
-            } else {
-              checkedCheckboxesCopy = checkedCheckboxes.filter(
-                (value) => value !== e.target.value
-              );
-            }
-
-            field.onChange(checkedCheckboxesCopy);
-
-            setCheckedCheckboxes(checkedCheckboxesCopy);
+            setCheckedCheckboxes((prevState) => ({
+              ...prevState,
+              [e.target.value]: e.target.checked,
+            }));
           }}
-          ref={field.ref}
+          ref={containerField.ref}
           type="checkbox"
-          checked={checkedCheckboxes.includes("container")}
+          checked={checkedCheckboxes.container}
           className="checkbox checkbox-primary checkbox-xs rounded-sm checked:text-neutral-10 border-neutral-70"
           value="container"
           {...props}
@@ -58,28 +64,18 @@ export default function LokasiPenanamanCheckbox({
         <input
           id="plantingWithoutPotCheckbox"
           onChange={(e) => {
-            let checkedCheckboxesCopy = [...checkedCheckboxes];
+            groundField.onChange(e.target.checked);
 
-            // checkedCheckboxesCopy[1] = e.target.checked ? e.target.value : null;
-            if (e.target.checked) {
-              checkedCheckboxesCopy = [
-                ...checkedCheckboxesCopy,
-                e.target.value,
-              ];
-            } else {
-              checkedCheckboxesCopy = checkedCheckboxes.filter(
-                (value) => value !== e.target.value
-              );
-            }
-
-            field.onChange(checkedCheckboxesCopy);
-
-            setCheckedCheckboxes(checkedCheckboxesCopy);
+            setCheckedCheckboxes((prevState) => ({
+              ...prevState,
+              [e.target.value]: e.target.checked,
+            }));
           }}
+          ref={containerField.ref}
           type="checkbox"
-          checked={checkedCheckboxes.includes("in-ground")}
+          checked={checkedCheckboxes.ground}
           className="checkbox checkbox-primary checkbox-xs rounded-sm border-neutral-70"
-          value="in-ground"
+          value="ground"
           {...props}
         />
         <span className="label-text">tanpa pot</span>
@@ -89,7 +85,14 @@ export default function LokasiPenanamanCheckbox({
           <Info12Regular className="-mt-0.5" /> {errorMessage}
         </p>
       )}
-      <div className={checkedCheckboxes.length === 0 ? "h-[500px]" : ""}></div>
+      <div
+        className={
+          checkedCheckboxes.container === false &&
+          checkedCheckboxes.ground === false
+            ? "h-[500px]"
+            : ""
+        }
+      ></div>
     </div>
   );
 }

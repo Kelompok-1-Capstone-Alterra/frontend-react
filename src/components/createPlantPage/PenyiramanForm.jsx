@@ -23,23 +23,23 @@ export default function PenyiramanForm({ formId, onSubmit }) {
   } = useForm({ defaultValues: addPlantData });
 
   useEffect(() => {
-    register("watering.desc", {
+    register("watering_info.watering_description", {
       required: "Wajib diisi",
       validate: (value) => value !== "<p><br></p>",
     });
   }, [register]);
 
   const onWateringDescriptionStateChange = (state) => {
-    setValue("watering.desc", state);
-    trigger("watering.desc");
+    setValue("watering_info.watering_description", state);
+    trigger("watering_info.watering_description");
   };
 
-  let wateringDescriptionContent = watch("watering.desc");
+  let wateringDescriptionContent = watch("watering_info.watering_description");
 
   return (
     <form
       id={formId}
-      onSubmit={handleSubmit((data) => onSubmit(data, "watering"))}
+      onSubmit={handleSubmit(onSubmit)}
     >
       <div className="flex flex-col gap-10">
         <div>
@@ -54,7 +54,7 @@ export default function PenyiramanForm({ formId, onSubmit }) {
               <MySelect
                 id="wateringTimeSelect"
                 autoFocus
-                errors={errors.watering?.period}
+                errors={errors.watering_info?.watering_period}
                 field={field}
                 options={[
                   { value: 1, label: "1 kali sehari" },
@@ -64,17 +64,17 @@ export default function PenyiramanForm({ formId, onSubmit }) {
                 className="max-w-[421px] mt-1"
               />
             )}
-            name="watering.period"
+            name="watering_info.watering_period"
             control={control}
             defaultValue=""
             rules={{
               required: "Waktu penyiraman tidak boleh kosong",
             }}
           />
-          {errors.watering?.period && (
+          {errors.watering_info?.watering_period && (
             <p className="text-error text-caption-lg mt-1">
               <Info12Regular className="-mt-0.5" />{" "}
-              {errors.watering?.period?.message}
+              {errors.watering_info?.watering_period?.message}
             </p>
           )}
         </div>
@@ -93,8 +93,12 @@ export default function PenyiramanForm({ formId, onSubmit }) {
             onChange={onWateringDescriptionStateChange}
             modules={MODULES}
             className={`h-[306px] mt-1 ${
-              editorFocus && !errors.watering?.desc ? "ql-focus" : null
-            } ${errors.watering?.desc ? "ql-error" : null}`}
+              editorFocus && !errors.watering_info?.watering_description
+                ? "ql-focus"
+                : null
+            } ${
+              errors.watering_info?.watering_description ? "ql-error" : null
+            }`}
             onFocus={() => {
               setEditorFocus(true);
             }}
@@ -103,7 +107,7 @@ export default function PenyiramanForm({ formId, onSubmit }) {
             }}
           />
           <div className="mt-12"></div>
-          {errors.watering?.desc && (
+          {errors.watering_info?.watering_description && (
             <p
               className="text-error text-caption-lg"
               id="error-image-message"
@@ -115,7 +119,10 @@ export default function PenyiramanForm({ formId, onSubmit }) {
         <FileInput
           id="wateringImageField"
           label={"Gambar Informasi Penyiraman"}
-          value={useWatch({ name: "watering.pict", control: control })}
+          value={useWatch({
+            name: "watering_info.watering_pictures",
+            control: control,
+          })}
           rules={{
             required: true,
             shouldUnregister: true,
@@ -126,14 +133,14 @@ export default function PenyiramanForm({ formId, onSubmit }) {
             },
           }}
           control={control}
-          name="watering.pict"
+          name="watering_info.watering_pictures"
           message={
             <span>
               <Info12Regular className="me-1.5" />
               Maksimal 1MB, Hanya file berformat .JPG, .JPEG, .PNG
             </span>
           }
-          isError={errors.watering?.pict}
+          isError={errors.watering_info?.watering_pictures}
         />
       </div>
     </form>

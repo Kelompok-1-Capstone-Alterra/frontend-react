@@ -18,35 +18,39 @@ export default function PlantingWithPotForm() {
   } = useFormContext();
 
   const [editorFocus, setEditorFocus] = useState({
-    container_method: false,
-    container_tools: false,
+    container_instruction: false,
+    container_materials: false,
   });
 
   useEffect(() => {
-    register("planting.container_method", {
+    register("planting_info.container_info.container_instruction", {
       required: true,
       validate: (value) => value !== "<p><br></p>",
       shouldUnregister: true,
     });
-    register("planting.container_tools", {
+    register("planting_info.container_info.container_materials", {
       required: true,
       validate: (value) => value !== "<p><br></p>",
       shouldUnregister: true,
     });
   }, [register]);
 
-  const onContainerMethodStateChange = (state) => {
-    setValue("planting.container_method", state);
-    trigger("planting.container_method");
+  const onContainerInstructionStateChange = (state) => {
+    setValue("planting_info.container_info.container_instruction", state);
+    trigger("planting_info.container_info.container_instruction");
   };
 
-  const onContainerToolsStateChange = (state) => {
-    setValue("planting.container_tools", state);
-    trigger("planting.container_tools");
+  const onContainerMaterialsStateChange = (state) => {
+    setValue("planting_info.container_info.container_materials", state);
+    trigger("planting_info.container_info.container_materials");
   };
 
-  let containerMethodContent = watch("planting.container_method");
-  let containerToolsContent = watch("planting.container_tools");
+  let containerInstructionContent = watch(
+    "planting_info.container_info.container_instruction"
+  );
+  let containerMaterialsContent = watch(
+    "planting_info.container_info.container_materials"
+  );
 
   return (
     <div className="flex flex-col gap-10 ps-10">
@@ -62,30 +66,34 @@ export default function PlantingWithPotForm() {
           id="withPotPlantMethodField"
           theme="snow"
           placeholder="Masukkan langkah-langkah cara penanaman"
-          value={containerMethodContent}
-          onChange={onContainerMethodStateChange}
+          value={containerInstructionContent}
+          onChange={onContainerInstructionStateChange}
           modules={MODULES}
           className={`h-[306px] mt-1 ${
-            editorFocus.planting?.container_method &&
-            !errors.planting?.container_method
+            editorFocus.container_instruction &&
+            !errors.planting_info?.container_info?.container_instruction
               ? "ql-focus"
               : null
-          } ${errors.planting?.container_method ? "ql-error" : null}`}
+          } ${
+            errors.planting_info?.container_info?.container_instruction
+              ? "ql-error"
+              : null
+          }`}
           onFocus={() => {
             setEditorFocus((prev) => ({
               ...prev,
-              container_method: true,
+              container_instruction: true,
             }));
           }}
           onBlur={() => {
             setEditorFocus((prev) => ({
               ...prev,
-              container_method: false,
+              container_instruction: false,
             }));
           }}
         />
         <div className="mt-12"></div>
-        {errors.planting?.container_method && (
+        {errors.planting_info?.container_info?.container_instruction && (
           <p
             className="text-error text-caption-lg"
             id="error-image-message"
@@ -105,30 +113,34 @@ export default function PlantingWithPotForm() {
           id="withPotPlantDescriptionField"
           theme="snow"
           placeholder="Masukkan alat dan bahan untuk penanaman"
-          value={containerToolsContent}
-          onChange={onContainerToolsStateChange}
+          value={containerMaterialsContent}
+          onChange={onContainerMaterialsStateChange}
           modules={MODULES}
           className={`h-[306px] mt-1 ${
-            editorFocus.planting?.container_tools &&
-            !errors.planting?.container_tools
+            editorFocus.container_materials &&
+            !errors.planting_info?.container_info?.container_materials
               ? "ql-focus"
               : null
-          } ${errors.planting?.container_tools ? "ql-error" : null}`}
+          } ${
+            errors.planting_info?.container_info?.container_materials
+              ? "ql-error"
+              : null
+          }`}
           onFocus={() => {
             setEditorFocus((prev) => ({
               ...prev,
-              container_tools: true,
+              container_materials: true,
             }));
           }}
           onBlur={() => {
             setEditorFocus((prev) => ({
               ...prev,
-              container_tools: false,
+              container_materials: false,
             }));
           }}
         />
         <div className="mt-12"></div>
-        {errors.planting?.container_tools && (
+        {errors.planting_info?.container_info?.container_materials && (
           <p
             className="text-error text-caption-lg"
             id="error-image-message"
@@ -142,18 +154,18 @@ export default function PlantingWithPotForm() {
         label={"Link Vidio Cara Penanaman"}
         autoComplete="off"
         placeholder="Masukkan link vidio cara penanaman"
-        isError={errors.planting?.url_container}
+        isError={errors.planting_info?.container_info?.container_video}
         register={{
-          ...register("planting.url_container", {
+          ...register("planting_info.container_info.container_video", {
             shouldUnregister: true,
             required: "Link tidak boleh kosong",
           }),
         }}
         message={
-          errors.planting?.url_container && (
+          errors.planting_info?.container_info?.container_video && (
             <span>
               <Info12Regular className="-mt-0.5" />{" "}
-              {errors.planting?.url_container.message}
+              {errors.planting_info?.container_info?.container_video.message}
             </span>
           )
         }
@@ -161,7 +173,10 @@ export default function PlantingWithPotForm() {
       <FileInput
         id="withPotImageField"
         label={"Gambar Penanaman dengan pot"}
-        value={useWatch({ name: "planting.container_pict", control: control })}
+        value={useWatch({
+          name: "planting_info.container_info.container_pictures",
+          control: control,
+        })}
         rules={{
           required: true,
           shouldUnregister: true,
@@ -172,14 +187,14 @@ export default function PlantingWithPotForm() {
           },
         }}
         control={control}
-        name="planting.container_pict"
+        name="planting_info.container_info.container_pictures"
         message={
           <span>
             <Info12Regular className="me-1.5" />
             Maksimal 1MB, Hanya file berformat .JPG, .JPEG, .PNG
           </span>
         }
-        isError={errors.planting?.container_pict}
+        isError={errors.planting_info?.container_info?.container_pictures}
       />
     </div>
   );

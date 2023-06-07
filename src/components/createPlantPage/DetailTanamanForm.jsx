@@ -9,20 +9,8 @@ import { MODULES } from "../../constants";
 import { useRecoilValue } from "recoil";
 import { addPlantDataState } from "../../utils/recoil_atoms";
 
-// const fetcher = (url) => axios.get(url).then((res) => res.data);
-
 export default function DetailTanamanForm({ formId, onSubmit }) {
   const addPlantData = useRecoilValue(addPlantDataState);
-
-  // try {
-  //   const { data } = useSWR(
-  //     `http://34.128.85.215:8080/pictures?path=0cac3677-2a12-4c2e-b936-f32f2acc2a2b.png`,
-  //     fetcher
-  //   );
-  //   console.log(data);
-  // } catch (error) {
-  //   console.log(error);
-  // }
 
   const {
     register,
@@ -39,18 +27,18 @@ export default function DetailTanamanForm({ formId, onSubmit }) {
   const [editorFocus, setEditorFocus] = useState(false);
 
   useEffect(() => {
-    register("detail.desc", {
+    register("plant_description", {
       required: true,
       validate: (value) => value !== "<p><br></p>",
     });
   }, [register]);
 
   const onPlantDescriptionStateChange = (state) => {
-    setValue("detail.desc", state);
-    trigger("detail.desc");
+    setValue("plant_description", state);
+    trigger("plant_description");
   };
 
-  let plantDescriptionContent = watch("detail.desc");
+  let plantDescriptionContent = watch("plant_description");
 
   return (
     <form
@@ -64,17 +52,17 @@ export default function DetailTanamanForm({ formId, onSubmit }) {
           autoFocus
           autoComplete="off"
           placeholder="Masukkan nama tanaman"
-          isError={errors.detail?.name}
+          isError={errors.plant_name}
           register={{
-            ...register("detail.name", {
+            ...register("plant_name", {
               required: "Nama tanaman tidak boleh kosong",
             }),
           }}
           message={
-            errors.detail?.name && (
+            errors.plant_name && (
               <span>
                 <Info12Regular className="-mt-0.5" />{" "}
-                {errors.detail?.name.message}
+                {errors.plant_name.message}
               </span>
             )
           }
@@ -84,17 +72,17 @@ export default function DetailTanamanForm({ formId, onSubmit }) {
           label={"Nama Latin Tanaman"}
           autoComplete="off"
           placeholder="Masukkan nama latin tanaman"
-          isError={errors.detail?.latin}
+          isError={errors.plant_latin}
           register={{
-            ...register("detail.latin", {
+            ...register("plant_latin", {
               required: "Nama latin tanaman tidak boleh kosong",
             }),
           }}
           message={
-            errors.detail?.latin && (
+            errors.plant_latin && (
               <span>
                 <Info12Regular className="-mt-0.5" />{" "}
-                {errors.detail?.latin.message}
+                {errors.plant_latin.message}
               </span>
             )
           }
@@ -114,8 +102,8 @@ export default function DetailTanamanForm({ formId, onSubmit }) {
             modules={MODULES}
             placeholder="Masukkan deskripsi produk"
             className={`h-[306px] ${
-              editorFocus && !errors.detail?.desc ? "ql-focus" : null
-            } ${errors.detail?.desc ? "ql-error" : null}`}
+              editorFocus && !errors.plant_description ? "ql-focus" : null
+            } ${errors.plant_description ? "ql-error" : null}`}
             onFocus={() => {
               setEditorFocus(true);
             }}
@@ -124,7 +112,7 @@ export default function DetailTanamanForm({ formId, onSubmit }) {
             }}
           />
           <div className="mt-12"></div>
-          {errors.detail?.desc && (
+          {errors.plant_description && (
             <p
               className="text-error text-caption-lg"
               id="error-image-message"
@@ -136,7 +124,7 @@ export default function DetailTanamanForm({ formId, onSubmit }) {
         <FileInput
           id="plantImageInput"
           label={"Gambar Tanaman"}
-          value={useWatch({ name: "detail.pict", control: control })}
+          value={useWatch({ name: "plant_pictures", control: control })}
           rules={{
             required: true,
             validate: {
@@ -146,7 +134,7 @@ export default function DetailTanamanForm({ formId, onSubmit }) {
             },
           }}
           control={control}
-          name="detail.pict"
+          name="plant_pictures"
           className="mt-10"
           message={
             <span>
@@ -154,7 +142,7 @@ export default function DetailTanamanForm({ formId, onSubmit }) {
               Maksimal 1MB, Hanya file berformat .JPG, .JPEG, .PNG
             </span>
           }
-          isError={errors.detail?.pict}
+          isError={errors.plant_pictures}
         />
       </div>
     </form>

@@ -14,22 +14,26 @@ export default function PenanamanForm({ formId, onSubmit }) {
   const {
     handleSubmit,
     unregister,
-    control,
     formState: { defaultValues, errors },
   } = methods;
 
-  const [checkedCheckboxes, setCheckedCheckboxes] = useState(
-    defaultValues.planting?.method || []
-  );
+  const [checkedCheckboxes, setCheckedCheckboxes] = useState({
+    container: defaultValues.planting_info?.planting_container ?? false,
+    ground: defaultValues.planting_info?.planting_ground ?? false,
+  });
 
   useEffect(() => {
-    if (!checkedCheckboxes?.includes("container")) {
-      unregister(["withPotPlantMethod", "withPotPlantTools", "withPotImage"]);
-    } else if (!checkedCheckboxes?.includes("in-ground")) {
+    if (!checkedCheckboxes.container) {
       unregister([
-        "withoutPotPlantMethod",
-        "withoutPotPlantTools",
-        "withoutPotImage",
+        "planting_info.container_info.container_instruction",
+        "planting_info.container_info.container_materials",
+        "planting_info.container_info.container_pictures",
+      ]);
+    } else if (!checkedCheckboxes.ground) {
+      unregister([
+        "planting_info.ground_info.ground_instruction",
+        "planting_info.ground_info.ground_materials",
+        "planting_info.ground_info.ground_pictures",
       ]);
     }
   }, [checkedCheckboxes]);
@@ -44,18 +48,18 @@ export default function PenanamanForm({ formId, onSubmit }) {
           <LokasiPenanamanCheckbox
             checkedCheckboxes={checkedCheckboxes}
             setCheckedCheckboxes={setCheckedCheckboxes}
-            name="planting.method"
-            control={control}
-            rules={{ required: "Pilih lokasi tanaman tidak boleh kosong" }}
-            errorMessage={errors.planting?.method?.message}
+            errorMessage={
+              errors.planting_info?.planting_container?.message ??
+              errors.planting_info?.planting_ground?.message
+            }
           />
-          {checkedCheckboxes?.includes("container") && (
+          {checkedCheckboxes?.container && (
             <>
               <hr className="mt-4" />
               <PlantingWithPotForm />
             </>
           )}
-          {checkedCheckboxes?.includes("in-ground") && (
+          {checkedCheckboxes?.ground && (
             <>
               <hr className="mt-4" />
               <PlantingWithoutPotForm />

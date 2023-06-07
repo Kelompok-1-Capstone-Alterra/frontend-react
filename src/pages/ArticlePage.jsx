@@ -6,7 +6,6 @@ import {
   Delete20Regular,
 } from "@fluentui/react-icons";
 import Cookies from "js-cookie";
-import axios from "axios";
 import { useState } from "react";
 import TextField from "../components/TextField";
 import { Link } from "react-router-dom";
@@ -17,6 +16,7 @@ import PaginationButton from "../components/PaginationButton";
 import useSWR from "swr";
 import useDebounce from "../hooks/useDebounce";
 import fetcher from "../utils/fetcher";
+import useArticle from "../hooks/useArticle";
 
 const ITEMS_PER_PAGE = 8;
 const DEBOUNCE_DELAY = 500;
@@ -40,7 +40,6 @@ export default function ArticlePage() {
       : `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles`,
     (url) => fetcher(url, Cookies.get("token"))
   );
-
   const [showModal, setShowModal] = useState({
     show: false,
     icon: "",
@@ -48,6 +47,7 @@ export default function ArticlePage() {
     title: "",
   });
   const [modalDelete, setModalDelete] = useState(false);
+  const { deleteArticle } = useArticle();
 
   const handleInputChange = (event) => {
     const newKeyword = event.target.value;
@@ -76,27 +76,23 @@ export default function ArticlePage() {
 
   const handleDelete = async (id) => {
     setModalDelete(false);
-    try {
-      const response = await axios.delete(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/${id}`
-      );
-      console.log(response);
-      mutate();
-      setShowModal({
-        show: true,
-        icon: "success",
-        text: "Artikel Berhasil Dihapus",
-        title: "Hapus Artikel",
-      });
-    } catch (error) {
-      console.log(error);
+    const del = await deleteArticle(id);
+    if (del.status !== 200) {
       setShowModal({
         show: true,
         icon: "info",
-        text: "Artikel Gagal Dihapus",
-        title: "Hapus Artikel",
+        text: "Data artikel kamu gagal dihapus",
+        title: "Aksi Gagal",
       });
+      return;
     }
+    setShowModal({
+      show: true,
+      icon: "success",
+      text: "Artikel Berhasil Dihapus",
+      title: "Hapus Artikel",
+    });
+    mutate();
   };
 
   return (

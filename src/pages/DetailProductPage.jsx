@@ -26,9 +26,9 @@ export default function DetailProductPage() {
           </span>
         </p>
         <div className="flex my-4 gap-5">
-          {product.product_pictures.map((image) => (
+          {product.product_pictures.map((image, index) => (
             <img
-              key={product.product_id}
+              key={index}
               src={`${import.meta.env.VITE_API_BASE_URL}/pictures/${image}`}
               alt="gambar"
               className="w-[130px] h-[130px]"

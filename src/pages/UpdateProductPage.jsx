@@ -11,13 +11,13 @@ import TextField from "../components/TextField";
 import MySelect from "../components/MySelect";
 import TextFieldGroup from "../components/TextFieldGroup";
 import { useForm, Controller } from "react-hook-form";
-import axios from "axios";
 import Button from "../components/Button";
 import ReactQuill from "react-quill";
 import { MODULES } from "../constants";
 import "react-quill/dist/quill.snow.css";
-import Cookies from "js-cookie";
 import { Navigate } from "react-router-dom";
+import useImage from "../hooks/useImage";
+import useProduct from "../hooks/useProduct";
 
 const options = [
   { value: "Alat Tani", label: "Alat Tani" },
@@ -60,7 +60,6 @@ export default function UpdateProductPage() {
   });
 
   const [editorFocus, setEditorFocus] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
   const [editorContent, setEditorContent] = useState(
     product?.product_description
   );
@@ -75,6 +74,8 @@ export default function UpdateProductPage() {
     text: "",
     title: "",
   });
+  const { uploadImage, isLoading: imageLoading } = useImage();
+  const { updateProduct, isLoading: uploadLoading } = useProduct();
 
   const navigate = useNavigate();
 
@@ -98,76 +99,69 @@ export default function UpdateProductPage() {
   };
 
   const saveProduct = async (data) => {
-    setIsSaving(true);
-    try {
-      let newPictures = [];
-      if (data.picture.length > 0) {
-        const formData = new FormData();
-        for (let i = 0; i < data.picture.length; i++) {
-          formData.append("pictures", data.picture[i]);
-        }
-        const responseUpload = await axios.post(
-          `${import.meta.env.VITE_API_BASE_URL}/pictures`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${Cookies.get("token")}`,
-            },
-          }
-        );
-        const urlsArray = responseUpload?.data?.urls;
-        newPictures = urlsArray.map((url) => {
-          return { url };
-        });
-        console.log(newPictures);
+    let newPictures = [];
+
+    //if user upload new pictures
+    if (data.picture.length > 0) {
+      const formData = new FormData();
+      for (let i = 0; i < data.picture.length; i++) {
+        formData.append("pictures", data.picture[i]);
       }
-      await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/products/${
-          product?.id
-        }`,
-        {
-          product_pictures: newPictures
-            ? newPictures
-            : product?.product_pictures,
-          product_name: data.name,
-          product_category: data.category.value,
-          product_description: data.description,
-          product_price: Number(data.price),
-          product_status: Boolean(data.status === "etalase"),
-          product_brand: data.brand,
-          product_condition: data.condition,
-          product_unit: Number(data.unit),
-          product_weight: Number(data.weight),
-          product_form: data.form,
-          product_seller_name: data.sellerName,
-          product_seller_phone: data.sellerPhone,
-          category: data.category.value,
-          status: data.status === "etalase" ? true : false,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("token")}`,
-          },
-        }
-      );
-      setNotifModal({
-        show: true,
-        icon: "success",
-        title: "Ubah Data Produk",
-        text: "Data produk berhasil diubah",
+
+      //upload the image
+      const responseUpload = await uploadImage(formData);
+      if (responseUpload.status !== 200) {
+        setNotifModal({
+          show: true,
+          icon: "info",
+          title: "Aksi Gagal",
+          text: "Data produk kamu gagal diubah",
+        });
+        return;
+      }
+
+      //get the url
+      const urlsArray = responseUpload?.data?.urls;
+      newPictures = urlsArray.map((url) => {
+        return { url };
       });
-    } catch (error) {
+    }
+
+    //update the product
+    const res = await updateProduct(product?.id, {
+      product_pictures: newPictures ? newPictures : product?.product_pictures,
+      product_name: data.name,
+      product_category: data.category.value,
+      product_description: data.description,
+      product_price: Number(data.price),
+      product_status: Boolean(data.status === "etalase"),
+      product_brand: data.brand,
+      product_condition: data.condition,
+      product_unit: Number(data.unit),
+      product_weight: Number(data.weight),
+      product_form: data.form,
+      product_seller_name: data.sellerName,
+      product_seller_phone: data.sellerPhone,
+      category: data.category.value,
+      status: data.status === "etalase" ? true : false,
+    });
+
+    if (res.status !== 200) {
       setNotifModal({
         show: true,
         icon: "info",
         title: "Aksi Gagal",
         text: "Data produk kamu gagal diubah",
       });
-    } finally {
-      setIsSaving(false);
+      return;
     }
+
+    setNotifModal({
+      show: true,
+      icon: "success",
+      title: "Ubah Data Produk",
+      text: "Data produk berhasil diubah",
+    });
   };
 
   const onSubmit = () => {
@@ -675,7 +669,7 @@ export default function UpdateProductPage() {
               id="submit-button"
               type="submit"
               size="md"
-              disabled={isSaving}
+              disabled={imageLoading || uploadLoading}
             >
               Simpan
             </Button>

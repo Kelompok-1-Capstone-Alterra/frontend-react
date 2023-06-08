@@ -7,11 +7,12 @@ import TextField from "../components/TextField";
 import MySelect from "../components/MySelect";
 import TextFieldGroup from "../components/TextFieldGroup";
 import { useForm, Controller } from "react-hook-form";
-import axios from "axios";
 import Button from "../components/Button";
 import ReactQuill from "react-quill";
 import { MODULES } from "../constants";
 import "react-quill/dist/quill.snow.css";
+import useImage from "../hooks/useImage";
+import useProduct from "../hooks/useProduct";
 import Cookies from "js-cookie";
 
 export default function CreateProductPage() {
@@ -27,9 +28,11 @@ export default function CreateProductPage() {
     formState: { errors },
   } = useForm();
 
+  const { uploadImage, isLoading: loadingImage } = useImage();
+  const { createProduct, isLoading: loadingProduct } = useProduct();
+
   const [editorFocus, setEditorFocus] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
   const [notifModal, setNotifModal] = useState({
     show: false,
     icon: "",
@@ -56,74 +59,68 @@ export default function CreateProductPage() {
   let editorContent = watch("description");
 
   const saveProduct = async (product) => {
-    setIsSaving(true);
-    try {
-      const formData = new FormData();
-      for (let i = 0; i < product.picture.length; i++) {
-        formData.append("pictures", product.picture[i]);
-      }
-
-      const responseUpload = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/pictures`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${Cookies.get("token")}`,
-          },
-        }
-      );
-
-      const urlsArray = responseUpload?.data?.urls;
-      const product_pictures = urlsArray.map((url) => {
-        return { url };
-      });
-
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/products/add`,
-        {
-          product_pictures,
-          product_name: product.name,
-          product_category: product.category.value,
-          product_description: product.description,
-          product_price: Number(product.price),
-          product_status: Boolean(product.status === "etalase"),
-          product_brand: product.brand,
-          product_condition: product.condition,
-          product_unit: Number(product.unit),
-          product_weight: Number(product.weight),
-          product_form: product.form,
-          product_seller_name: product.sellerName,
-          product_seller_phone: product.sellerPhone,
-          product_seen: 0,
-          admin_id: 1,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("token")}`,
-          },
-        }
-      );
-      setNotifModal({
-        show: true,
-        icon: "success",
-        text: `Data produk kamu berhasil ditambahkan ke ${
-          product.status === "etalase" ? "etalase" : "arsip"
-        }`,
-        title: "Tambah Produk",
-      });
-    } catch (error) {
-      console.log(error);
+    //upload the image
+    const formData = new FormData();
+    for (let i = 0; i < product.picture.length; i++) {
+      formData.append("pictures", product.picture[i]);
+    }
+    const responseUpload = await uploadImage(formData);
+    if (responseUpload.status !== 200) {
       setNotifModal({
         show: true,
         icon: "info",
         text: "Data produk kamu gagal ditambahkan",
         title: "Aksi Gagal",
       });
-    } finally {
-      setIsSaving(false);
+      return;
     }
+
+    //get the url
+    const urlsArray = responseUpload?.data?.urls;
+    const product_pictures = urlsArray.map((url) => {
+      return { url };
+    });
+
+    //create the product
+    const res = await createProduct(
+      {
+        product_pictures,
+        product_name: product.name,
+        product_category: product.category.value,
+        product_description: product.description,
+        product_price: Number(product.price),
+        product_status: Boolean(product.status === "etalase"),
+        product_brand: product.brand,
+        product_condition: product.condition,
+        product_unit: Number(product.unit),
+        product_weight: Number(product.weight),
+        product_form: product.form,
+        product_seller_name: product.sellerName,
+        product_seller_phone: product.sellerPhone,
+        product_seen: 0,
+        admin_id: 1,
+      },
+      Cookies.get("token")
+    );
+
+    if (res.status !== 200) {
+      setNotifModal({
+        show: true,
+        icon: "info",
+        text: "Data produk kamu gagal ditambahkan",
+        title: "Aksi Gagal",
+      });
+      return;
+    }
+
+    setNotifModal({
+      show: true,
+      icon: "success",
+      text: `Data produk kamu berhasil ditambahkan ke ${
+        product.status === "etalase" ? "etalase" : "arsip"
+      }`,
+      title: "Tambah Produk",
+    });
   };
 
   const onSubmit = () => {
@@ -604,7 +601,7 @@ export default function CreateProductPage() {
               className={"rounded-full"}
               id="submit-button"
               type="submit"
-              disabled={isSaving}
+              disabled={loadingImage || loadingProduct}
               size="md"
             >
               Simpan

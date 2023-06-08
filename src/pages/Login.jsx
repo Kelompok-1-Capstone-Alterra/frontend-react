@@ -90,7 +90,7 @@ function Login() {
                   alt="Logo"
                   className="mr-2 w-10"
                 />
-                Agriplant
+                Agriplan
               </h1>
               <div>
                 <TextField

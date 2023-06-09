@@ -15,6 +15,7 @@ export default function MainContainer({ children }) {
 
   const handleLogOut = () => {
     Cookies.remove("token");
+    localStorage.removeItem("user");
     navigate("/login");
   };
 

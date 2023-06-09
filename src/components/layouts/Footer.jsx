@@ -10,7 +10,7 @@ export default function Footer() {
             src={Logo}
             className="w-10"
           />
-          <p className="text-h-6 font-bold text-primary">Agriplant</p>
+          <p className="text-h-6 font-bold text-primary">Agriplan</p>
         </div>
       </Link>
       <p className="text-[#6B7280] font-semibold">

@@ -24,6 +24,25 @@ const useWeather = () => {
       setIsLoading(false);
     }
   };
+  const fetchWeather = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/weathers`,{
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
+
+      return response;
+    } catch (error) {
+      return error.response;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const createWeather = async (body) => {
     try {
@@ -49,6 +68,7 @@ const useWeather = () => {
     isLoading,
     deleteWeather,
     createWeather,
+    fetchWeather
   };
 };
 

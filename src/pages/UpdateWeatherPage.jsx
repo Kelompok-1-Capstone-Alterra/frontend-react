@@ -13,6 +13,9 @@ import FileInput from "../components/FileInput";
 import MySelect from "../components/MySelect";
 import { MODULES } from "../constants";
 import SecondaryContainer from "../components/layouts/SecondaryContainer";
+import Cookies from "js-cookie";
+import fetcher from "../utils/fetcher";
+import useWeather from "../hooks/useWeather";
 
 const UpdateWeatherPage = () => {
   const { id } = useParams();
@@ -28,26 +31,34 @@ const UpdateWeatherPage = () => {
   const navigate = useNavigate();
   const [editorFocus, setEditorFocus] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [isNotifModalOpen, setIsNotifModalOpen] = useState(false);
+  const [showModal, setShowModal] = useState({
+    show: false,
+    icon: "",
+    text: "",
+    title: "",
+  });
   const [formData, setFormData] = useState(null);
   const [weatherOptions, setWeatherOptions] = useState([]);
-  const url = `https://642cdf18bf8cbecdb4f8b260.mockapi.io/weathers/${id}`;
-  const { data: weatherData } = useSWR(url, async (url) => {
-    const response = await axios.get(url);
-    return response.data;
-  });
+  const { fetchWeather } = useWeather();
+  const url = `${
+    import.meta.env.VITE_API_BASE_URL
+  }/auth/admins/weathers/${id}/detail`;
+  const { data } = useSWR(url, async (url) =>
+    fetcher(url, Cookies.get("token"))
+  );
+  const weatherData = data?.data;
 
   useEffect(() => {
     const fetchWeatherData = async () => {
       try {
         if (weatherData) {
-          setValue("judul", weatherData.judul);
+          setValue("judul", weatherData.weather_title);
           setValue("label", {
-            label: weatherData.label,
-            value: weatherData.label,
+            label: weatherData.weather_label,
+            value: weatherData.weather_label,
           });
-          setValue("deskripsi", weatherData.deskripsi);
-          setValue("gambar", weatherData.gambar);
+          setValue("deskripsi", weatherData.weather_description);
+          setValue("gambar", weatherData.weather_pictures);
         }
       } catch (error) {
         console.error("Terjadi kesalahan:", error);
@@ -56,11 +67,10 @@ const UpdateWeatherPage = () => {
 
     const fetchWeatherOptions = async () => {
       try {
-        const response = await axios.get(
-          "https://642cdf18bf8cbecdb4f8b260.mockapi.io/weathers"
+        const fetchWeatherLabel = await fetchWeather();
+        const existingLabels = fetchWeatherLabel.data.data.map(
+          (option) => option.weather_label
         );
-
-        const existingLabels = response.data.map((option) => option.label);
 
         const options = [
           { label: "Cerah", value: "Cerah" },
@@ -71,7 +81,7 @@ const UpdateWeatherPage = () => {
         const newOptions = options.filter(
           (option) =>
             !existingLabels.includes(option.value) ||
-            option.value === weatherData?.label
+            option.value === weatherData?.weather_label
         );
         setWeatherOptions(newOptions);
       } catch (error) {
@@ -97,7 +107,6 @@ const UpdateWeatherPage = () => {
     });
   }, [register]);
 
-  // let gambar = watch("gambar");
   let content = watch("deskripsi");
   const onEditorStateChange = (editorState) => {
     setValue("deskripsi", editorState);
@@ -110,30 +119,44 @@ const UpdateWeatherPage = () => {
   };
 
   const handleConfirmModal = async () => {
-    try {
-      const requestData = {
-        judul: formData.judul,
-        label: formData.label.label,
-        // gambar: formData.gambar,
-        deskripsi: content,
-      };
-
-      await axios.put(url, requestData);
-      setIsNotifModalOpen(true);
-    } catch (error) {
-      console.error("Terjadi kesalahan:", error);
+    const saveEdit = await axios.put(
+      `${import.meta.env.VITE_API_BASE_URL}/auth/admins/weathers/${id}`,
+      {
+        weather_title: formData.judul,
+        weather_label: formData.label.label,
+        weather_pictures: [
+          {
+            url: "url.com",
+          },
+        ],
+        weather_description: content,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      }
+    );
+    if (saveEdit.status !== 200) {
+      setShowModal({
+        show: true,
+        icon: "info",
+        text: "Informasi Cuaca gagal diedit",
+        title: "Aksi Gagal",
+      });
+      return;
     }
-
-    setIsConfirmModalOpen(false);
+    setShowModal({
+      show: true,
+      icon: "success",
+      text: "Informasi cuaca berhasil di edit",
+      title: "Informasi cuaca",
+    });
   };
 
   const handleCancelModal = () => {
     setIsConfirmModalOpen(false);
-  };
-
-  const handleNotifModal = () => {
-    setIsNotifModalOpen(false);
-    navigate("/admin/weathers");
   };
 
   return (
@@ -141,8 +164,7 @@ const UpdateWeatherPage = () => {
       <SecondaryContainer
         backTo="/admin/weathers"
         title="Edit Informasi cuaca"
-        className="pe-3"
-      >
+        className="pe-3">
         <div className="mx-8">
           <form onSubmit={handleSubmit(onSubmit)}>
             <TextField
@@ -213,10 +235,7 @@ const UpdateWeatherPage = () => {
                 />
               </div>
             </div>
-            <label
-              htmlFor="deskripsi"
-              className="text-body-lg font-semibold"
-            >
+            <label htmlFor="deskripsi" className="text-body-lg font-semibold">
               Deskripsi
             </label>
             <div className="mb-6">
@@ -250,9 +269,8 @@ const UpdateWeatherPage = () => {
             </div>
             <div
               className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
-                isConfirmModalOpen || isNotifModalOpen ? "block" : "hidden"
-              } cursor-pointer top-0 bottom-0 left-0 right-0`}
-            >
+                isConfirmModalOpen || showModal.show ? "block" : "hidden"
+              } cursor-pointer top-0 bottom-0 left-0 right-0`}>
               <ConfirmModal
                 isOpen={isConfirmModalOpen}
                 text="Pastikan kembali informasi yang akan dikirim sudah sesuai"
@@ -263,19 +281,24 @@ const UpdateWeatherPage = () => {
                 onCancel={handleCancelModal}
               />
               <NotifModal
-                isOpen={isNotifModalOpen}
-                text="Informasi cuaca berhasil di ubah"
-                title="Ubah Informasi cuaca"
+                isOpen={showModal.show}
+                title={showModal.title}
+                text={showModal.text}
+                icon={showModal.icon}
                 confirmText="Tutup"
-                icon="success"
-                onConfirm={handleNotifModal}
+                onConfirm={() => {
+                  setShowModal({
+                    show: false,
+                    icon: "",
+                    text: "",
+                    title: "",
+                  });
+                  navigate("/admin/weathers");
+                }}
               />
             </div>
             <div className="flex justify-end gap-x-3.5 pt-5">
-              <Button
-                type="submit"
-                size="md"
-              >
+              <Button type="submit" size="md">
                 Kirim
               </Button>
             </div>

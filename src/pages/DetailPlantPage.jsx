@@ -47,7 +47,7 @@ export default function DetailPlantPage() {
     {
       id: "temperatur",
       title: "Temperatur",
-      content: <TemperaturView />,
+      content: <TemperaturView plantTemperature={plants?.temperature_info} />,
     },
   ];
 

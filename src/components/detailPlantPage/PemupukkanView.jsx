@@ -33,7 +33,7 @@ export default function PemupukkanView({ plantFertilizing }) {
                   }`
                 : ""
             }
-            alt=""
+            alt="Gambar pemupukkan"
             className="w-[210px]"
           />
         </div>

@@ -31,7 +31,7 @@ export default function PenyiramanView({ plantWatering }) {
                   }`
                 : ""
             }
-            alt=""
+            alt="Gambar Penyiramans"
             className="w-[210px]"
           />
         </div>

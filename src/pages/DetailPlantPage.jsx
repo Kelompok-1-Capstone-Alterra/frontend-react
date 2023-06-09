@@ -42,7 +42,7 @@ export default function DetailPlantPage() {
     {
       id: "penyiraman",
       title: "Penyiraman",
-      content: <PenyiramanView />,
+      content: <PenyiramanView plantWatering={plants?.watering_info} />,
     },
     {
       id: "temperatur",

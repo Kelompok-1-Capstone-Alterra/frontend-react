@@ -23,6 +23,7 @@ export default function PlantingWithPotForm() {
   });
 
   useEffect(() => {
+    // Unregister fields when unmount
     register("planting_info.container_info.container_instruction", {
       required: true,
       validate: (value) => value !== "<p><br></p>",

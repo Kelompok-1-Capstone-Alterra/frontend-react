@@ -1,37 +1,38 @@
-import Image from "../../assets/Hero.png";
-
-export default function PemupukkanView() {
+export default function PemupukkanView({ plantFertilizing }) {
   return (
     <div className="mt-8">
       <section>
         <h5 className="font-semibold text-body-lg">Berapa kali pemupukkan</h5>
-        <div className="text-neutral-80 mt-2">6 kali</div>
+        <div className="text-neutral-80 mt-2">
+          {plantFertilizing?.fertilizing_limit} kali
+        </div>
       </section>
       <section className="mt-8">
         <h5 className="font-semibold text-body-lg">Waktu pemupukkan</h5>
-        <div className="text-neutral-80 mt-2">30 hari sekali</div>
+        <div className="text-neutral-80 mt-2">
+          {plantFertilizing?.fertilizing_period} hari sekali
+        </div>
       </section>
       <section className="mt-8">
         <h5 className="font-semibold text-body-lg">Cara pemupukkan</h5>
-        <div className="text-neutral-80 mt-2">
-          <p>
-            Pemupukan susulan tanaman tomat dianjurkan menggunakan pupuk NPK
-            daun, kompos atau bisa juga dengan Pupuk Langsung Pakai (PLP),
-            ketika usia tanam menginjak satu minggu, dan seterusnya setelah satu
-            bulan, dan setiap 30 hari sekali.
-          </p>
-          <p className="mt-8">
-            Jika menggunakan kompos, berikan satu kepalan tangan pada setiap
-            tanaman baik dalam pot, polibag atau bedengan. Dan NPK sebanyak 2
-            gram per tanaman.
-          </p>
-        </div>
+        <div
+          className="styled-content text-neutral-80 mt-2"
+          dangerouslySetInnerHTML={{
+            __html: plantFertilizing?.fertilizing_description,
+          }}
+        ></div>
       </section>
       <section className="mt-8">
         <h5 className="font-semibold text-body-lg">Gambar pemupukkan</h5>
         <div className="text-neutral-80 mt-2">
           <img
-            src={Image}
+            src={
+              plantFertilizing?.fertilizing_pictures?.length > 0
+                ? `${import.meta.env.VITE_API_BASE_URL}/pictures/${
+                    plantFertilizing.fertilizing_pictures[0]?.url
+                  }`
+                : ""
+            }
             alt=""
             className="w-[210px]"
           />

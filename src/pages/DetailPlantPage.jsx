@@ -32,12 +32,12 @@ export default function DetailPlantPage() {
     {
       id: "penanaman",
       title: "Penanaman",
-      content: <PenanamanView plantPlanting={plants.planting_info} />,
+      content: <PenanamanView plantPlanting={plants?.planting_info} />,
     },
     {
       id: "pemupukkan",
       title: "Pemupukkan",
-      content: <PemupukkanView />,
+      content: <PemupukkanView plantFertilizing={plants?.fertilizing_info} />,
     },
     {
       id: "penyiraman",

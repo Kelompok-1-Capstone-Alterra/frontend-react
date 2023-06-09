@@ -1,4 +1,6 @@
+import { useLoaderData } from "react-router-dom";
 import { useState } from "react";
+
 import Tab from "../components/Tab";
 import SecondaryContainer from "../components/layouts/SecondaryContainer";
 import DetailTanamanView from "../components/detailPlantPage/DetailTanamanView";
@@ -8,13 +10,24 @@ import PenyiramanView from "../components/detailPlantPage/PenyiramanView";
 import TemperaturView from "../components/detailPlantPage/TemperaturView";
 
 export default function DetailPlantPage() {
+  const plants = useLoaderData();
+  console.log(plants);
   const [activeTabIndex, setActiveTabIndex] = useState(0);
 
   const tabs = [
     {
       id: "detailTanaman",
       title: "Detail Tanaman",
-      content: <DetailTanamanView />,
+      content: (
+        <DetailTanamanView
+          plantDetail={{
+            plant_name: plants?.plant_name,
+            plant_latin: plants?.plant_latin,
+            plant_description: plants?.plant_description,
+            plant_pictures: plants?.plant_pictures,
+          }}
+        />
+      ),
     },
     {
       id: "penanaman",

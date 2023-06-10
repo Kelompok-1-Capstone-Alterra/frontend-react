@@ -16,6 +16,7 @@ import SecondaryContainer from "../components/layouts/SecondaryContainer";
 import Cookies from "js-cookie";
 import fetcher from "../utils/fetcher";
 import useWeather from "../hooks/useWeather";
+import useImage from "../hooks/useImage";
 
 const UpdateWeatherPage = () => {
   const { id } = useParams();
@@ -39,6 +40,8 @@ const UpdateWeatherPage = () => {
   });
   const [formData, setFormData] = useState(null);
   const [weatherOptions, setWeatherOptions] = useState([]);
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const { uploadImage } = useImage();
   const { fetchWeather } = useWeather();
   const url = `${
     import.meta.env.VITE_API_BASE_URL
@@ -58,7 +61,21 @@ const UpdateWeatherPage = () => {
             value: weatherData.weather_label,
           });
           setValue("deskripsi", weatherData.weather_description);
-          setValue("gambar", weatherData.weather_pictures);
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_BASE_URL}/pictures/${
+              weatherData.weather_pictures[0]
+            }`,
+            {
+              responseType: "blob",
+            }
+          );
+          const blob = new Blob([response.data], { type: response.data.type });
+          const fileName = `${weatherData.weather_label}.png`; // Nama file bedasarkan label
+
+          const file = new File([blob], fileName, { type: response.data.type });
+
+          setValue("gambar", file);
+          setSelectedImageFile(blob);
         }
       } catch (error) {
         console.error("Terjadi kesalahan:", error);
@@ -92,6 +109,7 @@ const UpdateWeatherPage = () => {
     fetchWeatherData();
     fetchWeatherOptions();
   }, [weatherData]);
+  // images
 
   useEffect(() => {
     register("label", {
@@ -119,6 +137,22 @@ const UpdateWeatherPage = () => {
   };
 
   const handleConfirmModal = async () => {
+    const formPicture = new FormData();
+    formPicture.append("pictures", selectedImageFile);
+    const upload = await uploadImage(formPicture);
+    if (upload.status !== 200) {
+      setShowModal({
+        show: true,
+        icon: "info",
+        text: "Informasi Cuaca gagal ditambahkan",
+        title: "Aksi Gagal",
+      });
+      return;
+    }
+
+    //save the image url
+    const imageUrl = upload.data.urls[0];
+    // update
     const saveEdit = await axios.put(
       `${import.meta.env.VITE_API_BASE_URL}/auth/admins/weathers/${id}`,
       {
@@ -126,7 +160,7 @@ const UpdateWeatherPage = () => {
         weather_label: formData.label.label,
         weather_pictures: [
           {
-            url: "url.com",
+            url: imageUrl,
           },
         ],
         weather_description: content,
@@ -157,6 +191,10 @@ const UpdateWeatherPage = () => {
 
   const handleCancelModal = () => {
     setIsConfirmModalOpen(false);
+  };
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    setSelectedImageFile(file);
   };
 
   return (
@@ -232,6 +270,7 @@ const UpdateWeatherPage = () => {
                     </span>
                   }
                   isError={errors.gambar}
+                  onChange={handleImageChange}
                 />
               </div>
             </div>

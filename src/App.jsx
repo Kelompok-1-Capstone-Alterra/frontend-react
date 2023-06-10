@@ -28,6 +28,7 @@ import DetailWeatherPage from "./pages/DetailWeatherPage";
 import UpdateWeatherPage from "./pages/UpdateWeatherPage";
 import WeatherManagementPage from "./pages/WeatherManagementPage";
 import OverviewPage from "./pages/OverviewPage";
+import HelpAndSupport from "./pages/HelpAndSupportPage";
 import Cookies from "js-cookie";
 
 function App() {
@@ -53,6 +54,10 @@ function App() {
         {
           path: "/admin",
           element: <OverviewPage />,
+        },
+        {
+          path: "/admin/helpsupport",
+          element: <HelpAndSupport />,
         },
         {
           path: "/admin/plants",

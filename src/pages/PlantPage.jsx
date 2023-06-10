@@ -1,6 +1,5 @@
 import { useState } from "react";
 import useSWR from "swr";
-import axios from "axios";
 import Table from "../components/Table";
 import { Link } from "react-router-dom";
 import {
@@ -10,6 +9,7 @@ import {
   Edit20Regular,
   Filter20Filled,
 } from "@fluentui/react-icons";
+import Cookies from "js-cookie";
 
 import MainContainer from "../components/layouts/MainContainer";
 import PaginationButton from "../components/PaginationButton";
@@ -18,40 +18,76 @@ import Button from "../components/Button";
 import TextField from "../components/TextField";
 import PlantSearchEmpty from "../assets/PlantSearchEmpty.png";
 import EmptyPlant from "../assets/EmptyPlant.png";
+import useDebounce from "../hooks/useDebounce";
+import fetcher from "../utils/fetcher";
+import usePlant from "../hooks/usePlant";
 
-const RECIPE_PER_PAGE = 8;
-
-const url = "https://646df4e19c677e23218ab701.mockapi.io";
-
-const fetcher = (url) => axios.get(url).then((res) => res.data);
+const PLANT_PER_PAGE = 8;
+const DEBOUNCE_DELAY = 500;
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function PlantPage() {
-  const { data: plant, isLoading, mutate } = useSWR(`${url}/plant`, fetcher);
-  const [modalPlantId, setModalPlanttId] = useState(null);
-  const [alertOpen, setAlertOpen] = useState(false);
-
   const [filterState, setFilterState] = useState({
     isSort: false,
     currentPage: 1,
     search: "",
   });
+  const debouncedKeyword = useDebounce(filterState.keyword, DEBOUNCE_DELAY);
+  const { data, isLoading, mutate } = useSWR(
+    debouncedKeyword
+      ? `${BASE_URL}/auth/admins/plants/search?keyword=${debouncedKeyword}`
+      : `${BASE_URL}/auth/admins/plants`,
+    (url) => fetcher(url, Cookies.get("token"))
+  );
+  const [modalDelete, setModalDelete] = useState(false);
+  const [showModal, setShowModal] = useState({
+    show: false,
+    icon: "",
+    text: "",
+    title: "",
+  });
+  const { deletePlant } = usePlant();
 
-  const handleDelete = async () => {
-    setModalPlanttId(null);
-    const { status } = await axios.delete(`${url}/plants/${modalPlantId}`);
-    if (status === 200) {
-      setAlertOpen(true);
-      mutate();
+  console.log(modalDelete);
+
+  const handleDelete = async (id) => {
+    setModalDelete(false);
+    const response = await deletePlant(id);
+
+    if (filteredPlant.length === 1 && currentPage > 1) {
+      setFilterState((prev) => ({
+        ...prev,
+        currentPage: prev.currentPage - 1,
+      }));
     }
+
+    if (response.status !== 200) {
+      setShowModal({
+        show: true,
+        icon: "info",
+        text: "Data tanaman kamu gagal dihapus",
+        title: "Aksi Gagal",
+      });
+      return;
+    }
+
+    setShowModal({
+      show: true,
+      icon: "success",
+      text: "Data tanaman berhasil dihapus",
+      title: "Hapus Data Tanaman",
+    });
+    mutate();
   };
 
   const { currentPage, isSort, search } = filterState;
 
-  let filteredPlant = plant;
+  let totalPlant = data?.data?.length;
+  let filteredPlant = data?.data;
 
-  filteredPlant = filteredPlant?.filter((plant) =>
-    plant.name?.toLowerCase().includes(search.toLowerCase())
-  );
+  // filteredPlant = filteredPlant?.filter((plant) =>
+  //   plant.name?.toLowerCase().includes(search.toLowerCase())
+  // );
 
   filteredPlant = filteredPlant?.sort((a, b) => {
     if (isSort) {
@@ -61,11 +97,11 @@ export default function PlantPage() {
     }
   });
 
-  const totalPages = Math.ceil(filteredPlant?.length / RECIPE_PER_PAGE);
+  const totalPages = Math.ceil(filteredPlant?.length / PLANT_PER_PAGE);
 
   filteredPlant = filteredPlant?.slice(
-    (currentPage - 1) * RECIPE_PER_PAGE,
-    currentPage * RECIPE_PER_PAGE
+    (currentPage - 1) * PLANT_PER_PAGE,
+    currentPage * PLANT_PER_PAGE
   );
 
   const handlePageChange = (page) => {
@@ -105,8 +141,10 @@ export default function PlantPage() {
           <div className="ms-3 basis-[598px] shrink">
             <TextField
               id="searchInput"
+              type="search"
               variant="search"
               placeholder="Search"
+              className={"pe-2"}
               onChange={(e) => {
                 setFilterState({
                   ...filterState,
@@ -134,7 +172,7 @@ export default function PlantPage() {
         <p>Loading...</p>
       ) : (
         <>
-          {filteredPlant.length > 0 ? (
+          {totalPlant > 0 ? (
             <>
               <Table
                 headers={[
@@ -150,40 +188,47 @@ export default function PlantPage() {
                   "overflow-y-scroll mt-7 w-full overflow-x-hidden text-[#030712]"
                 }
               >
-                {filteredPlant?.map((d, index) => (
+                {filteredPlant?.map((plant, index) => (
                   <tr
                     key={index}
                     className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
                   >
                     <td className="flex justify-center">
                       <img
-                        src={`${d.pict}`}
-                        alt=""
+                        src={
+                          plant.Pictures.length > 0 &&
+                          `${BASE_URL}/pictures/${plant.Pictures[0]?.url}`
+                        }
+                        alt="Gambar Tanaman"
                         className="w-14 h-12"
                       />
                     </td>
-                    <td className="text-left ps-3">{d.name}</td>
-                    <td className="max-w-[25ch] text-left px-2">
-                      {d.desc.slice(0, 40)}
+                    <td className="text-left ps-3">
+                      {plant.Name} ({plant.Latin})
                     </td>
-                    <td>{`${d.watering} kali sehari`}</td>
-                    <td>{`${d.fertilizing} hari sekali`}</td>
+                    <td className="max-w-[25ch] text-left px-2">
+                      <div className=" line-clamp-2">
+                        {plant.Description.replace(/<(.|\n)*?>/g, "")}
+                      </div>
+                    </td>
+                    <td>{`${plant.Watering} kali sehari`}</td>
+                    <td>{`${plant.Fertilizing} hari sekali`}</td>
                     <td className="text-caption-sm text-[#49454F]">
-                      {`${d.min}`}&#8451; {`- ${d.max}`}&#8451;
+                      {`${plant.Min}`}&#8451; {`- ${plant.Max}`}&#8451;
                     </td>
                     <td>
                       <Link
                         id="viewIcon"
-                        to={`/admin/plants/${d.id}`}
+                        to={`/admin/plants/${plant.ID}`}
                       >
                         <Eye20Regular className="cursor-pointer me-3 hover:text-info" />
                       </Link>
                       <Delete20Regular
                         id="deleteIcon"
                         className="cursor-pointer me-3 hover:text-info"
-                        onClick={() => setModalPlanttId(d.id)}
+                        onClick={() => setModalDelete(plant.ID)}
                       />
-                      <Link to={`/admin/plants/update/${d.id}`}>
+                      <Link to={`/admin/plants/update/${plant.ID}`}>
                         <Edit20Regular
                           id="editIcon"
                           className="cursor-pointer hover:text-info"
@@ -236,20 +281,32 @@ export default function PlantPage() {
         cancelText={"Batal"}
         confirmText={"Hapus"}
         icon={"delete"}
-        isOpen={modalPlantId !== null}
-        text={"Yakin hapus tanaman ini?"}
-        title={"Hapus Tanaman"}
-        onCancel={() => setModalPlanttId(null)}
-        onConfirm={handleDelete}
+        isOpen={modalDelete ? true : false}
+        text={"Yakin ingin menghapus data tanaman ini?"}
+        title={"Konfirmasi Hapus Data Tanaman"}
+        onCancel={() => setModalDelete(false)}
+        onConfirm={() => handleDelete(modalDelete)}
       />
       <NotifModal
-        icon={"success"}
-        title={"Hapus Data Tanaman"}
-        text={"Data tanaman berhasil dihapus"}
-        onConfirm={() => setAlertOpen(false)}
-        isOpen={alertOpen}
-        confirmText={"Okay"}
+        title={showModal.title}
+        text={showModal.text}
+        icon={showModal.icon}
+        confirmText={"Tutup"}
+        isOpen={showModal.show}
+        onConfirm={() => {
+          setShowModal({
+            show: false,
+            icon: "",
+            text: "",
+            title: "",
+          });
+        }}
       />
+      <div
+        className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
+          showModal.show || modalDelete ? "block" : "hidden"
+        } cursor-pointer top-0 bottom-0 left-0 right-0`}
+      ></div>
     </MainContainer>
   );
 }

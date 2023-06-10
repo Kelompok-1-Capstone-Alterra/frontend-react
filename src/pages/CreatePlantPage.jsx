@@ -118,8 +118,6 @@ export default function CreatePlantPage() {
         },
       };
 
-      console.log(newData);
-
       const response = await createPlant(newData);
 
       if (response.status !== 200) throw new Error(response.data.message);

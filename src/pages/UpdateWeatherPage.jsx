@@ -109,7 +109,6 @@ const UpdateWeatherPage = () => {
     fetchWeatherData();
     fetchWeatherOptions();
   }, [weatherData]);
-  // images
 
   useEffect(() => {
     register("label", {

@@ -13,6 +13,11 @@ import FileInput from "../components/FileInput";
 import MySelect from "../components/MySelect";
 import { MODULES } from "../constants";
 import SecondaryContainer from "../components/layouts/SecondaryContainer";
+import Cookies from "js-cookie";
+import fetcher from "../utils/fetcher";
+import useWeather from "../hooks/useWeather";
+import useImage from "../hooks/useImage";
+import Loading from "../components/Loading";
 
 const UpdateWeatherPage = () => {
   const { id } = useParams();
@@ -28,57 +33,80 @@ const UpdateWeatherPage = () => {
   const navigate = useNavigate();
   const [editorFocus, setEditorFocus] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [isNotifModalOpen, setIsNotifModalOpen] = useState(false);
+  const [showModal, setShowModal] = useState({
+    show: false,
+    icon: "",
+    text: "",
+    title: "",
+  });
   const [formData, setFormData] = useState(null);
   const [weatherOptions, setWeatherOptions] = useState([]);
-  const url = `https://642cdf18bf8cbecdb4f8b260.mockapi.io/weathers/${id}`;
-  const { data: weatherData } = useSWR(url, async (url) => {
-    const response = await axios.get(url);
-    return response.data;
-  });
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const { uploadImage, isLoading: isUploading } = useImage();
+  const { updateWeather, isLoading: isSaving } = useWeather();
+  const { fetchWeather } = useWeather();
+  const url = `${
+    import.meta.env.VITE_API_BASE_URL
+  }/auth/admins/weathers/${id}/detail`;
+  const { data, isLoading } = useSWR(url, async (url) =>
+    fetcher(url, Cookies.get("token"))
+  );
+  const weatherData = data?.data;
 
-  useEffect(() => {
-    const fetchWeatherData = async () => {
-      try {
-        if (weatherData) {
-          setValue("judul", weatherData.judul);
-          setValue("label", {
-            label: weatherData.label,
-            value: weatherData.label,
-          });
-          setValue("deskripsi", weatherData.deskripsi);
-          setValue("gambar", weatherData.gambar);
-        }
-      } catch (error) {
-        console.error("Terjadi kesalahan:", error);
-      }
-    };
-
-    const fetchWeatherOptions = async () => {
-      try {
+  const fetchWeatherData = async () => {
+    try {
+      if (weatherData) {
+        setValue("judul", weatherData.weather_title);
+        setValue("label", {
+          label: weatherData.weather_label,
+          value: weatherData.weather_label,
+        });
+        setValue("deskripsi", weatherData.weather_description);
         const response = await axios.get(
-          "https://642cdf18bf8cbecdb4f8b260.mockapi.io/weathers"
+          `${import.meta.env.VITE_API_BASE_URL}/pictures/${
+            weatherData.weather_pictures[0]
+          }`,
+          {
+            responseType: "blob",
+          }
         );
+        const blob = new Blob([response.data], { type: response.data.type });
+        // Nama file bedasarkan label
+        const fileName = `${weatherData.weather_label}.png`;
 
-        const existingLabels = response.data.map((option) => option.label);
-
-        const options = [
-          { label: "Cerah", value: "Cerah" },
-          { label: "Hujan", value: "Hujan" },
-          { label: "Mendung", value: "Mendung" },
-          { label: "Berawan", value: "Berawan" },
-        ];
-        const newOptions = options.filter(
-          (option) =>
-            !existingLabels.includes(option.value) ||
-            option.value === weatherData?.label
-        );
-        setWeatherOptions(newOptions);
-      } catch (error) {
-        console.error("Terjadi kesalahan:", error);
+        const file = new File([blob], fileName, { type: response.data.type });
+        setValue("gambar", file);
+        setSelectedImageFile(blob);
       }
-    };
+    } catch (error) {
+      console.error("Terjadi kesalahan:", error);
+    }
+  };
 
+  const fetchWeatherOptions = async () => {
+    try {
+      const fetchWeatherLabel = await fetchWeather();
+      const existingLabels = fetchWeatherLabel.data.data.map(
+        (option) => option.weather_label
+      );
+
+      const options = [
+        { label: "Cerah", value: "Cerah" },
+        { label: "Hujan", value: "Hujan" },
+        { label: "Mendung", value: "Mendung" },
+        { label: "Berawan", value: "Berawan" },
+      ];
+      const newOptions = options.filter(
+        (option) =>
+          !existingLabels.includes(option.value) ||
+          option.value === weatherData?.weather_label
+      );
+      setWeatherOptions(newOptions);
+    } catch (error) {
+      console.error("Terjadi kesalahan:", error);
+    }
+  };
+  useEffect(() => {
     fetchWeatherData();
     fetchWeatherOptions();
   }, [weatherData]);
@@ -97,7 +125,6 @@ const UpdateWeatherPage = () => {
     });
   }, [register]);
 
-  // let gambar = watch("gambar");
   let content = watch("deskripsi");
   const onEditorStateChange = (editorState) => {
     setValue("deskripsi", editorState);
@@ -110,30 +137,56 @@ const UpdateWeatherPage = () => {
   };
 
   const handleConfirmModal = async () => {
-    try {
-      const requestData = {
-        judul: formData.judul,
-        label: formData.label.label,
-        // gambar: formData.gambar,
-        deskripsi: content,
-      };
-
-      await axios.put(url, requestData);
-      setIsNotifModalOpen(true);
-    } catch (error) {
-      console.error("Terjadi kesalahan:", error);
+    const formPicture = new FormData();
+    formPicture.append("pictures", selectedImageFile);
+    const upload = await uploadImage(formPicture);
+    if (upload.status !== 200) {
+      setShowModal({
+        show: true,
+        icon: "info",
+        text: "Informasi Cuaca gagal ditambahkan",
+        title: "Aksi Gagal",
+      });
+      return;
     }
 
-    setIsConfirmModalOpen(false);
+    //save the image url
+    const imageUrl = upload.data.urls[0];
+    // update
+    const saveEdit = await updateWeather(id, {
+      weather_title: formData.judul,
+      weather_label: formData.label.label,
+      weather_pictures: [
+        {
+          url: imageUrl,
+        },
+      ],
+      weather_description: content,
+    });
+
+    if (saveEdit.status !== 200) {
+      setShowModal({
+        show: true,
+        icon: "info",
+        text: "Informasi cuaca gagal di ubah",
+        title: "Ubah Informasi cuaca",
+      });
+      return;
+    }
+    setShowModal({
+      show: true,
+      icon: "success",
+      text: "Informasi cuaca berhasil di ubah",
+      title: "Ubah Informasi cuaca",
+    });
   };
 
   const handleCancelModal = () => {
     setIsConfirmModalOpen(false);
   };
-
-  const handleNotifModal = () => {
-    setIsNotifModalOpen(false);
-    navigate("/admin/weathers");
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    setSelectedImageFile(file);
   };
 
   return (
@@ -141,9 +194,9 @@ const UpdateWeatherPage = () => {
       <SecondaryContainer
         backTo="/admin/weathers"
         title="Edit Informasi cuaca"
-        className="pe-3"
-      >
+        className="pe-3">
         <div className="mx-8">
+          {isLoading && <Loading />}
           <form onSubmit={handleSubmit(onSubmit)}>
             <TextField
               label="Judul"
@@ -167,7 +220,7 @@ const UpdateWeatherPage = () => {
 
             <div className="flex justify-between mb-4 mt-3">
               <div>
-                <label className="text-body-sm font-semibold">
+                <label className="text-body-sm font-semibold" htmlFor="label">
                   Label Cuaca
                 </label>
                 <div className="mb-1"></div>
@@ -210,13 +263,11 @@ const UpdateWeatherPage = () => {
                     </span>
                   }
                   isError={errors.gambar}
+                  onChange={handleImageChange}
                 />
               </div>
             </div>
-            <label
-              htmlFor="deskripsi"
-              className="text-body-lg font-semibold"
-            >
+            <label htmlFor="deskripsi" className="text-body-lg font-semibold">
               Deskripsi
             </label>
             <div className="mb-6">
@@ -248,40 +299,49 @@ const UpdateWeatherPage = () => {
                 )}
               </div>
             </div>
-            <div
-              className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
-                isConfirmModalOpen || isNotifModalOpen ? "block" : "hidden"
-              } cursor-pointer top-0 bottom-0 left-0 right-0`}
-            >
-              <ConfirmModal
-                isOpen={isConfirmModalOpen}
-                text="Pastikan kembali informasi yang akan dikirim sudah sesuai"
-                title="Edit Informasi cuaca"
-                cancelText="Batal"
-                confirmText="Kirim"
-                onConfirm={handleConfirmModal}
-                onCancel={handleCancelModal}
-              />
-              <NotifModal
-                isOpen={isNotifModalOpen}
-                text="Informasi cuaca berhasil di ubah"
-                title="Ubah Informasi cuaca"
-                confirmText="Tutup"
-                icon="success"
-                onConfirm={handleNotifModal}
-              />
-            </div>
+            <ConfirmModal
+              isOpen={isConfirmModalOpen}
+              text="Pastikan kembali informasi yang akan dikirim sudah sesuai"
+              title="Edit Informasi cuaca"
+              cancelText="Batal"
+              confirmText="Kirim"
+              onConfirm={handleConfirmModal}
+              onCancel={handleCancelModal}
+              id="confirm-modal"
+            />
+            <NotifModal
+              isOpen={showModal.show}
+              title={showModal.title}
+              text={showModal.text}
+              icon={showModal.icon}
+              confirmText="Tutup"
+              onConfirm={() => {
+                setShowModal({
+                  show: false,
+                  icon: "",
+                  text: "",
+                  title: "",
+                });
+                navigate("/admin/weathers");
+              }}
+              id="notif-modal"
+            />
             <div className="flex justify-end gap-x-3.5 pt-5">
               <Button
                 type="submit"
                 size="md"
-              >
+                disabled={isUploading || isSaving}
+                id="btn-submit">
                 Kirim
               </Button>
             </div>
           </form>
         </div>
       </SecondaryContainer>
+      <div
+        className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
+          isConfirmModalOpen || showModal.show ? "block" : "hidden"
+        } cursor-pointer top-0 bottom-0 left-0 right-0`}></div>
     </>
   );
 };

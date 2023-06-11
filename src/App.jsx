@@ -171,22 +171,46 @@ function App() {
           path: "/admin/articles/update/:id",
           element: <UpdateArticlePage />,
           loader: async ({ params }) => {
-            const { data } = await axios.get(
-              `https://6428ef045a40b82da4c9fa2d.mockapi.io/api/articles/${params.id}`
-            );
-            if (data) return data;
-            return null;
+            try {
+              const {
+                data: { data },
+              } = await axios.get(
+                `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/${
+                  params.id
+                }/detail`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${Cookies.get("token")}`,
+                  },
+                }
+              );
+              return data;
+            } catch (error) {
+              return null;
+            }
           },
         },
         {
           path: "/admin/articles/:id",
           element: <DetailArticlePage />,
           loader: async ({ params }) => {
-            const { data } = await axios.get(
-              `https://6428ef045a40b82da4c9fa2d.mockapi.io/api/articles/${params.id}`
-            );
-            if (data) return data;
-            return null;
+            try {
+              const {
+                data: { data },
+              } = await axios.get(
+                `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/${
+                  params.id
+                }/detail`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${Cookies.get("token")}`,
+                  },
+                }
+              );
+              return data;
+            } catch (error) {
+              return null;
+            }
           },
         },
       ],

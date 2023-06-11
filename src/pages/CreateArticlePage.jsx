@@ -13,7 +13,7 @@ import SecondaryContainer from "../components/layouts/SecondaryContainer";
 import useImages from "../hooks/useImage";
 import useArticle from "../hooks/useArticle";
 
-export default function CreateArticlPage() {
+export default function CreateArticlePage() {
   const {
     register,
     handleSubmit,
@@ -102,7 +102,7 @@ export default function CreateArticlPage() {
     setShowModal({
       show: true,
       icon: "success",
-      text: "Artikel telah berhasil disimpan",
+      text: "Data artikel kamu berhasil ditambahkan",
       title: "Tambah Artikel",
     });
   };
@@ -114,6 +114,7 @@ export default function CreateArticlPage() {
   const handleImageDissmiss = () => {
     setSelectedImage(null);
     setSelectedImageFile(null);
+    setValue("article_image", null);
   };
 
   return (
@@ -127,7 +128,7 @@ export default function CreateArticlPage() {
         className="px-8"
       >
         {/* judul Artikel */}
-        <div className="mb-2.5">
+        <div className="mb-5">
           <TextField
             id="article-title"
             label="Judul Artikel"
@@ -149,7 +150,7 @@ export default function CreateArticlPage() {
           ></TextField>
         </div>
         {/* Input File */}
-        <div className="mb-7">
+        <div className="mb-5">
           <>
             <FileInput
               id="article-image"
@@ -194,15 +195,15 @@ export default function CreateArticlPage() {
                   Thumbnail
                 </label>
                 <div className="border-dashed border-2 border-gray-300 rounded-md p-4 ">
-                  <div className="relative flex">
-                    <img
-                      src={selectedImage}
-                      alt="Thumbnail"
-                      className="w-[80px] h-[48px] mt-[16px] mb-[16px] ml-[16px]"
-                    />
-                    <p className="pt-[28px] pb-[28px] pl-[16px]">
-                      {selectedImageFile.name}
-                    </p>
+                  <div className="relative flex items-center">
+                    <div className="h-[100px]">
+                      <img
+                        src={selectedImage}
+                        alt="Thumbnail"
+                        className="object-fill w-full h-full"
+                      />
+                    </div>
+                    <p className="ps-5">{selectedImageFile.name}</p>
                     <div className="flex justify-center items-center absolute right-0 h-full">
                       <DismissCircle24Filled
                         className="text-neutral-40 hover:text-neutral-60 cursor-pointer"
@@ -225,7 +226,7 @@ export default function CreateArticlPage() {
           )}
         </div>
         <div className="">
-          <p className="text-body-sm font-semibold lg:mb-1">Content</p>
+          <p className="text-body-sm font-semibold lg:mb-1">Konten</p>
           <ReactQuill
             theme="snow"
             id="article_description"
@@ -249,7 +250,7 @@ export default function CreateArticlPage() {
               className="text-error text-caption-lg"
               id="error-image-message"
             >
-              <Info12Regular className="-mt-0.5" /> Content tidak boleh kosong
+              <Info12Regular className="-mt-0.5" /> Konten tidak boleh kosong
             </p>
           )}
         </div>

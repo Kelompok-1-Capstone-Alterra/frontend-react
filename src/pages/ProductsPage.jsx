@@ -20,6 +20,7 @@ import { toRupiah } from "../utils/functions";
 import Cookies from "js-cookie";
 import useProduct from "../hooks/useProduct";
 import useDebounce from "../hooks/useDebounce";
+import Loading from "../components/Loading";
 
 const ITEMS_PER_PAGE = 4;
 const DEBOUNCE_DELAY = 500;
@@ -55,7 +56,7 @@ const RenderContent = ({
         </Link>
       </div>
       {isLoading ? (
-        <p>Loading...</p>
+        <Loading />
       ) : (
         <>
           {totalProducts > 0 ? (
@@ -258,7 +259,7 @@ export default function ProductsPage() {
     setConfirmModalId(null);
     const result = await deleteProduct(id);
 
-    if (filteredProducts.length === 1 && currentPage > 1) {
+    if (filteredProducts?.length === 1 && currentPage > 1) {
       setFilter((prev) => ({
         ...prev,
         currentPage: prev.currentPage - 1,

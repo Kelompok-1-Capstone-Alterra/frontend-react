@@ -4,7 +4,15 @@ import SecondaryContainer from "../components/layouts/SecondaryContainer";
 export default function DetailArticlePage() {
   const article = useLoaderData();
   console.log(article);
-
+  if (article === null) {
+    return <Navigate to="/admin/articles" />;
+  }
+  if (article)
+    return (
+      <div className="h-screen flex justify-center items-center px-24">
+        {JSON.stringify(article)}
+      </div>
+    );
   return (
     <>
       {article === null ? <Navigate to="/admin/articles" /> : null}

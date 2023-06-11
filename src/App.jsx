@@ -29,7 +29,6 @@ import UpdateWeatherPage from "./pages/UpdateWeatherPage";
 import WeatherManagementPage from "./pages/WeatherManagementPage";
 import OverviewPage from "./pages/OverviewPage";
 
-import Error400 from "./pages/errors/400";
 function App() {
   const router = createBrowserRouter([
     {

@@ -17,6 +17,8 @@ import useSWR from "swr";
 import useDebounce from "../hooks/useDebounce";
 import fetcher from "../utils/fetcher";
 import useArticle from "../hooks/useArticle";
+import EmptyArticle from "../assets/EmptyArticle.png";
+import Loading from "../components/Loading";
 
 const ITEMS_PER_PAGE = 8;
 const DEBOUNCE_DELAY = 500;
@@ -36,7 +38,7 @@ export default function ArticlePage() {
     debouncedKeyword
       ? `${
           import.meta.env.VITE_API_BASE_URL
-        }/auth/admins/articles/search?keyword=${debouncedKeyword}`
+        }/auth/admins/articles/search?title=${debouncedKeyword}`
       : `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles`,
     (url) => fetcher(url, Cookies.get("token"))
   );
@@ -76,6 +78,14 @@ export default function ArticlePage() {
 
   const handleDelete = async (id) => {
     setModalDelete(false);
+
+    if (filteredArticles?.length === 1 && currentPage > 1) {
+      setFilter((prev) => ({
+        ...prev,
+        currentPage: prev.currentPage - 1,
+      }));
+    }
+
     const del = await deleteArticle(id);
     if (del.status !== 200) {
       setShowModal({
@@ -141,14 +151,33 @@ export default function ArticlePage() {
       )}
 
       {/* Table */}
-
       <div className="w-full">
         {isArticlesLoading ? (
-          <p>Loading...</p>
+          <Loading />
         ) : (
           <>
-            {filteredArticles?.length <= 0 ? (
-              <p className="text-center">Tidak ada artikel</p>
+            {!articles && keyword !== "" ? (
+              <div className="flex mt-14 flex-col items-center justify-center">
+                <img
+                  src={EmptyArticle}
+                  alt="empty article"
+                  id="empty-article"
+                />
+                <p className="text-body-lg mt-2 text-[#6B7280]">
+                  Artikel yang kamu cari tidak tersedia
+                </p>
+              </div>
+            ) : !articles ? (
+              <div className="flex mt-14 flex-col items-center justify-center">
+                <img
+                  src={EmptyArticle}
+                  alt="empty article"
+                  id="empty-article"
+                />
+                <p className="text-body-lg mt-2 text-[#6B7280]">
+                  Belum ada artikel yang ditambahkan
+                </p>
+              </div>
             ) : (
               <div className="overflow-x-auto">
                 <Table
@@ -163,15 +192,17 @@ export default function ArticlePage() {
                       className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
                     >
                       <td className="flex justify-center">
-                        <img
-                          src={
-                            article.article_pictures[0].url
-                              ? `https://34.128.85.215:8080/pictures/${article.article_pictures[0].url}`
-                              : "http://via.placeholder.com/56x48"
-                          }
-                          className="w-[56px] h-[48px]"
-                          alt="Article avatar"
-                        />
+                        <div className="w-[56px] h-[48px]">
+                          <img
+                            src={
+                              article?.article_pictures?.length > 0
+                                ? `https://34.128.85.215:8080/pictures/${article.article_pictures[0]}`
+                                : "http://via.placeholder.com/56x48"
+                            }
+                            className="w-full h-full object-fill"
+                            alt="Article avatar"
+                          />
+                        </div>
                       </td>
                       <td className="text-caption-lg">
                         {article.article_title}
@@ -184,7 +215,7 @@ export default function ArticlePage() {
                       </td>
                       <td>
                         <div className="flex gap-3 justify-center">
-                          <Link to={`/admin/articles/${article.ID}`}>
+                          <Link to={`/admin/articles/${article.id}`}>
                             <Eye20Regular
                               className="cursor-pointer hover:text-info"
                               id="detail-article"
@@ -192,10 +223,10 @@ export default function ArticlePage() {
                           </Link>
                           <Delete20Regular
                             className="cursor-pointer hover:text-info"
-                            onClick={() => setModalDelete(article.ID)}
+                            onClick={() => setModalDelete(article.id)}
                             id="delete-article"
                           />
-                          <Link to={`/admin/articles/update/${article.ID}`}>
+                          <Link to={`/admin/articles/update/${article.id}`}>
                             <Edit20Regular
                               className="cursor-pointer hover:text-info"
                               id="update-article"
@@ -210,7 +241,7 @@ export default function ArticlePage() {
                   <PaginationButton
                     currentPage={currentPage}
                     handlePageChange={handlePageChange}
-                    totalPages={filteredArticles?.length > 0 ? totalPages : 1}
+                    totalPages={articles?.length > 0 ? totalPages : 1}
                   />
                 </div>
               </div>

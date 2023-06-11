@@ -18,6 +18,7 @@ import "react-quill/dist/quill.snow.css";
 import { Navigate } from "react-router-dom";
 import useImage from "../hooks/useImage";
 import useProduct from "../hooks/useProduct";
+import axios from "axios";
 
 const options = [
   { value: "Alat Tani", label: "Alat Tani" },
@@ -100,15 +101,11 @@ export default function UpdateProductPage() {
 
   const saveProduct = async (data) => {
     let newPictures = [];
-
-    //if user upload new pictures
     if (data.picture.length > 0) {
       const formData = new FormData();
       for (let i = 0; i < data.picture.length; i++) {
         formData.append("pictures", data.picture[i]);
       }
-
-      //upload the image
       const responseUpload = await uploadImage(formData);
       if (responseUpload.status !== 200) {
         setNotifModal({
@@ -119,17 +116,52 @@ export default function UpdateProductPage() {
         });
         return;
       }
-
-      //get the url
       const urlsArray = responseUpload?.data?.urls;
       newPictures = urlsArray.map((url) => {
         return { url };
       });
+    } else {
+      try {
+        const promises = product?.product_pictures.map(async (pic) => {
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_BASE_URL}/pictures/${pic}`,
+            {
+              responseType: "blob",
+            }
+          );
+          const blob = await response.data;
+          const file = new File([blob], pic, { type: blob.type });
+          const formData = new FormData();
+          formData.append("pictures", file);
+          const responseUpload = await uploadImage(formData);
+          if (responseUpload.status !== 200) {
+            setNotifModal({
+              show: true,
+              icon: "info",
+              title: "Aksi Gagal",
+              text: "Data produk kamu gagal diubah",
+            });
+            return;
+          }
+          return responseUpload?.data?.urls[0];
+        });
+        const results = await Promise.all(promises);
+        newPictures = results.map((result) => {
+          return { url: result };
+        });
+      } catch (err) {
+        setNotifModal({
+          show: true,
+          icon: "info",
+          title: "Aksi Gagal",
+          text: "Data produk kamu gagal diubah",
+        });
+        return;
+      }
     }
-
     //update the product
     const res = await updateProduct(product?.id, {
-      product_pictures: newPictures ? newPictures : product?.product_pictures,
+      product_pictures: newPictures,
       product_name: data.name,
       product_category: data.category.value,
       product_description: data.description,

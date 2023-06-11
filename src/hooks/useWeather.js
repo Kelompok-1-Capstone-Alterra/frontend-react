@@ -63,11 +63,31 @@ const useWeather = () => {
       setIsLoading(false);
     }
   };
+  const updateWeather = async (id,body) => {
+    try {
+      const res = await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/weathers/${id}`,
+        body,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
+      return res;
+    } catch (error) {
+      return error.response;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return {
     isLoading,
     deleteWeather,
     createWeather,
+    updateWeather,
     fetchWeather
   };
 };

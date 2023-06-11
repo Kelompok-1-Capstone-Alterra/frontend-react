@@ -98,8 +98,8 @@ const CreateWeatherPage = () => {
       setShowModal({
         show: true,
         icon: "info",
-        text: "Informasi Cuaca gagal ditambahkan",
-        title: "Aksi Gagal",
+        text: "Informasi cuaca gagal dit ambahkan",
+        title: "Informasi cuaca",
       });
       return;
     }
@@ -121,8 +121,8 @@ const CreateWeatherPage = () => {
       setShowModal({
         show: true,
         icon: "info",
-        text: "Data artikel kamu gagal ditambahkan",
-        title: "Aksi Gagal",
+        text: "Informasi cuaca gagal di tambahkan",
+        title: "Informasi cuaca",
       });
       return;
     }
@@ -143,9 +143,6 @@ const CreateWeatherPage = () => {
   const handleCancelModal = () => {
     setIsConfirmModalOpen(false);
   };
-  // const noOptions =
-  //   weatherOptions.filter((option) => !existingWeatherLabels.includes(option))
-  //     .length === 0;
 
   return (
     <>
@@ -179,7 +176,7 @@ const CreateWeatherPage = () => {
 
               <div className="flex justify-between mt-3">
                 <div>
-                  <label className="text-body-sm font-semibold">
+                  <label className="text-body-sm font-semibold" htmlFor="label">
                     Label Cuaca
                   </label>
                   <div className="mb-1"></div>
@@ -224,7 +221,7 @@ const CreateWeatherPage = () => {
                 </div>
 
                 <FileInput
-                  id="gambarWeather"
+                  id="gambar"
                   label={"Gambar Tanaman"}
                   value={gambar}
                   rules={{
@@ -291,6 +288,7 @@ const CreateWeatherPage = () => {
                 onConfirm={handleConfirmModal}
                 onCancel={handleCancelModal}
                 disabled={isUploading || isSaving}
+                id="confirm-modal"
               />
               <NotifModal
                 isOpen={showModal.show}
@@ -307,17 +305,15 @@ const CreateWeatherPage = () => {
                   });
                   navigate("/admin/weathers");
                 }}
+                id="notif-modal"
               />
-              <div
-                className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
-                  isConfirmModalOpen || showModal.show ? "block" : "hidden"
-                } cursor-pointer top-0 bottom-0 left-0 right-0`}></div>
               <div className="flex justify-end gap-x-3.5 pt-5">
                 <Button
                   type="button"
                   size="md"
                   onClick={handleSubmit(onSubmit)}
-                  disabled={isUploading || isSaving}>
+                  disabled={isUploading || isSaving}
+                  id="btn-submit">
                   Kirim
                 </Button>
               </div>
@@ -325,6 +321,10 @@ const CreateWeatherPage = () => {
           </div>
         </div>
       </SecondaryContainer>
+      <div
+        className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
+          isConfirmModalOpen || showModal.show ? "block" : "hidden"
+        } cursor-pointer top-0 bottom-0 left-0 right-0`}></div>
     </>
   );
 };

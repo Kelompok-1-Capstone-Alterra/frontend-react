@@ -15,6 +15,7 @@ import fetcher from "../utils/fetcher";
 import Cookies from "js-cookie";
 import useWeather from "../hooks/useWeather";
 import { NotifModal } from "../components/Modal";
+import Loading from "../components/Loading";
 
 const WeatherManagementPage = () => {
   const navigate = useNavigate();
@@ -45,16 +46,16 @@ const WeatherManagementPage = () => {
       setShowModal({
         show: true,
         icon: "info",
-        text: "Informasi cuaca kamu gagal dihapus",
-        title: "Aksi Gagal",
+        text: "Informasi cuaca gagal di hapus",
+        title: "Informasi cuaca",
       });
       return;
     }
     setShowModal({
       show: true,
       icon: "success",
-      text: "Informasi cuaca Berhasil Dihapus",
-      title: "Hapus Artikel",
+      text: "Informasi cuaca berhasil di hapus",
+      title: "Informasi cuaca ",
     });
     mutate();
   };
@@ -81,8 +82,8 @@ const WeatherManagementPage = () => {
             </Button>
           </div>
           <div>
-            {isLoading && <p>Loading...</p>}
-            {!isLoading && weathers && weathers.length <= 0 && (
+            {isLoading && <Loading />}
+            {weathers === null && (
               <>
                 <div className="flex flex-col justify-center items-center mt-16">
                   <div>
@@ -96,6 +97,7 @@ const WeatherManagementPage = () => {
             )}
             {weathers && weathers.length > 0 && (
               <Table
+                id="table"
                 headers={["No", "Gambar", "Label", "Judul", "Aksi"]}
                 className={"overflow-y-scroll mt-7 w-full overflow-x-hidden"}>
                 {weathers.map((item, index) => (
@@ -155,6 +157,7 @@ const WeatherManagementPage = () => {
             onConfirm={handleConfirmDelete}
             onCancel={handleCancelDelete}
             icon="info"
+            id="confirm-modal"
           />
           <NotifModal
             title={showModal.title}
@@ -170,6 +173,7 @@ const WeatherManagementPage = () => {
                 title: "",
               });
             }}
+            id="notif-modal"
           />
         </div>
       </MainContainer>

@@ -9,7 +9,12 @@ const useArticle = () => {
     setIsLoading(true);
     try {
       const response = await axios.delete(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/${id}`
+        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
       );
 
       return response;
@@ -40,10 +45,33 @@ const useArticle = () => {
     }
   };
 
+  const updateArticle = async (id, body) => {
+    setIsLoading(true);
+    try {
+      const res = await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/${id}`,
+        body,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
+
+      return res;
+    } catch (error) {
+      return error.response;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     isLoading,
     deleteArticle,
     createArticle,
+    updateArticle,
   };
 };
 

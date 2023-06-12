@@ -118,7 +118,7 @@ export default function Sidebar({ children }) {
             <li>
               <Link
                 className="px-8 py-4 hover:bg-primary-surface"
-                to={"/admin/helpsupport"}
+                to={"/admin/support"}
               >
                 <ChatHelp20Regular />
                 Masukan & Saran

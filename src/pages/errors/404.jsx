@@ -2,7 +2,7 @@ import gambar from "../../assets/405.png";
 import Button from "../../components/Button";
 import { Link } from "react-router-dom";
 
-export default function Error405({ to }) {
+export default function Error404({ to }) {
   return (
     <>
       <div className="justify-center flex mb-[32px]">

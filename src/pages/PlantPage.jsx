@@ -85,15 +85,11 @@ export default function PlantPage() {
   let totalPlant = data?.data?.length;
   let filteredPlant = data?.data;
 
-  // filteredPlant = filteredPlant?.filter((plant) =>
-  //   plant.name?.toLowerCase().includes(search.toLowerCase())
-  // );
-
   filteredPlant = filteredPlant?.sort((a, b) => {
     if (isSort) {
-      return a.name.localeCompare(b.name);
+      return a.Name.localeCompare(b.Name);
     } else {
-      return a.id - b.id;
+      return a.ID - b.ID;
     }
   });
 

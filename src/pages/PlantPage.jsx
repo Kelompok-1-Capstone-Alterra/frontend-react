@@ -32,7 +32,7 @@ export default function PlantPage() {
     currentPage: 1,
     search: "",
   });
-  const debouncedKeyword = useDebounce(filterState.keyword, DEBOUNCE_DELAY);
+  const debouncedKeyword = useDebounce(filterState.search, DEBOUNCE_DELAY);
   const { data, isLoading, mutate } = useSWR(
     debouncedKeyword
       ? `${BASE_URL}/auth/admins/plants/search?keyword=${debouncedKeyword}`

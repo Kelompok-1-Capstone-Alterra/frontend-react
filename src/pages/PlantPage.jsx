@@ -32,7 +32,7 @@ export default function PlantPage() {
     currentPage: 1,
     search: "",
   });
-  const debouncedKeyword = useDebounce(filterState.keyword, DEBOUNCE_DELAY);
+  const debouncedKeyword = useDebounce(filterState.search, DEBOUNCE_DELAY);
   const { data, isLoading, mutate } = useSWR(
     debouncedKeyword
       ? `${BASE_URL}/auth/admins/plants/search?keyword=${debouncedKeyword}`
@@ -85,15 +85,11 @@ export default function PlantPage() {
   let totalPlant = data?.data?.length;
   let filteredPlant = data?.data;
 
-  // filteredPlant = filteredPlant?.filter((plant) =>
-  //   plant.name?.toLowerCase().includes(search.toLowerCase())
-  // );
-
   filteredPlant = filteredPlant?.sort((a, b) => {
     if (isSort) {
-      return a.name.localeCompare(b.name);
+      return a.Name.localeCompare(b.Name);
     } else {
-      return a.id - b.id;
+      return a.ID - b.ID;
     }
   });
 

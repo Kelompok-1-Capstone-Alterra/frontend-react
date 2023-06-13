@@ -122,7 +122,7 @@ const CreateWeatherPage = () => {
         show: true,
         icon: "info",
         text: "Informasi cuaca gagal di tambahkan",
-        title: "Informasi cuaca",
+        title: "Tambah Informasi cuaca",
       });
       return;
     }
@@ -131,7 +131,7 @@ const CreateWeatherPage = () => {
       show: true,
       icon: "success",
       text: "Informasi cuaca berhasil di tambahkan",
-      title: "Informasi cuaca",
+      title: "Tambah Informasi cuaca",
     });
     reset();
     const updatedLabels = [...existingWeatherLabels, formData.label.label];
@@ -281,10 +281,11 @@ const CreateWeatherPage = () => {
               </div>
               <ConfirmModal
                 isOpen={isConfirmModalOpen}
-                text="Pastikan kembali informasi yang akan dikirim sudah sesuai"
-                title="Upload Informasi Cuaca"
+                icon="info"
+                text="Kamu yakin ingin menyimpan data cuaca ini?"
+                title="Informasi Simpan Data Cuaca"
                 cancelText="Batal"
-                confirmText="Kirim"
+                confirmText="Simpan"
                 onConfirm={handleConfirmModal}
                 onCancel={handleCancelModal}
                 disabled={isUploading || isSaving}
@@ -314,7 +315,7 @@ const CreateWeatherPage = () => {
                   onClick={handleSubmit(onSubmit)}
                   disabled={isUploading || isSaving}
                   id="btn-submit">
-                  Kirim
+                  Simpan
                 </Button>
               </div>
             </form>

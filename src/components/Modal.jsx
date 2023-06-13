@@ -47,7 +47,9 @@ const ConfirmModal = ({
         <ModalContainer>
           <div className="flex flex-col items-center justify-center">
             {SelectedIcon && <SelectedIcon className="mb-3 w-10 h-10" />}
-            <h5 className="font-bold text-h-5 text-neutral-80 mb-2">{title}</h5>
+            <h5 className="font-bold text-h-5 text-neutral-80 mb-2 text-center">
+              {title}
+            </h5>
             <p className="font-normal text-center text-body-lg text-[#637381] mb-6">
               {text}
             </p>
@@ -55,15 +57,13 @@ const ConfirmModal = ({
               <Button
                 variant="outline-green"
                 className="rounded-full w-[190px] h-[44px]"
-                onClick={handleCancel}
-              >
+                onClick={handleCancel}>
                 {cancelText ? cancelText : "Label"}
               </Button>
               <Button
                 variant="green"
                 className="rounded-full w-[190px] h-[44px]"
-                onClick={handleConfirm}
-              >
+                onClick={handleConfirm}>
                 {confirmText ? confirmText : "Label"}
               </Button>
             </div>
@@ -101,8 +101,7 @@ const NotifModal = ({ isOpen, text, title, confirmText, icon, onConfirm }) => {
               <Button
                 variant="green"
                 className="rounded-full w-[190px] h-[44px]"
-                onClick={handleConfirm}
-              >
+                onClick={handleConfirm}>
                 {confirmText ? confirmText : "Label"}
               </Button>
             </div>

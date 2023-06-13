@@ -300,11 +300,12 @@ const UpdateWeatherPage = () => {
               </div>
             </div>
             <ConfirmModal
+              icon="info"
               isOpen={isConfirmModalOpen}
-              text="Pastikan kembali informasi yang akan dikirim sudah sesuai"
-              title="Edit Informasi cuaca"
+              text="Kamu yakin ingin mengubah data cuaca ini?"
+              title="Informasi Ubah Data Cuaca"
               cancelText="Batal"
-              confirmText="Kirim"
+              confirmText="Ubah"
               onConfirm={handleConfirmModal}
               onCancel={handleCancelModal}
               id="confirm-modal"
@@ -332,7 +333,7 @@ const UpdateWeatherPage = () => {
                 size="md"
                 disabled={isUploading || isSaving}
                 id="btn-submit">
-                Kirim
+                Simpan
               </Button>
             </div>
           </form>

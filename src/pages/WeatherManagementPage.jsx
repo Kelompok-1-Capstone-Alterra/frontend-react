@@ -150,13 +150,13 @@ const WeatherManagementPage = () => {
           } cursor-pointer top-0 bottom-0 left-0 right-0`}>
           <ConfirmModal
             isOpen={showConfirmModal}
-            title="Hapus Informasi cuaca"
-            text="Yakin ingin menghapus informasi cuaca ini ?"
+            title="Konfirmasi Hapus Data Informasi Cuaca"
+            text="Yakin ingin menghapus data informasi cuaca ini ?"
             cancelText="Tidak"
             confirmText="Ya"
             onConfirm={handleConfirmDelete}
             onCancel={handleCancelDelete}
-            icon="info"
+            icon="delete"
             id="confirm-modal"
           />
           <NotifModal

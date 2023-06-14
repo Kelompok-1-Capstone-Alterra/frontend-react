@@ -18,6 +18,7 @@ import useDebounce from "../hooks/useDebounce";
 import fetcher from "../utils/fetcher";
 import useArticle from "../hooks/useArticle";
 import EmptyArticle from "../assets/EmptyArticle.png";
+import EmptySearch from "../assets/EmptyArticleSearch.png";
 import Loading from "../components/Loading";
 
 const ITEMS_PER_PAGE = 8;
@@ -99,8 +100,8 @@ export default function ArticlePage() {
     setShowModal({
       show: true,
       icon: "success",
-      text: "Artikel Berhasil Dihapus",
-      title: "Hapus Artikel",
+      text: "Data artikel berhasil dihapus",
+      title: "Hapus Data Artikel",
     });
     mutate();
   };
@@ -136,20 +137,6 @@ export default function ArticlePage() {
         </Link>
       </div>
 
-      {/* Modal */}
-      {modalDelete && (
-        <ConfirmModal
-          icon={"info"}
-          title={"Hapus Artikel"}
-          text={"Apakah Anda yakin ingin menghapus artikel ini?"}
-          cancelText={"Kembali"}
-          confirmText={"Hapus"}
-          onConfirm={() => handleDelete(modalDelete)}
-          onCancel={() => setModalDelete(null)}
-          isOpen={modalDelete ? true : false}
-        />
-      )}
-
       {/* Table */}
       <div className="w-full">
         {isArticlesLoading ? (
@@ -159,12 +146,12 @@ export default function ArticlePage() {
             {!articles && keyword !== "" ? (
               <div className="flex mt-14 flex-col items-center justify-center">
                 <img
-                  src={EmptyArticle}
+                  src={EmptySearch}
                   alt="empty article"
                   id="empty-article"
                 />
                 <p className="text-body-lg mt-2 text-[#6B7280]">
-                  Artikel yang kamu cari tidak tersedia
+                  Artikel yang kamu cari tidak ada
                 </p>
               </div>
             ) : !articles ? (
@@ -175,13 +162,19 @@ export default function ArticlePage() {
                   id="empty-article"
                 />
                 <p className="text-body-lg mt-2 text-[#6B7280]">
-                  Belum ada artikel yang ditambahkan
+                  Kamu belum menambahkan data artikel
                 </p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <Table
-                  headers={["Gambar", "Judul", "Dilihat", "Disukai", "Aksi"]}
+                  headers={[
+                    "Gambar",
+                    "Judul Artikel",
+                    "Dilihat",
+                    "Disukai",
+                    "Aksi",
+                  ]}
                   className={
                     "overflow-y-scroll mt-7 w-full overflow-x-hidden text-[#030712]"
                   }
@@ -208,10 +201,14 @@ export default function ArticlePage() {
                         {article.article_title}
                       </td>
                       <td className="text-caption-lg">
-                        {article.article_view}
+                        {article.article_view > 0
+                          ? `${article.article_view} kali`
+                          : 0}
                       </td>
                       <td className="text-caption-lg">
-                        {article.article_like}
+                        {article.article_like > 0
+                          ? `${article.article_like} orang`
+                          : 0}
                       </td>
                       <td>
                         <div className="flex gap-3 justify-center">
@@ -249,6 +246,18 @@ export default function ArticlePage() {
           </>
         )}
       </div>
+
+      {/* Modal */}
+      <ConfirmModal
+        icon={"delete"}
+        title={"Konfirmasi Hapus Data Artikel"}
+        text={"Yakin ingin menghapus data artikel ini?"}
+        cancelText={"Tidak"}
+        confirmText={"Ya"}
+        onConfirm={() => handleDelete(modalDelete)}
+        onCancel={() => setModalDelete(null)}
+        isOpen={modalDelete ? true : false}
+      />
       <NotifModal
         title={showModal.title}
         text={showModal.text}

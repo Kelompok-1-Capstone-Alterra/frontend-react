@@ -170,48 +170,10 @@ function App() {
         {
           path: "/admin/articles/update/:id",
           element: <UpdateArticlePage />,
-          loader: async ({ params }) => {
-            try {
-              const {
-                data: { data },
-              } = await axios.get(
-                `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/${
-                  params.id
-                }/detail`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${Cookies.get("token")}`,
-                  },
-                }
-              );
-              return data;
-            } catch (error) {
-              return null;
-            }
-          },
         },
         {
           path: "/admin/articles/:id",
           element: <DetailArticlePage />,
-          loader: async ({ params }) => {
-            try {
-              const {
-                data: { data },
-              } = await axios.get(
-                `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/${
-                  params.id
-                }/detail`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${Cookies.get("token")}`,
-                  },
-                }
-              );
-              return data;
-            } catch (error) {
-              return null;
-            }
-          },
         },
       ],
     },

@@ -19,6 +19,7 @@ import fetcher from "../utils/fetcher";
 import useArticle from "../hooks/useArticle";
 import EmptyArticle from "../assets/EmptyArticle.png";
 import EmptySearch from "../assets/EmptyArticleSearch.png";
+import ImageOverlay from "../components/ImageOverlay";
 import Loading from "../components/Loading";
 
 const ITEMS_PER_PAGE = 8;
@@ -51,6 +52,10 @@ export default function ArticlePage() {
   });
   const [modalDelete, setModalDelete] = useState(false);
   const { deleteArticle } = useArticle();
+  const [imageOverlay, setImageOverlay] = useState({
+    isOpen: false,
+    image: null,
+  });
 
   const handleInputChange = (event) => {
     const newKeyword = event.target.value;
@@ -192,8 +197,14 @@ export default function ArticlePage() {
                                 ? `https://34.128.85.215:8080/pictures/${article.article_pictures[0]}`
                                 : "http://via.placeholder.com/56x48"
                             }
-                            className="w-full h-full object-fill"
+                            className="w-full h-full object-fill cursor-pointer"
                             alt="Article avatar"
+                            onClick={() =>
+                              setImageOverlay({
+                                isOpen: true,
+                                image: `https://34.128.85.215:8080/pictures/${article.article_pictures[0]}`,
+                              })
+                            }
                           />
                         </div>
                       </td>
@@ -248,6 +259,11 @@ export default function ArticlePage() {
       </div>
 
       {/* Modal */}
+      <ImageOverlay
+        image={imageOverlay.image}
+        isOpen={imageOverlay.isOpen}
+        onClose={() => setImageOverlay({ isOpen: false, image: null })}
+      />
       <ConfirmModal
         icon={"delete"}
         title={"Konfirmasi Hapus Data Artikel"}

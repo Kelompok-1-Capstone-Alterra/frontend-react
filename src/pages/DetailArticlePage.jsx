@@ -1,46 +1,55 @@
-import { useLoaderData, Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import SecondaryContainer from "../components/layouts/SecondaryContainer";
+import useSWR from "swr";
+import fetcher from "../utils/fetcher";
+import Loading from "../components/Loading";
+import Cookies from "js-cookie";
 
 export default function DetailArticlePage() {
-  const article = useLoaderData();
-  console.log(article);
+  const { id } = useParams();
+
+  const { data, isLoading, error } = useSWR(
+    `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/${id}/detail`,
+    (url) => fetcher(url, Cookies.get("token"))
+  );
+
+  const article = data?.data;
+
+  if (isLoading)
+    return (
+      <div className="h-screen w-full flex justify-center items-center">
+        <Loading />
+      </div>
+    );
+
+  if (error) return <Navigate to="/admin/articles" />;
 
   return (
     <>
-      {article === null ? <Navigate to="/admin/articles" /> : null}
       <SecondaryContainer
         backTo="/admin/articles"
-        title="Tambah Artikel"
+        title="Data Artikel"
         className={"pe-3"}
       >
         <div className="ps-10">
-          <div className="mb-[8px]">
-            <label className="flex text-body-lg font-bold mb-3">
-              Judul Artikel
-            </label>
-            <div className="w-[1037px]">{article.article_title}</div>
-          </div>
-          <div className="pb-4">
-            <label className="flex text-body-lg font-bold mb-3">
-              Deskripsi
-            </label>
-            <div
-              className="styled-content"
-              dangerouslySetInnerHTML={{
-                __html: article.article_description,
-              }}
-            ></div>
-          </div>
-          <div className="pb-4">
-            <label className="flex text-body-lg font-bold mb-3">
-              Gambar Tanaman
-            </label>
+          <h6 className="text-[#030712] text-h-6 font-bold">
+            {article?.article_title}
+          </h6>
+          <div className="my-5">
             <img
-              src={article.image}
-              alt=""
-              className="w-[153px] h-[87px]"
+              src={`${import.meta.env.VITE_API_BASE_URL}/pictures/${
+                article?.article_pictures[0]
+              }`}
+              alt="gambar artikel"
+              className="w-[302px] h-[184px]"
             />
           </div>
+          <div
+            className="styled-content"
+            dangerouslySetInnerHTML={{
+              __html: article?.article_description,
+            }}
+          ></div>
         </div>
       </SecondaryContainer>
     </>

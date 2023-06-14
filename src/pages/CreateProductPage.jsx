@@ -7,11 +7,13 @@ import TextField from "../components/TextField";
 import MySelect from "../components/MySelect";
 import TextFieldGroup from "../components/TextFieldGroup";
 import { useForm, Controller } from "react-hook-form";
-import axios from "axios";
 import Button from "../components/Button";
 import ReactQuill from "react-quill";
 import { MODULES } from "../constants";
 import "react-quill/dist/quill.snow.css";
+import useImage from "../hooks/useImage";
+import useProduct from "../hooks/useProduct";
+import Cookies from "js-cookie";
 
 export default function CreateProductPage() {
   const {
@@ -25,6 +27,9 @@ export default function CreateProductPage() {
     control,
     formState: { errors },
   } = useForm();
+
+  const { uploadImage, isLoading: loadingImage } = useImage();
+  const { createProduct, isLoading: loadingProduct } = useProduct();
 
   const [editorFocus, setEditorFocus] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -53,35 +58,69 @@ export default function CreateProductPage() {
 
   let editorContent = watch("description");
 
-  const saveProduct = async (data) => {
-    const response = await axios.post(
-      "https://6428ef045a40b82da4c9fa2d.mockapi.io/api/products",
-      {
-        ...data,
-        category: data.category.value,
-        status: data.status === "etalase" ? true : false,
-      }
-    );
-
-    console.log(data.status);
-
-    if (response.status === 201) {
-      setNotifModal({
-        show: true,
-        icon: "success",
-        text: `Produk kamu berhasil ditambahkan ke ${
-          data.status === "etalase" ? "etalase" : "arsip"
-        }`,
-        title: "Simpan Produk",
-      });
-    } else {
+  const saveProduct = async (product) => {
+    //upload the image
+    const formData = new FormData();
+    for (let i = 0; i < product.picture.length; i++) {
+      formData.append("pictures", product.picture[i]);
+    }
+    const responseUpload = await uploadImage(formData);
+    if (responseUpload.status !== 200) {
       setNotifModal({
         show: true,
         icon: "info",
-        text: "Simpan Produk",
-        title: "Produk Gagal Disimpan",
+        text: "Data produk kamu gagal ditambahkan",
+        title: "Aksi Gagal",
       });
+      return;
     }
+
+    //get the url
+    const urlsArray = responseUpload?.data?.urls;
+    const product_pictures = urlsArray.map((url) => {
+      return { url };
+    });
+
+    //create the product
+    const res = await createProduct(
+      {
+        product_pictures,
+        product_name: product.name,
+        product_category: product.category.value,
+        product_description: product.description,
+        product_price: Number(product.price),
+        product_status: Boolean(product.status === "etalase"),
+        product_brand: product.brand,
+        product_condition: product.condition,
+        product_unit: Number(product.unit),
+        product_weight: Number(product.weight),
+        product_form: product.form,
+        product_seller_name: product.sellerName,
+        product_seller_phone: product.sellerPhone,
+        product_seen: 0,
+        admin_id: 1,
+      },
+      Cookies.get("token")
+    );
+
+    if (res.status !== 200) {
+      setNotifModal({
+        show: true,
+        icon: "info",
+        text: "Data produk kamu gagal ditambahkan",
+        title: "Aksi Gagal",
+      });
+      return;
+    }
+
+    setNotifModal({
+      show: true,
+      icon: "success",
+      text: `Data produk kamu berhasil ditambahkan ke ${
+        product.status === "etalase" ? "etalase" : "arsip"
+      }`,
+      title: "Tambah Produk",
+    });
   };
 
   const onSubmit = () => {
@@ -348,10 +387,6 @@ export default function CreateProductPage() {
                         value: true,
                         message: "Harga tidak boleh kosong",
                       },
-                      min: {
-                        value: 1000,
-                        message: "Harga tidak boleh kurang dari Rp.1000",
-                      },
                     }),
                   }}
                   leftIndicator={"Rp"}
@@ -376,12 +411,7 @@ export default function CreateProductPage() {
                   id="product-content"
                   isError={errors.unit}
                   register={{
-                    ...register("unit", {
-                      min: {
-                        value: 1,
-                        message: "Isi tidak boleh kurang dari 1",
-                      },
-                    }),
+                    ...register("unit"),
                   }}
                   topOption={"Optional"}
                   message={
@@ -400,6 +430,7 @@ export default function CreateProductPage() {
                   label={"Merek"}
                   placeholder="Masukkan merek"
                   name="brand"
+                  autoComplete="off"
                   type="text"
                   id="product-brand"
                   isError={errors.brand}
@@ -437,10 +468,6 @@ export default function CreateProductPage() {
                         value: true,
                         message: "Berat tidak boleh kosong",
                       },
-                      min: {
-                        value: 1,
-                        message: "Berat tidak boleh kurang dari 1",
-                      },
                     }),
                   }}
                   message={
@@ -459,6 +486,7 @@ export default function CreateProductPage() {
                   label={"Kondisi"}
                   placeholder="Masukkan kondisi"
                   name="condition"
+                  autoComplete="off"
                   id="product-condition"
                   isError={errors.condition}
                   register={{
@@ -484,6 +512,7 @@ export default function CreateProductPage() {
                 <TextField
                   label={"Wujud"}
                   placeholder="Masukkan wujud"
+                  autoComplete="off"
                   name="form"
                   id="product-form"
                   topOption={"Optional"}
@@ -497,22 +526,19 @@ export default function CreateProductPage() {
           <div className="lg:mt-8 border w-full border-neutral-40 rounded-md">
             <div className="p-7">
               <h6 className="text-h-6 font-bold">Informasi Penjualan</h6>
-              <div className="flex gap-16 mt-5">
+              <div className="grid grid-cols-2 gap-x-16 mt-5">
                 <TextField
                   label={"Nama Seller"}
                   placeholder="Masukkan nama"
                   name="sellerName"
                   id="seller-name"
+                  autoComplete="off"
                   isError={errors.sellerName}
                   register={{
                     ...register("sellerName", {
                       required: {
                         value: true,
                         message: "Nama seller tidak boleh kosong",
-                      },
-                      minLength: {
-                        value: 4,
-                        message: "Minimal 4 karakter",
                       },
                     }),
                   }}
@@ -532,6 +558,8 @@ export default function CreateProductPage() {
                   label={"Nomor Whatsapp"}
                   placeholder="Masukkan nomor"
                   name="sellerPhone"
+                  type="text"
+                  autoComplete="off"
                   id="seller-phone-number"
                   isError={errors.sellerPhone}
                   register={{
@@ -539,6 +567,17 @@ export default function CreateProductPage() {
                       required: {
                         value: true,
                         message: "Nomor tidak boleh kosong",
+                      },
+                      onChange: (e) => {
+                        //value must be number
+                        const value = e.target.value;
+                        if (isNaN(value)) {
+                          setValue("sellerPhone", "");
+                        }
+                        //if 0 in first index, replace with 62
+                        if (value[0] === "0") {
+                          setValue("sellerPhone", "62");
+                        }
                       },
                     }),
                   }}
@@ -562,6 +601,7 @@ export default function CreateProductPage() {
               className={"rounded-full"}
               id="submit-button"
               type="submit"
+              disabled={loadingImage || loadingProduct}
               size="md"
             >
               Simpan
@@ -569,8 +609,8 @@ export default function CreateProductPage() {
           </div>
           <ConfirmModal
             cancelText={"Kembali"}
-            title={"Simpan Produk"}
-            text={"Apakah Anda yakin ingin menyimpan produk ini?"}
+            title={"Konfirmasi Simpan Produk"}
+            text={"Kamu yakin ingin menyimpan produk ini?"}
             confirmText={"Simpan"}
             icon={"info"}
             isOpen={isConfirmModalOpen}

@@ -1,37 +1,40 @@
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import fetcher from "../utils/fetcher";
+import Cookies from "js-cookie";
 import useSWR from "swr";
 import SecondaryContainer from "../components/layouts/SecondaryContainer";
 
 const DetailWeatherPage = () => {
   const { id } = useParams();
-  const url = `https://642cdf18bf8cbecdb4f8b260.mockapi.io/weathers/${id}`;
-  const fetcher = (url) => axios.get(url).then((res) => res.data);
-  const { data: weatherData, error } = useSWR(url, fetcher);
+  const url = `${
+    import.meta.env.VITE_API_BASE_URL
+  }/auth/admins/weathers/${id}/detail`;
+  const { data, error } = useSWR(url, async (url) =>
+    fetcher(url, Cookies.get("token"))
+  );
+  const weathers = data?.data;
 
   if (error) {
     return console.log(error);
   }
 
-  if (!weatherData) {
+  if (!weathers) {
     return null;
   }
-
-  const { judul, deskripsi } = weatherData;
 
   return (
     <>
       <SecondaryContainer
         backTo="/admin/weathers"
         title="Preview Informasi Cuaca"
-        className="pe-3"
-      >
-        <div className="ps-10">
-          <p className="text-h-5 font-bold mb-5">{judul}</p>
+        className="pe-3">
+        <div className="px-10 mb-[8px]">
+          <p className="text-h-5 font-bold mb-5">{weathers.weather_title}</p>
           <div
             className="styled-content"
-            dangerouslySetInnerHTML={{ __html: deskripsi }}
-          ></div>
+            dangerouslySetInnerHTML={{
+              __html: weathers.weather_description,
+            }}></div>
         </div>
       </SecondaryContainer>
     </>

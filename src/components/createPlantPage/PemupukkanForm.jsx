@@ -24,24 +24,26 @@ export default function PemupukkanForm({ formId, onSubmit }) {
     formState: { errors },
   } = useForm({ defaultValues: addPlantData });
 
+  console.log(errors);
+
   useEffect(() => {
-    register("fertilizing.desc", {
+    register("fertilizing_info.fertilizing_description", {
       required: "Wajib diisi",
       validate: (value) => value !== "<p><br></p>",
     });
   }, [register]);
 
   const onDescStateChange = (state) => {
-    setValue("fertilizing.desc", state);
-    trigger("fertilizing.desc");
+    setValue("fertilizing_info.fertilizing_description", state);
+    trigger("fertilizing_info.fertilizing_description");
   };
 
-  let descContent = watch("fertilizing.desc");
+  let descContent = watch("fertilizing_info.fertilizing_description");
 
   return (
     <form
       id={formId}
-      onSubmit={handleSubmit((data) => onSubmit(data, "fertilizing"))}
+      onSubmit={handleSubmit(onSubmit)}
     >
       <div className="flex flex-col gap-10">
         <div>
@@ -55,7 +57,7 @@ export default function PemupukkanForm({ formId, onSubmit }) {
             render={({ field }) => (
               <MySelect
                 id="fertilizationAmountSelect"
-                errors={errors.fertilizing?.limit}
+                errors={errors.fertilizing_info?.fertilizing_limit}
                 field={field}
                 autoFocus
                 options={[
@@ -68,17 +70,17 @@ export default function PemupukkanForm({ formId, onSubmit }) {
                 className="max-w-[421px] mt-1"
               />
             )}
-            name="fertilizing.limit"
+            name="fertilizing_info.fertilizing_limit"
             control={control}
             defaultValue=""
             rules={{
               required: "Data pemupukkan tidak boleh kosong",
             }}
           />
-          {errors.fertilizing?.limit && (
+          {errors.fertilizing_info?.fertilizing_limit && (
             <p className="text-error text-caption-lg mt-1">
               <Info12Regular className="-mt-0.5" />{" "}
-              {errors.fertilizing?.limit?.message}
+              {errors.fertilizing_info?.fertilizing_limit?.message}
             </p>
           )}
         </div>
@@ -93,7 +95,7 @@ export default function PemupukkanForm({ formId, onSubmit }) {
             render={({ field }) => (
               <MySelect
                 id="fertilizationTimeSelect"
-                errors={errors.fertilizing?.period}
+                errors={errors.fertilizing_info?.fertilizing_period}
                 field={field}
                 options={[
                   { value: 10, label: "10 Hari Sekali" },
@@ -105,20 +107,20 @@ export default function PemupukkanForm({ formId, onSubmit }) {
                 className="max-w-[421px] mt-1"
               />
             )}
-            name="fertilizing.period"
+            name="fertilizing_info.fertilizing_period"
             control={control}
             defaultValue=""
             rules={{
               required: "Waktu pemupukkan tidak boleh kosong",
             }}
           />
-          {errors.fertilizing?.period && (
+          {errors.fertilizing_info?.fertilizing_period && (
             <p
               className="text-error text-caption-lg mt-1"
               id="error-image-message"
             >
               <Info12Regular className="-mt-0.5" />{" "}
-              {errors.fertilizing?.period?.message}
+              {errors.fertilizing_info?.fertilizing_period?.message}
             </p>
           )}
         </div>
@@ -137,8 +139,14 @@ export default function PemupukkanForm({ formId, onSubmit }) {
             onChange={onDescStateChange}
             modules={MODULES}
             className={`h-[306px] mt-1 ${
-              editorFocus && !errors.fertilizing?.desc ? "ql-focus" : null
-            } ${errors.fertilizing?.desc ? "ql-error" : null}`}
+              editorFocus && !errors.fertilizing_info?.fertilizing_description
+                ? "ql-focus"
+                : null
+            } ${
+              errors.fertilizing_info?.fertilizing_description
+                ? "ql-error"
+                : null
+            }`}
             onFocus={() => {
               setEditorFocus(true);
             }}
@@ -147,7 +155,7 @@ export default function PemupukkanForm({ formId, onSubmit }) {
             }}
           />
           <div className="mt-12"></div>
-          {errors.fertilizing?.desc && (
+          {errors.fertilizing_info?.fertilizing_description && (
             <p
               className="text-error text-caption-lg"
               id="error-image-message"
@@ -160,7 +168,7 @@ export default function PemupukkanForm({ formId, onSubmit }) {
           id="fertilizationImageField"
           label={"Gambar Pemupukkan"}
           value={useWatch({
-            name: "fertilizing.pict",
+            name: "fertilizing_info.fertilizing_pictures",
             control: control,
           })}
           rules={{
@@ -173,14 +181,14 @@ export default function PemupukkanForm({ formId, onSubmit }) {
             },
           }}
           control={control}
-          name="fertilizing.pict"
+          name="fertilizing_info.fertilizing_pictures"
           message={
             <span>
               <Info12Regular className="me-1.5" />
               Maksimal 1MB, Hanya file berformat .JPG, .JPEG, .PNG
             </span>
           }
-          isError={errors.fertilizing?.pict}
+          isError={errors.fertilizing_info?.fertilizing_pictures}
         />
       </div>
     </form>

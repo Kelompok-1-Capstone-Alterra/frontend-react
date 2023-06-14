@@ -10,7 +10,6 @@ import {
   Delete20Regular,
   Edit20Regular,
 } from "@fluentui/react-icons";
-import axios from "axios";
 import useSWR from "swr";
 import PaginationButton from "../components/PaginationButton";
 import { ConfirmModal, NotifModal } from "../components/Modal";
@@ -18,8 +17,13 @@ import EmptyProduct from "../assets/EmptyProduct.png";
 import { Link } from "react-router-dom";
 import fetcher from "../utils/fetcher";
 import { toRupiah } from "../utils/functions";
+import Cookies from "js-cookie";
+import useProduct from "../hooks/useProduct";
+import useDebounce from "../hooks/useDebounce";
+import Loading from "../components/Loading";
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 4;
+const DEBOUNCE_DELAY = 500;
 
 const RenderContent = ({
   filteredProducts,
@@ -35,7 +39,9 @@ const RenderContent = ({
   return (
     <>
       <div className="lg:my-5 flex justify-between w-full items-center">
-        <p className="text-body-lg font-bold">{totalProducts} Produk</p>
+        <p className="text-body-lg font-bold">
+          {totalProducts > 0 ? totalProducts : "0"} Produk
+        </p>
         <Link
           to={"/admin/products/create"}
           id="add-product"
@@ -50,10 +56,10 @@ const RenderContent = ({
         </Link>
       </div>
       {isLoading ? (
-        <p>Loading...</p>
+        <Loading />
       ) : (
         <>
-          {totalProducts > 0 && filteredProducts.length > 0 ? (
+          {totalProducts > 0 ? (
             <>
               <Table
                 headers={[
@@ -74,20 +80,29 @@ const RenderContent = ({
                   >
                     <td>
                       <img
-                        // src={product.images && product.images[0]}
-                        src={"http://via.placeholder.com/56x48"}
+                        src={
+                          product.product_picture
+                            ? `${import.meta.env.VITE_API_BASE_URL}/pictures/${
+                                product.product_picture
+                              }`
+                            : "http://via.placeholder.com/56x48"
+                        }
                         alt="gambar"
                         className="w-[56px] h-[48px] mx-auto"
                       />
                     </td>
-                    <td className="text-caption-lg">{product.name}</td>
-                    <td className="text-caption-lg">{product.sellerName}</td>
+                    <td className="text-caption-lg">{product.product_name}</td>
                     <td className="text-caption-lg">
-                      {toRupiah(product.price)}
+                      {product.product_seller_name}
                     </td>
-                    <td className="text-caption-lg">{product.category}</td>
                     <td className="text-caption-lg">
-                      {product.status ? "Etalase" : "Diarsipkan"}
+                      {toRupiah(product.product_price)}
+                    </td>
+                    <td className="text-caption-lg">
+                      {product.product_category}
+                    </td>
+                    <td className="text-caption-lg">
+                      {product.product_status ? "Etalase" : "Diarsipkan"}
                     </td>
                     <td>
                       <div className="flex gap-3 justify-center">
@@ -121,7 +136,7 @@ const RenderContent = ({
                 />
               </div>
             </>
-          ) : totalProducts <= 0 && filteredProducts <= 0 && search ? (
+          ) : !totalProducts && !filteredProducts && search ? (
             <>
               <div className="flex flex-col items-center justify-center">
                 <img
@@ -157,56 +172,67 @@ const RenderContent = ({
 
 export default function ProductsPage() {
   const [filter, setFilter] = useState({
-    search: "",
-    is_archived: false,
     currentPage: 1,
+    keyword: "",
   });
+  const { currentPage, keyword } = filter;
+  const debouncedKeyword = useDebounce(keyword, DEBOUNCE_DELAY);
   const [confirmModalId, setConfirmModalId] = useState(null);
   const [notifModal, setNotifModal] = useState({
     show: false,
-    isSuccess: false,
+    icon: "",
     text: "",
     title: "",
   });
+  const [activeTabIndex, setActiveTabIndex] = useState(0); // 0: semua, 1: etalase, 2: arsip
+  const { deleteProduct } = useProduct();
+
+  const getUrl = (tab, keyword) => {
+    let resource = "";
+    if (tab === 1 && keyword === "") {
+      resource = "/display";
+    }
+    if (tab === 2 && keyword === "") {
+      resource = "/archive";
+    }
+    if (keyword !== "") {
+      resource = `/search?name=${keyword}`;
+    }
+    return `${
+      import.meta.env.VITE_API_BASE_URL
+    }/auth/admins/products${resource}`;
+  };
+
   const {
     data: products,
     isLoading,
     mutate,
   } = useSWR(
-    "https://6428ef045a40b82da4c9fa2d.mockapi.io/api/products",
-    fetcher
-  );
-
-  const { search, currentPage } = filter;
-
-  let filteredProducts = products;
-
-  const [activeTabIndex, setActiveTabIndex] = useState(0); // state untuk menentukan tab mana yang aktif, jika 0 berarti index ke 0 dari array tabs diatas
-
-  filteredProducts = filteredProducts?.filter((product) =>
-    product.name.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const totalIsArchived = filteredProducts?.filter(
-    (product) => !product.status
-  );
-
-  const totalProducts = filteredProducts;
-
-  const totalNotArchived = filteredProducts?.filter(
-    (product) => product.status
-  );
-
-  filteredProducts = filteredProducts?.filter((product) => {
-    if (activeTabIndex === 0) {
-      return product;
-    } else if (activeTabIndex === 1) {
-      return product.status === true;
-    } else if (activeTabIndex === 2) {
-      return product.status === false;
+    getUrl(activeTabIndex, debouncedKeyword),
+    (url) => fetcher(url, Cookies.get("token")),
+    {
+      onError: (err) => {
+        if (err.response.status === 500) {
+          console.log("Internal Server Error");
+        }
+      },
     }
-  });
+  );
 
+  let filteredProducts;
+  if (activeTabIndex === 0) {
+    filteredProducts = products?.data;
+  } else if (activeTabIndex === 1) {
+    filteredProducts = products?.data?.filter(
+      (product) => product.product_status === true
+    );
+  } else if (activeTabIndex === 2) {
+    filteredProducts = products?.data?.filter(
+      (product) => product.product_status === false
+    );
+  }
+
+  const totalProducts = filteredProducts?.length;
   const totalPages = Math.ceil(filteredProducts?.length / ITEMS_PER_PAGE);
 
   filteredProducts = filteredProducts?.slice(
@@ -231,23 +257,31 @@ export default function ProductsPage() {
 
   const handleDelete = async (id) => {
     setConfirmModalId(null);
-    const result = await axios.delete(
-      `https://6428ef045a40b82da4c9fa2d.mockapi.io/api/products/${id}`
-    );
-    if (result.status === 200) {
-      setNotifModal({
-        show: true,
-        text: "Produk berhasil dihapus",
-        title: "Hapus Produk",
-      });
-      mutate();
-    } else {
-      setNotifModal({
-        show: true,
-        text: "Produk gagal dihapus",
-        title: "Hapus Produk",
-      });
+    const result = await deleteProduct(id);
+
+    if (filteredProducts?.length === 1 && currentPage > 1) {
+      setFilter((prev) => ({
+        ...prev,
+        currentPage: prev.currentPage - 1,
+      }));
     }
+
+    if (result.status !== 200) {
+      setNotifModal({
+        show: true,
+        icon: "info",
+        text: "Aksi Gagal",
+        title: "Data produk kamu gagal dihapus",
+      });
+      return;
+    }
+    setNotifModal({
+      show: true,
+      icon: "success",
+      text: "Data produk kamu berhasil dihapus",
+      title: "Hapus Data Produk",
+    });
+    mutate();
   };
 
   const tabs = [
@@ -259,11 +293,11 @@ export default function ProductsPage() {
           <RenderContent
             filteredProducts={filteredProducts}
             currentPage={currentPage}
-            search={search}
+            search={keyword}
             handlePageChange={handlePageChange}
             totalPages={totalPages}
+            totalProducts={totalProducts}
             setConfirmModalId={setConfirmModalId}
-            totalProducts={totalProducts?.length}
             isLoading={isLoading}
             tab="semua"
           />
@@ -277,12 +311,12 @@ export default function ProductsPage() {
         <>
           <RenderContent
             filteredProducts={filteredProducts}
-            search={search}
             currentPage={currentPage}
+            search={keyword}
             handlePageChange={handlePageChange}
             setConfirmModalId={setConfirmModalId}
+            totalProducts={totalProducts}
             totalPages={totalPages}
-            totalProducts={totalNotArchived?.length}
             isLoading={isLoading}
             tab="etalase"
           />
@@ -296,12 +330,12 @@ export default function ProductsPage() {
         <>
           <RenderContent
             filteredProducts={filteredProducts}
-            search={search}
             currentPage={currentPage}
+            search={keyword}
             handlePageChange={handlePageChange}
             setConfirmModalId={setConfirmModalId}
+            totalProducts={totalProducts}
             totalPages={totalPages}
-            totalProducts={totalIsArchived?.length}
             isLoading={isLoading}
             tab="arsip"
           />
@@ -320,12 +354,13 @@ export default function ProductsPage() {
               variant="search"
               label={"Nama Produk"}
               id={"search"}
-              className={"w-full"}
+              type="search"
+              className={"w-ful pe-2"}
               placeholder={"Ketik Kata Kunci"}
               onChange={(e) =>
                 setFilter({
                   ...filter,
-                  search: e.target.value,
+                  keyword: e.target.value,
                   currentPage: 1,
                 })
               }
@@ -348,8 +383,8 @@ export default function ProductsPage() {
       ></div>
       <ConfirmModal
         icon={"info"}
-        title={"Hapus Produk"}
-        text={"Apakah Anda yakin ingin menghapus produk ini?"}
+        title={"Konfirmasi Hapus Data Produk"}
+        text={"Yakin ingin menghapus data produk ini?"}
         cancelText={"Kembali"}
         confirmText={"Hapus"}
         onConfirm={() => handleDelete(confirmModalId)}
@@ -357,7 +392,7 @@ export default function ProductsPage() {
         isOpen={confirmModalId ? true : false}
       />
       <NotifModal
-        icon={"success"}
+        icon={notifModal.icon}
         onConfirm={() => {
           setNotifModal({
             ...notifModal,

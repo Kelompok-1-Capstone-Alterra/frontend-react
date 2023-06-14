@@ -12,7 +12,7 @@ export default function Navbar() {
             src={Logo}
             className="w-10"
           />
-          <span className="text-h-6 font-bold text-primary">Agriplant</span>
+          <span className="text-h-6 font-bold text-primary">Agriplan</span>
         </div>
       </Link>
       <div className="flex gap-[10px]">

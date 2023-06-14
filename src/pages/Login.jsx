@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Button from "../components/Button";
-import gambar from "../assets/Login.png";
+import gambar from "../assets/Login.webp";
 import logo from "../assets/Logo.png";
 import TextField from "../components/TextField";
 import { Eye24Regular, EyeOff24Regular } from "@fluentui/react-icons";
@@ -34,8 +34,13 @@ function Login() {
       );
 
       if (res.status === 200) {
+        const user = {
+          admin_id: res.data.data.admin.ID,
+          admin_name: res.data.data.admin.admin_name,
+          admin_email: res.data.data.admin.admin_email,
+        };
+        localStorage.setItem("user", JSON.stringify(user));
         Cookies.set("token", res.data.data.token);
-        Cookies.set("admin", res.data.data.admin);
         navigate("/admin");
       }
     } catch (err) {
@@ -85,7 +90,7 @@ function Login() {
                   alt="Logo"
                   className="mr-2 w-10"
                 />
-                Agriplant
+                Agriplan
               </h1>
               <div>
                 <TextField

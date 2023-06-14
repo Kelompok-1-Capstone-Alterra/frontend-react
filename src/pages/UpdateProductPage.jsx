@@ -1,4 +1,8 @@
-import { Image24Regular, Info12Regular } from "@fluentui/react-icons";
+import {
+  DismissCircle28Filled,
+  Image24Regular,
+  Info12Regular,
+} from "@fluentui/react-icons";
 import SecondaryContainer from "../components/layouts/SecondaryContainer";
 import { NotifModal, ConfirmModal } from "../components/Modal";
 import { useNavigate, useLoaderData } from "react-router-dom";
@@ -7,14 +11,28 @@ import TextField from "../components/TextField";
 import MySelect from "../components/MySelect";
 import TextFieldGroup from "../components/TextFieldGroup";
 import { useForm, Controller } from "react-hook-form";
-import axios from "axios";
 import Button from "../components/Button";
 import ReactQuill from "react-quill";
 import { MODULES } from "../constants";
 import "react-quill/dist/quill.snow.css";
+import { Navigate } from "react-router-dom";
+import useImage from "../hooks/useImage";
+import useProduct from "../hooks/useProduct";
+import axios from "axios";
+
+const options = [
+  { value: "Alat Tani", label: "Alat Tani" },
+  { value: "Bibit", label: "Bibit" },
+  { value: "Pestisida", label: "Pestisida" },
+  { value: "Pupuk", label: "Pupuk" },
+];
 
 export default function UpdateProductPage() {
   const product = useLoaderData();
+
+  const defaultOption = options.find(
+    (option) => option.value === product?.product_category
+  );
 
   const {
     register,
@@ -22,25 +40,45 @@ export default function UpdateProductPage() {
     getValues,
     setValue,
     reset,
+    clearErrors,
     trigger,
-    watch,
     control,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      name: product?.product_name,
+      category: defaultOption,
+      status: product?.product_status ? "etalase" : "arsip",
+      price: product?.product_price,
+      unit: product?.product_unit,
+      brand: product?.product_brand,
+      weight: product?.product_weight,
+      condition: product?.product_condition,
+      form: product?.product_form,
+      sellerName: product?.product_seller_name,
+      sellerPhone: product?.product_seller_phone,
+    },
+  });
 
   const [editorFocus, setEditorFocus] = useState(false);
-  const [editorContent, setEditorContent] = useState(product?.description);
+  const [editorContent, setEditorContent] = useState(
+    product?.product_description
+  );
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const defaultPictures = product?.product_pictures.map(
+    (pic) => `${import.meta.env.VITE_API_BASE_URL}/pictures/${pic}`
+  );
+  const [pictures, setPictures] = useState([]);
   const [notifModal, setNotifModal] = useState({
     show: false,
     icon: "",
     text: "",
     title: "",
   });
+  const { uploadImage, isLoading: imageLoading } = useImage();
+  const { updateProduct, isLoading: uploadLoading } = useProduct();
 
   const navigate = useNavigate();
-
-  const images = watch("picture");
 
   useEffect(() => {
     register("description", {
@@ -51,7 +89,7 @@ export default function UpdateProductPage() {
 
   useEffect(() => {
     if (product) {
-      setValue("description", product.description);
+      setValue("description", product.product_description);
     }
   }, [product, setValue]);
 
@@ -61,49 +99,110 @@ export default function UpdateProductPage() {
     setEditorContent(editorState);
   };
 
-  // let editorContent = watch("description");
-
   const saveProduct = async (data) => {
-    const response = await axios.put(
-      `https://6428ef045a40b82da4c9fa2d.mockapi.io/api/products/${product.id}`,
-      {
-        ...data,
-        category: data.category.value,
-        status: data.status === "etalase" ? true : false,
+    let newPictures = [];
+    if (data.picture.length > 0) {
+      const formData = new FormData();
+      for (let i = 0; i < data.picture.length; i++) {
+        formData.append("pictures", data.picture[i]);
       }
-    );
-
-    if (response.status === 200) {
-      setNotifModal({
-        show: true,
-        icon: "success",
-        title: "Edit Produk",
-        text: "Produk kamu berhasil diedit!",
+      const responseUpload = await uploadImage(formData);
+      if (responseUpload.status !== 200) {
+        setNotifModal({
+          show: true,
+          icon: "info",
+          title: "Aksi Gagal",
+          text: "Data produk kamu gagal diubah",
+        });
+        return;
+      }
+      const urlsArray = responseUpload?.data?.urls;
+      newPictures = urlsArray.map((url) => {
+        return { url };
       });
     } else {
+      try {
+        const promises = product?.product_pictures.map(async (pic) => {
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_BASE_URL}/pictures/${pic}`,
+            {
+              responseType: "blob",
+            }
+          );
+          const blob = await response.data;
+          const file = new File([blob], pic, { type: blob.type });
+          const formData = new FormData();
+          formData.append("pictures", file);
+          const responseUpload = await uploadImage(formData);
+          if (responseUpload.status !== 200) {
+            setNotifModal({
+              show: true,
+              icon: "info",
+              title: "Aksi Gagal",
+              text: "Data produk kamu gagal diubah",
+            });
+            return;
+          }
+          return responseUpload?.data?.urls[0];
+        });
+        const results = await Promise.all(promises);
+        newPictures = results.map((result) => {
+          return { url: result };
+        });
+      } catch (err) {
+        setNotifModal({
+          show: true,
+          icon: "info",
+          title: "Aksi Gagal",
+          text: "Data produk kamu gagal diubah",
+        });
+        return;
+      }
+    }
+    //update the product
+    const res = await updateProduct(product?.id, {
+      product_pictures: newPictures,
+      product_name: data.name,
+      product_category: data.category.value,
+      product_description: data.description,
+      product_price: Number(data.price),
+      product_status: Boolean(data.status === "etalase"),
+      product_brand: data.brand,
+      product_condition: data.condition,
+      product_unit: Number(data.unit),
+      product_weight: Number(data.weight),
+      product_form: data.form,
+      product_seller_name: data.sellerName,
+      product_seller_phone: data.sellerPhone,
+      category: data.category.value,
+      status: data.status === "etalase" ? true : false,
+    });
+
+    if (res.status !== 200) {
       setNotifModal({
         show: true,
         icon: "info",
-        title: "Edit Produk",
-        text: "Produk gagal diedit!",
+        title: "Aksi Gagal",
+        text: "Data produk kamu gagal diubah",
       });
+      return;
     }
+
+    setNotifModal({
+      show: true,
+      icon: "success",
+      title: "Ubah Data Produk",
+      text: "Data produk berhasil diubah",
+    });
   };
 
   const onSubmit = () => {
     setIsConfirmModalOpen(true);
   };
 
-  const options = [
-    { value: "Alat Tani", label: "Alat Tani" },
-    { value: "Bibit", label: "Bibit" },
-    { value: "Pestisida", label: "Pestisida" },
-    { value: "Pupuk", label: "Pupuk" },
-  ];
-
-  const defaultOption = options.find(
-    (option) => option.value === product?.category
-  );
+  if (product === null) {
+    return <Navigate to="/admin/products" />;
+  }
 
   return (
     <SecondaryContainer
@@ -119,7 +218,7 @@ export default function UpdateProductPage() {
               <div className="flex flex-col my-5">
                 <p className="font-semibold text-body-s mb-2.5">Foto Produk</p>
                 <div>
-                  <div className="flex gap-5">
+                  <div className="flex items-center gap-5">
                     <div>
                       <label
                         id="image-input-label"
@@ -131,7 +230,10 @@ export default function UpdateProductPage() {
                         } flex flex-col justify-center items-center text-center p-5 text-body-sm`}
                       >
                         <Image24Regular />
-                        Tambahkan Foto ({images?.length ? images.length : "0"}
+                        Tambahkan Foto (
+                        {pictures?.length
+                          ? pictures.length
+                          : defaultPictures.length}
                         /5)
                       </label>
                       <input
@@ -139,35 +241,64 @@ export default function UpdateProductPage() {
                         id="picture-input"
                         className="hidden"
                         multiple
-                        accept="image/*"
+                        accept="image/png, image/jpeg, image/jpg"
                         {...register("picture", {
-                          required: {
-                            value: true,
-                            message: "Gambar tidak boleh kosong",
-                          },
                           validate: (value) => {
+                            if (value === null) return true;
                             const files = Array.from(value);
                             if (files.length > 5) {
-                              setValue("picture", null);
                               return "Gambar produk tidak boleh lebih dari 5";
                             }
+
+                            return true;
+                          },
+                          onChange: (e) => {
+                            const files = Array.from(e.target.files);
+                            const urls = files.map((file) =>
+                              URL.createObjectURL(file)
+                            );
+                            setPictures(urls);
                           },
                         })}
                       />
                     </div>
-                    {images?.length > 0 &&
-                      [...images].map((image, index) => (
-                        <div
-                          key={index}
-                          className="relative w-[132px] h-[132px] overflow-hidden"
-                        >
-                          <img
-                            src={URL.createObjectURL(image)}
-                            alt="product"
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      ))}
+                    <div className="flex gap-5 overflow-auto">
+                      {pictures?.length > 0
+                        ? [...pictures].map((picture, index) => (
+                            <div
+                              key={index}
+                              className="relative w-[132px] h-[132px] overflow-hidden"
+                            >
+                              <img
+                                src={picture}
+                                alt="product"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          ))
+                        : [...defaultPictures].map((picture, index) => (
+                            <div
+                              key={index}
+                              className="relative w-[132px] h-[132px] overflow-hidden"
+                            >
+                              <img
+                                src={picture}
+                                alt="product"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          ))}
+                    </div>
+                    {pictures?.length > 0 && (
+                      <DismissCircle28Filled
+                        className="text-error hover:text-error-hover cursor-pointer"
+                        onClick={() => {
+                          setValue("picture", []);
+                          setPictures([]);
+                          clearErrors("picture");
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
                 {errors.picture && (
@@ -187,7 +318,6 @@ export default function UpdateProductPage() {
                     label={"Nama Produk"}
                     id="name"
                     autoComplete="off"
-                    defaultValue={product.name}
                     placeholder="Tulis nama produk"
                     isError={errors.name}
                     register={{
@@ -232,7 +362,6 @@ export default function UpdateProductPage() {
                     )}
                     name="category"
                     control={control}
-                    defaultValue={defaultOption}
                     rules={{
                       required: {
                         value: true,
@@ -353,7 +482,6 @@ export default function UpdateProductPage() {
                   placeholder="Masukkan harga"
                   name="price"
                   type="number"
-                  defaultValue={product.price}
                   id="product-price"
                   isError={errors.price}
                   register={{
@@ -361,10 +489,6 @@ export default function UpdateProductPage() {
                       required: {
                         value: true,
                         message: "Harga tidak boleh kosong",
-                      },
-                      min: {
-                        value: 1000,
-                        message: "Harga tidak boleh kurang dari Rp.1000",
                       },
                     }),
                   }}
@@ -385,18 +509,12 @@ export default function UpdateProductPage() {
                   label={"Isi"}
                   placeholder="Masukkan isi"
                   name="unit"
-                  defaultValue={product.unit}
                   rightIndicator={"Pcs"}
                   type="number"
                   id="product-content"
                   isError={errors.unit}
                   register={{
-                    ...register("unit", {
-                      min: {
-                        value: 1,
-                        message: "Isi tidak boleh kurang dari 1",
-                      },
-                    }),
+                    ...register("unit"),
                   }}
                   topOption={"Optional"}
                   message={
@@ -414,7 +532,6 @@ export default function UpdateProductPage() {
                 <TextField
                   label={"Merek"}
                   placeholder="Masukkan merek"
-                  defaultValue={product.brand}
                   name="brand"
                   type="text"
                   id="product-brand"
@@ -442,7 +559,6 @@ export default function UpdateProductPage() {
                 <TextFieldGroup
                   label={"Berat"}
                   placeholder="Masukkan berat"
-                  defaultValue={product.weight}
                   rightIndicator={"Gram"}
                   name="weight"
                   type="number"
@@ -453,10 +569,6 @@ export default function UpdateProductPage() {
                       required: {
                         value: true,
                         message: "Berat tidak boleh kosong",
-                      },
-                      min: {
-                        value: 1,
-                        message: "Berat tidak boleh kurang dari 1",
                       },
                     }),
                   }}
@@ -475,7 +587,6 @@ export default function UpdateProductPage() {
                 <TextField
                   label={"Kondisi"}
                   placeholder="Masukkan kondisi"
-                  defaultValue={product.condition}
                   name="condition"
                   id="product-condition"
                   isError={errors.condition}
@@ -502,7 +613,6 @@ export default function UpdateProductPage() {
                 <TextField
                   label={"Wujud"}
                   placeholder="Masukkan wujud"
-                  defaultValue={product.form}
                   name="form"
                   id="product-form"
                   topOption={"Optional"}
@@ -516,11 +626,10 @@ export default function UpdateProductPage() {
           <div className="lg:mt-8 border w-full border-neutral-40 rounded-md">
             <div className="p-7">
               <h6 className="text-h-6 font-bold">Informasi Penjualan</h6>
-              <div className="flex gap-16 mt-5">
+              <div className="grid grid-cols-2 gap-x-16 mt-5">
                 <TextField
                   label={"Nama Seller"}
                   placeholder="Masukkan nama"
-                  defaultValue={product.sellerName}
                   name="sellerName"
                   id="seller-name"
                   isError={errors.sellerName}
@@ -529,10 +638,6 @@ export default function UpdateProductPage() {
                       required: {
                         value: true,
                         message: "Nama seller tidak boleh kosong",
-                      },
-                      minLength: {
-                        value: 4,
-                        message: "Minimal 4 karakter",
                       },
                     }),
                   }}
@@ -552,7 +657,8 @@ export default function UpdateProductPage() {
                   label={"Nomor Whatsapp"}
                   placeholder="Masukkan nomor"
                   name="sellerPhone"
-                  defaultValue={product.sellerPhone}
+                  type="text"
+                  autoComplete="off"
                   id="seller-phone-number"
                   isError={errors.sellerPhone}
                   register={{
@@ -560,6 +666,17 @@ export default function UpdateProductPage() {
                       required: {
                         value: true,
                         message: "Nomor tidak boleh kosong",
+                      },
+                      onChange: (e) => {
+                        //value must be number
+                        const value = e.target.value;
+                        if (isNaN(value)) {
+                          setValue("sellerPhone", "");
+                        }
+                        //if 0 in first index, replace with 62
+                        if (value[0] === "0") {
+                          setValue("sellerPhone", "62");
+                        }
                       },
                     }),
                   }}
@@ -584,14 +701,15 @@ export default function UpdateProductPage() {
               id="submit-button"
               type="submit"
               size="md"
+              disabled={imageLoading || uploadLoading}
             >
               Simpan
             </Button>
           </div>
           <ConfirmModal
             cancelText={"Kembali"}
-            title={"Edit Produk"}
-            text={"Apakah Anda yakin ingin mengedit produk ini?"}
+            title={"Konfirmasi Ubah Data Produk"}
+            text={"Kamu yakin ingin mengubah data produk ini?"}
             confirmText={"Edit"}
             icon={"info"}
             isOpen={isConfirmModalOpen}

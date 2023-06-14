@@ -28,6 +28,7 @@ import DetailWeatherPage from "./pages/DetailWeatherPage";
 import UpdateWeatherPage from "./pages/UpdateWeatherPage";
 import WeatherManagementPage from "./pages/WeatherManagementPage";
 import OverviewPage from "./pages/OverviewPage";
+import Cookies from "js-cookie";
 
 function App() {
   const router = createBrowserRouter([
@@ -68,6 +69,25 @@ function App() {
         {
           path: "/admin/plants/:id",
           element: <DetailPlantPage />,
+          loader: async ({ params }) => {
+            try {
+              const {
+                data: { data },
+              } = await axios.get(
+                `${import.meta.env.VITE_API_BASE_URL}/auth/admins/plants/${
+                  params.id
+                }/detail`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${Cookies.get("token")}`,
+                  },
+                }
+              );
+              return data;
+            } catch (error) {
+              return null;
+            }
+          },
         },
         {
           path: "/admin/products",
@@ -81,20 +101,46 @@ function App() {
           path: "/admin/products/update/:id",
           element: <UpdateProductPage />,
           loader: async ({ params }) => {
-            const { data } = await axios.get(
-              `https://6428ef045a40b82da4c9fa2d.mockapi.io/api/products/${params.id}`
-            );
-            return data;
+            try {
+              const {
+                data: { data },
+              } = await axios.get(
+                `${import.meta.env.VITE_API_BASE_URL}/auth/admins/products/${
+                  params.id
+                }/detail`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${Cookies.get("token")}`,
+                  },
+                }
+              );
+              return data;
+            } catch (error) {
+              return null;
+            }
           },
         },
         {
           path: "/admin/products/:id",
           element: <DetailProductPage />,
           loader: async ({ params }) => {
-            const { data } = await axios.get(
-              `https://6428ef045a40b82da4c9fa2d.mockapi.io/api/products/${params.id}`
-            );
-            return data;
+            try {
+              const {
+                data: { data },
+              } = await axios.get(
+                `${import.meta.env.VITE_API_BASE_URL}/auth/admins/products/${
+                  params.id
+                }/detail`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${Cookies.get("token")}`,
+                  },
+                }
+              );
+              return data;
+            } catch (error) {
+              return null;
+            }
           },
         },
         {
@@ -124,24 +170,10 @@ function App() {
         {
           path: "/admin/articles/update/:id",
           element: <UpdateArticlePage />,
-          loader: async ({ params }) => {
-            const { data } = await axios.get(
-              `https://6428ef045a40b82da4c9fa2d.mockapi.io/api/articles/${params.id}`
-            );
-            if (data) return data;
-            return null;
-          },
         },
         {
           path: "/admin/articles/:id",
           element: <DetailArticlePage />,
-          loader: async ({ params }) => {
-            const { data } = await axios.get(
-              `https://6428ef045a40b82da4c9fa2d.mockapi.io/api/articles/${params.id}`
-            );
-            if (data) return data;
-            return null;
-          },
         },
       ],
     },

@@ -2,9 +2,9 @@ import Hero from "../assets/Hero.png";
 import Button from "../components/Button";
 import { Link } from "react-router-dom";
 import { APPLICATION_DOWNLOAD_LINK } from "../constants";
-import Landing1 from "../assets/Landing1.png";
-import Landing2 from "../assets/Landing2.png";
-import Landing3 from "../assets/Landing3.png";
+import Landing1 from "../assets/Landing1.webp";
+import Landing2 from "../assets/Landing2.webp";
+import Landing3 from "../assets/Landing3.webp";
 
 export default function LandingPage() {
   return (
@@ -13,7 +13,10 @@ export default function LandingPage() {
         <section>
           <div className="grid min-h-screen">
             <div className="flex flex-col items-center justify-between min-w-full lg:gap-2 max-w-7xl lg:flex-row-reverse">
-              <img src={Hero} className="flex-1 max-w-sm lg:min-w-[543px]" />
+              <img
+                src={Hero}
+                className="flex-1 max-w-sm lg:min-w-[543px]"
+              />
               <div>
                 <h1 className="text-h-1 font-bold lg:-mt-24">
                   Pantau tanaman anda kapan saja

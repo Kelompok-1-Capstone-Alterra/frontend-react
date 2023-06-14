@@ -6,7 +6,11 @@ export default function Error404({ to }) {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="flex flex-col items-center justify-center">
-        <img src={gambar} className="w-[469px] h-[449px]" alt="Error 404" />
+        <img
+          src={gambar}
+          className="h-[449px]"
+          alt="Error 404"
+        />
         {to && (
           <div className="mt-4">
             <Link to={to}>

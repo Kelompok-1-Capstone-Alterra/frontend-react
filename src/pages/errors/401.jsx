@@ -3,9 +3,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Button from "../../components/Button";
 
-export default function Error401() {
+export default function Error401({ to }) {
   return (
-    <>
      <>
       <div className="justify-center flex mb-[32px]">
         <img src={gambar} className="w-[469px] h-[449px]" alt="Error 400" />
@@ -24,7 +23,6 @@ export default function Error401() {
           </Link>
         </div>
       )}
-    </>
     </>
   );
 }

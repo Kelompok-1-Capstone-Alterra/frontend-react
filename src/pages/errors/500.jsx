@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Button from "../../components/Button";
 
-export default function Error500() {
+export default function Error500({ to }) {
   return (
     <>
       <div className="justify-center flex mb-[32px]">

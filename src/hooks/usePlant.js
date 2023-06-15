@@ -2,16 +2,17 @@ import { useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const useArticle = () => {
+const usePlant = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const deleteArticle = async (id) => {
+  const deletePlant = async (id) => {
     setIsLoading(true);
     try {
       const response = await axios.delete(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/${id}`,
+        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/plants/${id}/detail`,
         {
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
         }
@@ -19,16 +20,17 @@ const useArticle = () => {
 
       return response;
     } catch (error) {
+      console.log(error);
       return error.response;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const createArticle = async (body) => {
+  const createPlant = async (body) => {
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/add`,
+        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/plants/add`,
         body,
         {
           headers: {
@@ -37,28 +39,6 @@ const useArticle = () => {
           },
         }
       );
-      return res;
-    } catch (error) {
-      return error.response;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const updateArticle = async (id, body) => {
-    setIsLoading(true);
-    try {
-      const res = await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/${id}`,
-        body,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("token")}`,
-          },
-        }
-      );
-
       return res;
     } catch (error) {
       return error.response;
@@ -69,10 +49,9 @@ const useArticle = () => {
 
   return {
     isLoading,
-    deleteArticle,
-    createArticle,
-    updateArticle,
+    deletePlant,
+    createPlant,
   };
 };
 
-export default useArticle;
+export default usePlant;

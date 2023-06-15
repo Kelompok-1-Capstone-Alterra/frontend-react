@@ -23,6 +23,12 @@ export default function Support() {
   const support = data;
 
   let filteredSupport = support;
+  filteredSupport = filteredSupport?.filter((value) => {
+    const supportDate = new Date(value.date);
+    return (
+      supportDate >= startDate && supportDate <= endDate
+    );
+  });
 
   const totalPages = Math.ceil(filteredSupport?.length / ITEMS_PER_PAGE);
 
@@ -46,17 +52,27 @@ export default function Support() {
     setShowModal(true);
   };
 
+  const handleStartDateChange = (e) => {
+    const startDateValue = new Date(e.target.value);
+    setStartDate(startDateValue);
+  };
+
+  const handleEndDateChange = (e) => {
+    const endDateValue = new Date(e.target.value);
+    setEndDate(endDateValue);
+  };
+
   return (
     <MainContainer>
       {/* title */}
       <h4 className="text-h-4 font-bold">Masukan & Saran</h4>
       <div className="mt-[20px] flex">
         <div className="mr-[10px]">
-          <input type="date" className="border border-gray-500 pl-[10px] rounded-md" />
+          <input type="date" className="border border-gray-500 pl-[10px] rounded-md" onChange={handleStartDateChange} />
         </div>
         <p>-</p>
         <div className="ml-[10px]">
-          <input type="date" className="border border-gray-500 pl-[10px] rounded-md"  />
+          <input type="date" className="border border-gray-500 pl-[10px] rounded-md" onChange={handleEndDateChange}  />
         </div>
       </div>
       <div className="w-full">

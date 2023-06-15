@@ -1,20 +1,25 @@
-import { useForm, useWatch } from "react-hook-form";
-import { Info12Regular, DismissCircle24Filled } from "@fluentui/react-icons";
+import { useForm } from "react-hook-form";
+import { Info12Regular } from "@fluentui/react-icons";
 import { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Button from "../components/Button";
 import TextField from "../components/TextField";
 import { MODULES } from "../constants";
-import axios from "axios";
-import { useNavigate, useLoaderData } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import FileInput from "../components/FileInput";
 import { NotifModal, ConfirmModal } from "../components/Modal";
 import SecondaryContainer from "../components/layouts/SecondaryContainer";
+import useImages from "../hooks/useImage";
+import useArticle from "../hooks/useArticle";
+import useSWR from "swr";
+import Cookies from "js-cookie";
+import fetcher from "../utils/fetcher";
+import { useParams } from "react-router-dom";
+import Loading from "../components/Loading";
+import axios from "axios";
 
-export default function CreateArticlPage() {
-  const article = useLoaderData();
-
+export default function UpdateArticlePage() {
   const {
     register,
     handleSubmit,
@@ -24,25 +29,25 @@ export default function CreateArticlPage() {
     setValue,
     watch,
     control,
-  } = useForm({
-    defaultValues: {
-      article_title: article?.article_title ? article.article_title : "",
-      article_image: article?.article_image ? article.article_image : "",
-      description: article?.article_description
-        ? article.article_description
-        : "",
-    },
-  });
+  } = useForm();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const { id } = useParams();
   const [showModal, setShowModal] = useState({
     show: false,
     icon: "",
     text: "",
     title: "",
   });
-  const [selectedImage, setSelectedImage] = useState(null);
   const [editorFocus, setEditorFocus] = useState(false);
+  const { uploadImage, isLoading: isUploading } = useImages();
   const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const { updateArticle, isLoading: isUpdating } = useArticle();
+  const { data, isLoading, error } = useSWR(
+    `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/${id}/detail`,
+    (url) => fetcher(url, Cookies.get("token"))
+  );
+
+  const article = data?.data;
 
   useEffect(() => {
     register("description", {
@@ -58,67 +63,98 @@ export default function CreateArticlPage() {
 
   let editorContent = watch("description");
 
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    setSelectedImageFile(file);
-    setSelectedImage(URL.createObjectURL(file));
-  };
-
   const navigate = useNavigate();
 
-  const saveData = async (data) => {
+  const fetchArticleData = async () => {
     try {
-      /*
-      
-        logic to upload file and get url
-
-      */
-
-      const response = await axios.put(
-        `https://6428ef045a40b82da4c9fa2d.mockapi.io/api/articles/${article.id}`,
-        {
-          article_title: data.article_title,
-          article_pictures: [
-            {
-              article_url: "url.com",
-            },
-          ],
-          article_description: data.description,
-        }
-      );
-      console.log(response);
-      if (response.status === 200) {
-        setShowModal({
-          show: true,
-          icon: "success",
-          text: "Artikel telah berhasil disimpan",
-          title: "Tambah Artikel",
+      if (article) {
+        setValue("article_title", article.article_title);
+        setValue("description", article.article_description);
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/pictures/${
+            article.article_pictures[0]
+          }`,
+          {
+            responseType: "blob",
+          }
+        );
+        // Nama file bedasarkan label
+        const fileName = `artikel.${response.data.type.split("/")[1]}`;
+        const file = new File([response.data], fileName, {
+          type: response.data.type,
         });
+        setValue("article_image", file);
+        setSelectedImageFile(response.data);
       }
     } catch (error) {
-      console.log(error);
+      console.error("Terjadi kesalahan:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchArticleData();
+  }, [article]);
+
+  const saveData = async (data) => {
+    const formPicture = new FormData();
+    formPicture.append("pictures", selectedImageFile);
+    const upload = await uploadImage(formPicture);
+    if (upload.status !== 200) {
       setShowModal({
         show: true,
         icon: "info",
-        text: "Artikel Gagal Disimpan",
-        title: "Tambah Artikel",
+        text: "Data artikel kamu gagal disimpan",
+        title: "Aksi Gagal",
       });
+      return;
     }
+    //save the image url
+    const imageUrl = upload.data.urls[0];
+    // update
+    const save = await updateArticle(id, {
+      article_title: data.article_title,
+      article_pictures: [
+        {
+          url: imageUrl,
+        },
+      ],
+      article_description: data.description,
+    });
+
+    if (save.status !== 200) {
+      setShowModal({
+        show: true,
+        icon: "info",
+        text: "Data artikel kamu gagal disimpan",
+        title: "Aksi Gagal",
+      });
+      return;
+    }
+    setShowModal({
+      show: true,
+      icon: "success",
+      text: "Artikel berhasil di edit",
+      title: "Edit Artikel",
+    });
   };
 
   const onSubmit = () => {
     setIsConfirmModalOpen(true);
   };
 
-  const handleImageDissmiss = () => {
-    setSelectedImage(null);
-    setSelectedImageFile(null);
-  };
+  if (isLoading)
+    return (
+      <div className="h-screen w-full flex justify-center items-center">
+        <Loading />
+      </div>
+    );
+
+  if (error) navigate("/admin/articles");
 
   return (
     <SecondaryContainer
       backTo="/admin/articles"
-      title="Update Artikel"
+      title="Edit Artikel"
       className={"pe-3"}
     >
       <form
@@ -126,7 +162,7 @@ export default function CreateArticlPage() {
         className="px-8"
       >
         {/* judul Artikel */}
-        <div className="mb-2.5">
+        <div className="mb-5">
           <TextField
             id="article-title"
             label="Judul Artikel"
@@ -135,7 +171,7 @@ export default function CreateArticlPage() {
             placeholder="Tulis Judul Artikel"
             className="w-[1142px]"
             register={register("article_title", {
-              required: "Judul tidak boleh kosong",
+              required: "Judul artikel tidak boleh kosong",
             })}
             message={
               errors.article_title && (
@@ -148,15 +184,12 @@ export default function CreateArticlPage() {
           ></TextField>
         </div>
         {/* Input File */}
-        <div className="mb-7">
+        <div className="mb-5">
           <>
             <FileInput
               id="article-image"
-              label="Thumbnail"
-              value={useWatch({
-                name: "article_image",
-                control: control,
-              })}
+              label="Gambar Artikel"
+              value={watch("article_image")}
               rules={{
                 required: true,
                 validate: {
@@ -168,7 +201,9 @@ export default function CreateArticlPage() {
                 },
               }}
               control={control}
-              className={`${selectedImage ? "hidden" : "block"}`}
+              onChange={(e) => {
+                setSelectedImageFile(e.target.files[0]);
+              }}
               name="article_image"
               message={
                 <p className="text-caption-lg">
@@ -179,52 +214,12 @@ export default function CreateArticlPage() {
                   </span>
                 </p>
               }
-              onChange={handleImageChange}
               isError={errors.article_image}
             />
           </>
-          {selectedImage && (
-            <>
-              <div className="content-center">
-                <label
-                  htmlFor="thumbnail"
-                  className="block mb-1 text-body-sm font-semibold"
-                >
-                  Thumbnail
-                </label>
-                <div className="border-dashed border-2 border-gray-300 rounded-md p-4 ">
-                  <div className="relative flex">
-                    <img
-                      src={selectedImage}
-                      alt="Thumbnail"
-                      className="w-[80px] h-[48px] mt-[16px] mb-[16px] ml-[16px]"
-                    />
-                    <p className="pt-[28px] pb-[28px] pl-[16px]">
-                      {selectedImageFile.name}
-                    </p>
-                    <div className="flex justify-center items-center absolute right-0 h-full">
-                      <DismissCircle24Filled
-                        className="text-neutral-40 hover:text-neutral-60 cursor-pointer"
-                        onClick={handleImageDissmiss}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {errors.article_image && (
-                <div className="text-error text-caption-lg mt-1">
-                  <Info12Regular className="-mt-0.5 me-1" />
-                  <span>
-                    Wajib di isi maksimal 1MB, Hanya file berformat .JPG, .JPEG,
-                    .PNG
-                  </span>
-                </div>
-              )}
-            </>
-          )}
         </div>
         <div>
-          <p className="text-body-sm font-semibold lg:mb-1">Content</p>
+          <p className="text-body-sm font-semibold lg:mb-1">Deskripsi</p>
           <ReactQuill
             theme="snow"
             id="article_description"
@@ -248,28 +243,30 @@ export default function CreateArticlPage() {
               className="text-error text-caption-lg"
               id="error-image-message"
             >
-              <Info12Regular className="-mt-0.5" /> Content tidak boleh kosong
+              <Info12Regular className="-mt-0.5" /> Deskripsi tidak boleh kosong
             </p>
           )}
         </div>
-        {/* button */}
+
+        {/* submit button */}
         <div className="flex w-full justify-end items-center">
           <Button
             id="save-article"
             type="submit"
             variant={"green"}
             size="md"
-            className="rounded-full"
-            onClick={handleSubmit(onSubmit)}
+            disabled={isUploading || isUpdating}
+            className={"rounded-full"}
           >
             Simpan
           </Button>
         </div>
+
         <ConfirmModal
-          cancelText={"Kembali"}
-          title={"Simpan Artikel"}
-          text={"Apakah Anda Ingin Menambah Artikel ?"}
-          confirmText={"Simpan"}
+          cancelText={"Batal"}
+          title={"Informasi Ubah Data Artikel"}
+          text={"Kamu yakin ingin mengubah data artikel ini?"}
+          confirmText={"Ubah"}
           icon={"info"}
           isOpen={isConfirmModalOpen}
           onCancel={() => {

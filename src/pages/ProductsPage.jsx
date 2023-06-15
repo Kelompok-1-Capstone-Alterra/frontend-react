@@ -10,7 +10,6 @@ import {
   Delete20Regular,
   Edit20Regular,
 } from "@fluentui/react-icons";
-import axios from "axios";
 import useSWR from "swr";
 import PaginationButton from "../components/PaginationButton";
 import { ConfirmModal, NotifModal } from "../components/Modal";
@@ -19,8 +18,12 @@ import { Link } from "react-router-dom";
 import fetcher from "../utils/fetcher";
 import { toRupiah } from "../utils/functions";
 import Cookies from "js-cookie";
+import useProduct from "../hooks/useProduct";
+import useDebounce from "../hooks/useDebounce";
+import Loading from "../components/Loading";
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 4;
+const DEBOUNCE_DELAY = 500;
 
 const RenderContent = ({
   filteredProducts,
@@ -53,10 +56,10 @@ const RenderContent = ({
         </Link>
       </div>
       {isLoading ? (
-        <p>Loading...</p>
+        <Loading />
       ) : (
         <>
-          {filteredProducts?.length > 0 ? (
+          {totalProducts > 0 ? (
             <>
               <Table
                 headers={[
@@ -77,7 +80,6 @@ const RenderContent = ({
                   >
                     <td>
                       <img
-                        // src={product.images && product.images[0]}
                         src={
                           product.product_picture
                             ? `${import.meta.env.VITE_API_BASE_URL}/pictures/${
@@ -134,7 +136,7 @@ const RenderContent = ({
                 />
               </div>
             </>
-          ) : totalProducts <= 0 && filteredProducts <= 0 && search ? (
+          ) : !totalProducts && !filteredProducts && search ? (
             <>
               <div className="flex flex-col items-center justify-center">
                 <img
@@ -171,26 +173,30 @@ const RenderContent = ({
 export default function ProductsPage() {
   const [filter, setFilter] = useState({
     currentPage: 1,
+    keyword: "",
   });
-
+  const { currentPage, keyword } = filter;
+  const debouncedKeyword = useDebounce(keyword, DEBOUNCE_DELAY);
   const [confirmModalId, setConfirmModalId] = useState(null);
-
   const [notifModal, setNotifModal] = useState({
     show: false,
     icon: "",
     text: "",
     title: "",
   });
-
   const [activeTabIndex, setActiveTabIndex] = useState(0); // 0: semua, 1: etalase, 2: arsip
+  const { deleteProduct } = useProduct();
 
-  const getUrl = (tab) => {
+  const getUrl = (tab, keyword) => {
     let resource = "";
-    if (tab === 1) {
+    if (tab === 1 && keyword === "") {
       resource = "/display";
     }
-    if (tab === 2) {
+    if (tab === 2 && keyword === "") {
       resource = "/archive";
+    }
+    if (keyword !== "") {
+      resource = `/search?name=${keyword}`;
     }
     return `${
       import.meta.env.VITE_API_BASE_URL
@@ -201,19 +207,32 @@ export default function ProductsPage() {
     data: products,
     isLoading,
     mutate,
-    errors,
-  } = useSWR(getUrl(activeTabIndex), (url) =>
-    fetcher(url, Cookies.get("token"))
+  } = useSWR(
+    getUrl(activeTabIndex, debouncedKeyword),
+    (url) => fetcher(url, Cookies.get("token")),
+    {
+      onError: (err) => {
+        if (err.response.status === 500) {
+          console.log("Internal Server Error");
+        }
+      },
+    }
   );
 
-  if (errors) {
-    console.log(errors);
+  let filteredProducts;
+  if (activeTabIndex === 0) {
+    filteredProducts = products?.data;
+  } else if (activeTabIndex === 1) {
+    filteredProducts = products?.data?.filter(
+      (product) => product.product_status === true
+    );
+  } else if (activeTabIndex === 2) {
+    filteredProducts = products?.data?.filter(
+      (product) => product.product_status === false
+    );
   }
 
-  const { search, currentPage } = filter;
-
-  let filteredProducts = products?.data;
-
+  const totalProducts = filteredProducts?.length;
   const totalPages = Math.ceil(filteredProducts?.length / ITEMS_PER_PAGE);
 
   filteredProducts = filteredProducts?.slice(
@@ -238,33 +257,31 @@ export default function ProductsPage() {
 
   const handleDelete = async (id) => {
     setConfirmModalId(null);
-    try {
-      const result = await axios.delete(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/products/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${Cookies.get("token")}`,
-          },
-        }
-      );
-      if (result.status === 200) {
-        setNotifModal({
-          show: true,
-          icon: "success",
-          text: "Data produk kamu berhasil dihapus",
-          title: "Hapus Data Produk",
-        });
-        mutate();
-      }
-    } catch (error) {
-      console.log(error);
+    const result = await deleteProduct(id);
+
+    if (filteredProducts?.length === 1 && currentPage > 1) {
+      setFilter((prev) => ({
+        ...prev,
+        currentPage: prev.currentPage - 1,
+      }));
+    }
+
+    if (result.status !== 200) {
       setNotifModal({
         show: true,
         icon: "info",
         text: "Aksi Gagal",
         title: "Data produk kamu gagal dihapus",
       });
+      return;
     }
+    setNotifModal({
+      show: true,
+      icon: "success",
+      text: "Data produk kamu berhasil dihapus",
+      title: "Hapus Data Produk",
+    });
+    mutate();
   };
 
   const tabs = [
@@ -276,10 +293,10 @@ export default function ProductsPage() {
           <RenderContent
             filteredProducts={filteredProducts}
             currentPage={currentPage}
-            search={search}
+            search={keyword}
             handlePageChange={handlePageChange}
             totalPages={totalPages}
-            totalProducts={products?.data?.length}
+            totalProducts={totalProducts}
             setConfirmModalId={setConfirmModalId}
             isLoading={isLoading}
             tab="semua"
@@ -294,11 +311,11 @@ export default function ProductsPage() {
         <>
           <RenderContent
             filteredProducts={filteredProducts}
-            search={search}
             currentPage={currentPage}
+            search={keyword}
             handlePageChange={handlePageChange}
             setConfirmModalId={setConfirmModalId}
-            totalProducts={products?.data?.length}
+            totalProducts={totalProducts}
             totalPages={totalPages}
             isLoading={isLoading}
             tab="etalase"
@@ -313,11 +330,11 @@ export default function ProductsPage() {
         <>
           <RenderContent
             filteredProducts={filteredProducts}
-            search={search}
             currentPage={currentPage}
+            search={keyword}
             handlePageChange={handlePageChange}
             setConfirmModalId={setConfirmModalId}
-            totalProducts={products?.data?.length}
+            totalProducts={totalProducts}
             totalPages={totalPages}
             isLoading={isLoading}
             tab="arsip"
@@ -337,12 +354,13 @@ export default function ProductsPage() {
               variant="search"
               label={"Nama Produk"}
               id={"search"}
-              className={"w-full"}
+              type="search"
+              className={"w-ful pe-2"}
               placeholder={"Ketik Kata Kunci"}
               onChange={(e) =>
                 setFilter({
                   ...filter,
-                  search: e.target.value,
+                  keyword: e.target.value,
                   currentPage: 1,
                 })
               }

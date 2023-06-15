@@ -1,39 +1,33 @@
-import Image from "../../assets/Hero.png";
-
-export default function DetailTanamanView() {
+export default function DetailTanamanView({ plantDetail }) {
   return (
     <div className="mt-8">
       <section>
         <h5 className="font-semibold text-body-lg">Nama Tanaman</h5>
-        <div className="text-neutral-80 mt-2">Tomat</div>
+        <div className="text-neutral-80 mt-2">{plantDetail?.plant_name}</div>
       </section>
       <section className="mt-8">
         <h5 className="font-semibold text-body-lg">Nama Latin Tanaman</h5>
-        <div className="text-neutral-80 mt-2">Solanum lycopersicum</div>
+        <div className="text-neutral-80 mt-2">{plantDetail?.plant_latin}</div>
       </section>
       <section className="mt-8">
         <h5 className="font-semibold text-body-lg">Deskripsi</h5>
-        <div className="text-neutral-80 mt-2">
-          <p>
-            Tomat atau rangam (Solanum lycopersicum) adalah tumbuhan dari
-            keluarga Solanaceae, tumbuhan asli Amerika Tengah dan Selatan, dari
-            Meksiko sampai Peru. Tomat merupakan tumbuhan siklus hidup singkat,
-            dapat tumbuh setinggi 1 sampai 3 meter. Tumbuhan ini memiliki buah
-            berwarna hijau, kuning, dan merah yang biasa dipakai sebagai sayur
-            dalam masakan atau dimakan secara langsung tanpa diproses. Tomat
-            memiliki batang dan daun yang tidak dapat dikonsumsi karena masih
-            sekeluarga dengan kentang dan terung yang mengadung alkaloid.Cara
-            menanam tanaman tomat adalah disemai lebih dahulu, setelah tumbuh 4
-            daun sejati kemudian ditanam (dijadikan bibit terlebih dahulu).
-          </p>
-        </div>
+        <div
+          className="styled-content text-neutral-80 mt-2"
+          dangerouslySetInnerHTML={{ __html: plantDetail?.plant_description }}
+        ></div>
       </section>
       <section className="mt-8">
         <h5 className="font-semibold text-body-lg">Gambar pemupukkan</h5>
         <div className="text-neutral-80 mt-2">
           <img
-            src={Image}
-            alt=""
+            src={
+              plantDetail?.plant_pictures?.length > 0
+                ? `${import.meta.env.VITE_API_BASE_URL}/pictures/${
+                    plantDetail.plant_pictures[0]?.url
+                  }`
+                : ""
+            }
+            alt="Gambar Tanaman"
             className="w-[210px]"
           />
         </div>

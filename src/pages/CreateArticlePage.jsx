@@ -1,5 +1,5 @@
 import { useForm, useWatch } from "react-hook-form";
-import { Info12Regular, DismissCircle24Filled } from "@fluentui/react-icons";
+import { Info12Regular } from "@fluentui/react-icons";
 import { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -13,7 +13,7 @@ import SecondaryContainer from "../components/layouts/SecondaryContainer";
 import useImages from "../hooks/useImage";
 import useArticle from "../hooks/useArticle";
 
-export default function CreateArticlPage() {
+export default function CreateArticlePage() {
   const {
     register,
     handleSubmit,
@@ -31,9 +31,8 @@ export default function CreateArticlPage() {
     text: "",
     title: "",
   });
-  const [selectedImage, setSelectedImage] = useState(null);
+
   const [editorFocus, setEditorFocus] = useState(false);
-  const [selectedImageFile, setSelectedImageFile] = useState(null);
   const { uploadImage, isLoading: isUploading } = useImages();
   const { createArticle, isLoading: isSaving } = useArticle();
 
@@ -51,24 +50,18 @@ export default function CreateArticlPage() {
 
   let editorContent = watch("description");
 
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    setSelectedImageFile(file);
-    setSelectedImage(URL.createObjectURL(file));
-  };
-
   const navigate = useNavigate();
 
   const saveData = async (data) => {
     const formData = new FormData();
-    formData.append("pictures", selectedImageFile);
+    formData.append("pictures", data.article_image);
     const upload = await uploadImage(formData);
 
     if (upload.status !== 200) {
       setShowModal({
         show: true,
         icon: "info",
-        text: "Data artikel kamu gagal ditambahkan",
+        text: "Data artikel kamu gagal disimpan",
         title: "Aksi Gagal",
       });
       return;
@@ -86,14 +79,13 @@ export default function CreateArticlPage() {
       article_description: data.description,
       article_view: 0,
       article_like: 0,
-      admin_id: 1,
     });
 
     if (save.status !== 200) {
       setShowModal({
         show: true,
         icon: "info",
-        text: "Data artikel kamu gagal ditambahkan",
+        text: "Data artikel kamu gagal disimpan",
         title: "Aksi Gagal",
       });
       return;
@@ -102,18 +94,13 @@ export default function CreateArticlPage() {
     setShowModal({
       show: true,
       icon: "success",
-      text: "Artikel telah berhasil disimpan",
+      text: "Data artikel kamu berhasil disimpan",
       title: "Tambah Artikel",
     });
   };
 
   const onSubmit = () => {
     setIsConfirmModalOpen(true);
-  };
-
-  const handleImageDissmiss = () => {
-    setSelectedImage(null);
-    setSelectedImageFile(null);
   };
 
   return (
@@ -127,7 +114,7 @@ export default function CreateArticlPage() {
         className="px-8"
       >
         {/* judul Artikel */}
-        <div className="mb-2.5">
+        <div className="mb-5">
           <TextField
             id="article-title"
             label="Judul Artikel"
@@ -136,7 +123,7 @@ export default function CreateArticlPage() {
             placeholder="Tulis Judul Artikel"
             className="w-[1142px]"
             register={register("article_title", {
-              required: "Judul tidak boleh kosong",
+              required: "Judul artikel tidak boleh kosong",
             })}
             message={
               errors.article_title && (
@@ -149,11 +136,11 @@ export default function CreateArticlPage() {
           ></TextField>
         </div>
         {/* Input File */}
-        <div className="mb-7">
+        <div className="mb-5">
           <>
             <FileInput
               id="article-image"
-              label="Thumbnail"
+              label="Gambar Artikel"
               value={useWatch({
                 name: "article_image",
                 control: control,
@@ -169,7 +156,6 @@ export default function CreateArticlPage() {
                 },
               }}
               control={control}
-              className={`${selectedImage ? "hidden" : "block"}`}
               name="article_image"
               message={
                 <p className="text-caption-lg">
@@ -180,52 +166,12 @@ export default function CreateArticlPage() {
                   </span>
                 </p>
               }
-              onChange={handleImageChange}
               isError={errors.article_image}
             />
           </>
-          {selectedImage && (
-            <>
-              <div className="content-center">
-                <label
-                  htmlFor="thumbnail"
-                  className="block mb-1 text-body-sm font-semibold"
-                >
-                  Thumbnail
-                </label>
-                <div className="border-dashed border-2 border-gray-300 rounded-md p-4 ">
-                  <div className="relative flex">
-                    <img
-                      src={selectedImage}
-                      alt="Thumbnail"
-                      className="w-[80px] h-[48px] mt-[16px] mb-[16px] ml-[16px]"
-                    />
-                    <p className="pt-[28px] pb-[28px] pl-[16px]">
-                      {selectedImageFile.name}
-                    </p>
-                    <div className="flex justify-center items-center absolute right-0 h-full">
-                      <DismissCircle24Filled
-                        className="text-neutral-40 hover:text-neutral-60 cursor-pointer"
-                        onClick={handleImageDissmiss}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {errors.article_image && (
-                <div className="text-error text-caption-lg mt-1">
-                  <Info12Regular className="-mt-0.5 me-1" />
-                  <span>
-                    Wajib di isi maksimal 1MB, Hanya file berformat .JPG, .JPEG,
-                    .PNG
-                  </span>
-                </div>
-              )}
-            </>
-          )}
         </div>
-        <div className="">
-          <p className="text-body-sm font-semibold lg:mb-1">Content</p>
+        <div>
+          <p className="text-body-sm font-semibold lg:mb-1">Deskripsi</p>
           <ReactQuill
             theme="snow"
             id="article_description"
@@ -249,7 +195,7 @@ export default function CreateArticlPage() {
               className="text-error text-caption-lg"
               id="error-image-message"
             >
-              <Info12Regular className="-mt-0.5" /> Content tidak boleh kosong
+              <Info12Regular className="-mt-0.5" /> Deskripsi tidak boleh kosong
             </p>
           )}
         </div>
@@ -263,16 +209,15 @@ export default function CreateArticlPage() {
             size="md"
             disabled={isUploading || isSaving}
             className={"rounded-full"}
-            onClick={handleSubmit(onSubmit)}
           >
             Simpan
           </Button>
         </div>
 
         <ConfirmModal
-          cancelText={"Kembali"}
-          title={"Simpan Artikel"}
-          text={"Apakah Anda Ingin Menambah Artikel ?"}
+          cancelText={"Batal"}
+          title={"Informasi Simpan Data Artikel"}
+          text={"Kamu yakin ingin menyimpan data artikel ini?"}
           confirmText={"Simpan"}
           icon={"info"}
           isOpen={isConfirmModalOpen}

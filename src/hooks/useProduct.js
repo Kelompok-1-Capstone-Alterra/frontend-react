@@ -2,21 +2,21 @@ import { useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const useArticle = () => {
+const useProduct = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const deleteArticle = async (id) => {
+  const deleteProduct = async (id) => {
     setIsLoading(true);
     try {
       const response = await axios.delete(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/${id}`,
+        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/products/${id}`,
         {
           headers: {
             Authorization: `Bearer ${Cookies.get("token")}`,
+            "Content-Type": "application/json",
           },
         }
       );
-
       return response;
     } catch (error) {
       return error.response;
@@ -25,10 +25,11 @@ const useArticle = () => {
     }
   };
 
-  const createArticle = async (body) => {
+  const createProduct = async (body) => {
+    setIsLoading(true);
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/add`,
+        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/products/add`,
         body,
         {
           headers: {
@@ -45,11 +46,11 @@ const useArticle = () => {
     }
   };
 
-  const updateArticle = async (id, body) => {
+  const updateProduct = async (id, body) => {
     setIsLoading(true);
     try {
       const res = await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/${id}`,
+        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/products/${id}`,
         body,
         {
           headers: {
@@ -69,10 +70,10 @@ const useArticle = () => {
 
   return {
     isLoading,
-    deleteArticle,
-    createArticle,
-    updateArticle,
+    deleteProduct,
+    createProduct,
+    updateProduct,
   };
 };
 
-export default useArticle;
+export default useProduct;

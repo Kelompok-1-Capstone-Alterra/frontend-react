@@ -1,13 +1,8 @@
-
-
-import React, { useState } from "react";
-import { format } from "date-fns";
-import { DayPicker } from "react-day-picker";
-import "react-day-picker/dist/style.css";
 import { Eye20Regular } from "@fluentui/react-icons";
 import Table from "../components/Table";
 import axios from "axios";
 import useSWR from "swr";
+import { useState } from "react";
 import PaginationButton from "../components/PaginationButton";
 import MainContainer from "../components/layouts/MainContainer";
 import gambar from "../assets/Logo.png";
@@ -24,28 +19,16 @@ export default function Support() {
   const [filter, setFilter] = useState({ currentPage: 1 });
   const [showModal, setShowModal] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
-  const [selected, setSelected] = useState(null);
-  const [showDropdown, setShowDropdown] = useState(false);
-
   const { currentPage } = filter;
   const support = data;
 
-  const handleDayClick = (day) => {
-    setSelected(day);
-    setShowDropdown(false);
-  };
-
-  const handleInputChange = (event) => {
-    const { value } = event.target;
-    const parsedDate = parse(value, "yyyy-MM-dd", new Date());
-    setSelected(parsedDate);
-  };
-
-  const toggleDropdown = () => {
-    setShowDropdown(!showDropdown);
-  };
-
   let filteredSupport = support;
+  filteredSupport = filteredSupport?.filter((value) => {
+    const supportDate = new Date(value.date);
+    return (
+      supportDate >= startDate && supportDate <= endDate
+    );
+  });
 
   const totalPages = Math.ceil(filteredSupport?.length / ITEMS_PER_PAGE);
 
@@ -57,7 +40,6 @@ export default function Support() {
   if (error) {
     return <p>Error: {error.message}</p>;
   }
-
   const handlePageChange = (page) => {
     setFilter({
       ...filter,
@@ -70,26 +52,14 @@ export default function Support() {
     setShowModal(true);
   };
 
-  const handleStartDateChange = (date) => {
-    setStartDate(date);
+  const handleStartDateChange = (e) => {
+    const startDateValue = new Date(e.target.value);
+    setStartDate(startDateValue);
   };
 
-  const handleEndDateChange = (date) => {
-    setEndDate(date);
-  };
-
-  const handleFilter = () => {
-    // Filter the data based on the selected date range
-    filteredSupport = support.filter((item) => {
-      const itemDate = new Date(item.date);
-      return itemDate >= startDate && itemDate <= endDate;
-    });
-
-    // Reset the pagination to the first page
-    setFilter({
-      ...filter,
-      currentPage: 1,
-    });
+  const handleEndDateChange = (e) => {
+    const endDateValue = new Date(e.target.value);
+    setEndDate(endDateValue);
   };
 
   return (
@@ -97,60 +67,13 @@ export default function Support() {
       {/* title */}
       <h4 className="text-h-4 font-bold">Masukan & Saran</h4>
       <div className="mt-[20px] flex">
-        <div className="relative">
-          <input
-            type="text"
-            className="border border-gray-300 pr-[20px] text-center"
-            value={selected ? format(selected, "yyyy-MM-dd") : ""}
-            onChange={handleInputChange}
-          />
-          <button
-          className=" z-1 absolute right-0 top-0 h-[25px] w-[30px] bg-gray-200 border-l border-gray-300  flex items-center justify-center"
-          onClick={toggleDropdown}
-          >
-            {showDropdown ? "▲" : "▼"}
-          </button>
-          {showDropdown && (
-            <div className="absolute top-10 left-0 z-10 bg-white border border-gray-300 rounded shadow">
-              <DayPicker
-                selected={selected}
-                onDayClick={handleDayClick}
-                inputProps={{
-                  readOnly: true,
-                  className: "border-none",
-                }}
-              />
-            </div>
-          )}
+        <div className="mr-[10px]">
+          <input type="date" className="border border-gray-500 pl-[10px] rounded-md" onChange={handleStartDateChange} />
         </div>
-        <p className="ml-[10px] mr-[10px]">-</p>
-        <div className="relative">
-          <input
-            type="text"
-            className="border border-gray-300 pr-[20px] text-center"
-            value={selected ? format(selected, "yyyy-MM-dd") : ""}
-            onChange={handleInputChange}
-          />
-          <button
-          className=" z-1 absolute right-0 top-0 h-[25px] w-[30px] bg-gray-200 border-l border-gray-300  flex items-center justify-center"
-          onClick={toggleDropdown}
-          >
-            {showDropdown ? "▲" : "▼"}
-          </button>
-          {showDropdown && (
-            <div className="absolute top-10 left-0 z-10 bg-white border border-gray-300 rounded shadow">
-              <DayPicker
-                selected={selected}
-                onDayClick={handleDayClick}
-                inputProps={{
-                  readOnly: true,
-                  className: "border-none",
-                }}
-              />
-            </div>
-          )}
+        <p>-</p>
+        <div className="ml-[10px]">
+          <input type="date" className="border border-gray-500 pl-[10px] rounded-md" onChange={handleEndDateChange}  />
         </div>
-        
       </div>
       <div className="w-full">
         <div>
@@ -167,7 +90,7 @@ export default function Support() {
                 {filteredSupport?.map((value, index) => {
                   const kata = value.deskripsi.split(" ");
                   const maxKata = kata.slice(0, 15).join(" ");
-                  const Desc = kata.length > 15 ? maxKata + "..." : maxKata;
+                  const Desc =kata.length > 15 ? maxKata+ "..." : maxKata;
                   return (
                     <tr
                       key={index}

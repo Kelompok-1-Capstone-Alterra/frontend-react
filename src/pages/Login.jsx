@@ -34,6 +34,12 @@ function Login() {
       );
 
       if (res.status === 200) {
+        const user = {
+          admin_id: res.data.data.admin.ID,
+          admin_name: res.data.data.admin.admin_name,
+          admin_email: res.data.data.admin.admin_email,
+        };
+        localStorage.setItem("user", JSON.stringify(user));
         Cookies.set("token", res.data.data.token);
         navigate("/admin");
       }
@@ -84,7 +90,7 @@ function Login() {
                   alt="Logo"
                   className="mr-2 w-10"
                 />
-                Agriplant
+                Agriplan
               </h1>
               <div>
                 <TextField

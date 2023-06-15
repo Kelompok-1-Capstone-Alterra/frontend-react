@@ -1,11 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
 
-const useImages = () => {
-  const [loading, setLoading] = useState(true);
+const useImage = () => {
+  const [isLoading, setIsLoading] = useState(false);
 
   const uploadImage = async (formData) => {
-    setLoading(true);
+    setIsLoading(true);
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/pictures`,
@@ -20,14 +20,14 @@ const useImages = () => {
     } catch (err) {
       return err.response;
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return {
     uploadImage,
-    loading,
+    isLoading,
   };
 };
 
-export default useImages;
+export default useImage;

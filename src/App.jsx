@@ -29,7 +29,6 @@ import UpdateWeatherPage from "./pages/UpdateWeatherPage";
 import WeatherManagementPage from "./pages/WeatherManagementPage";
 import OverviewPage from "./pages/OverviewPage";
 import Support from "./pages/SupportPage";
-import Cookies from "js-cookie";
 
 function App() {
   const router = createBrowserRouter([
@@ -87,47 +86,20 @@ function App() {
           path: "/admin/products/update/:id",
           element: <UpdateProductPage />,
           loader: async ({ params }) => {
-            try {
-              const {
-                data: { data },
-              } = await axios.get(
-                `${import.meta.env.VITE_API_BASE_URL}/auth/admins/products/${
-                  params.id
-                }/detail`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${Cookies.get("token")}`,
-                  },
-                }
-              );
-              console.log(data);
-              return data;
-            } catch (error) {
-              return null;
-            }
+            const { data } = await axios.get(
+              `https://6428ef045a40b82da4c9fa2d.mockapi.io/api/products/${params.id}`
+            );
+            return data;
           },
         },
         {
           path: "/admin/products/:id",
           element: <DetailProductPage />,
           loader: async ({ params }) => {
-            try {
-              const {
-                data: { data },
-              } = await axios.get(
-                `${import.meta.env.VITE_API_BASE_URL}/auth/admins/products/${
-                  params.id
-                }/detail`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${Cookies.get("token")}`,
-                  },
-                }
-              );
-              return data;
-            } catch (error) {
-              return null;
-            }
+            const { data } = await axios.get(
+              `https://6428ef045a40b82da4c9fa2d.mockapi.io/api/products/${params.id}`
+            );
+            return data;
           },
         },
         {

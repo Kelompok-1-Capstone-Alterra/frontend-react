@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { SaveRegular } from "@fluentui/react-icons";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState, useResetRecoilState } from "recoil";
+import { useRecoilState, useResetRecoilState, useRecoilCallback } from "recoil";
 
 import Button from "../components/Button";
 import useMultistepForm from "../hooks/useMultistepForm";
@@ -15,6 +15,11 @@ import TemperaturForm from "../components/createPlantPage/TemperaturForm";
 import { addPlantDataState } from "../utils/recoil_atoms";
 import { ConfirmModal, NotifModal } from "../components/Modal";
 import usePlant from "../hooks/usePlant";
+import {
+  handleImagesUpload,
+  generatePlantSubmitData,
+  iterateConvertBase64ToFile,
+} from "../utils/functions";
 import useImage from "../hooks/useImage";
 
 export default function CreatePlantPage() {
@@ -30,10 +35,9 @@ export default function CreatePlantPage() {
   const navigate = useNavigate();
   const { createPlant } = usePlant();
   const { uploadImage } = useImage();
+  const formRef = useRef(null);
 
   async function onSubmit(data) {
-    console.log(data);
-
     setAddPlantData((prevData) => ({
       ...prevData,
       ...data,
@@ -45,25 +49,6 @@ export default function CreatePlantPage() {
 
     handleNextStep();
   }
-
-  const handleImagesUpload = async (images) => {
-    const imageUrls = {};
-
-    for (let key in images) {
-      if (!images[key]) continue;
-
-      const formData = new FormData();
-      formData.append("pictures", images[key]);
-
-      const response = await uploadImage(formData);
-
-      if (response.status !== 200) throw new Error(response.data.message);
-
-      imageUrls[key] = response.data.urls[0];
-    }
-
-    return imageUrls;
-  };
 
   const insertPlantData = async (data) => {
     try {
@@ -77,46 +62,9 @@ export default function CreatePlantPage() {
         temperature_pictures: data.temperature_info.temperature_pictures,
       };
 
-      const imageUrls = await handleImagesUpload(images);
+      const imageUrls = await handleImagesUpload(images, uploadImage);
 
-      const newData = {
-        ...data,
-        plant_pictures: [{ url: imageUrls.plant_pictures }],
-        planting_info: {
-          ...data.planting_info,
-          container_info: {
-            ...data.planting_info.container_info,
-            container_pictures: imageUrls.container_pictures
-              ? [
-                  {
-                    url: imageUrls?.container_pictures,
-                  },
-                ]
-              : null,
-          },
-          ground_info: {
-            ...data.planting_info.ground_info,
-            ground_pictures: imageUrls.ground_pictures
-              ? [{ url: imageUrls?.ground_pictures }]
-              : null,
-          },
-        },
-        fertilizing_info: {
-          ...data.fertilizing_info,
-          fertilizing_limit: data.fertilizing_info.fertilizing_limit.value,
-          fertilizing_period: data.fertilizing_info.fertilizing_period.value,
-          fertilizing_pictures: [{ url: imageUrls.fertilizing_pictures }],
-        },
-        watering_info: {
-          ...data.watering_info,
-          watering_period: data.watering_info.watering_period.value,
-          watering_pictures: [{ url: imageUrls.watering_pictures }],
-        },
-        temperature_info: {
-          ...data.temperature_info,
-          temperature_pictures: [{ url: imageUrls.temperature_pictures }],
-        },
-      };
+      const newData = generatePlantSubmitData(data, imageUrls);
 
       const response = await createPlant(newData);
 
@@ -137,6 +85,32 @@ export default function CreatePlantPage() {
       });
     } finally {
       resetAddPlantData();
+      localStorage.removeItem("plantFormDraft");
+    }
+  };
+
+  const saveFormDraft = (data) => {
+    localStorage.setItem("plantFormDraft", JSON.stringify(data));
+  };
+
+  const setLocalStorageToState = useRecoilCallback(({ set }) => async () => {
+    const data = localStorage.getItem("plantFormDraft");
+    if (data) {
+      const parsedData = JSON.parse(data);
+
+      iterateConvertBase64ToFile(parsedData);
+
+      set(addPlantDataState, parsedData);
+    }
+  });
+
+  const handleSaveDraft = async () => {
+    if (formRef.current) {
+      const formValues = await formRef.current.getFormValues();
+
+      saveFormDraft(formValues);
+
+      setLocalStorageToState();
     }
   };
 
@@ -155,6 +129,7 @@ export default function CreatePlantPage() {
         <DetailTanamanForm
           formId={"form0"}
           onSubmit={onSubmit}
+          ref={formRef}
         />
       ),
     },
@@ -165,6 +140,7 @@ export default function CreatePlantPage() {
         <PenanamanForm
           formId={"form1"}
           onSubmit={onSubmit}
+          ref={formRef}
         />
       ),
     },
@@ -175,6 +151,7 @@ export default function CreatePlantPage() {
         <PemupukkanForm
           formId={"form2"}
           onSubmit={onSubmit}
+          ref={formRef}
         />
       ),
     },
@@ -185,6 +162,7 @@ export default function CreatePlantPage() {
         <PenyiramanForm
           formId={"form3"}
           onSubmit={onSubmit}
+          ref={formRef}
         />
       ),
     },
@@ -195,6 +173,7 @@ export default function CreatePlantPage() {
         <TemperaturForm
           formId={"form4"}
           onSubmit={onSubmit}
+          ref={formRef}
         />
       ),
     },
@@ -216,6 +195,7 @@ export default function CreatePlantPage() {
           type="Button"
           variant="text"
           className="px-[10.5px] flex items-center gap-1.5"
+          onClick={handleSaveDraft}
         >
           Simpan draf <SaveRegular className="text-[22px] -mt-1" />
         </Button>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, forwardRef, useImperativeHandle } from "react";
 import ReactQuill from "react-quill";
 import { Info12Regular } from "@fluentui/react-icons";
 import { Controller, useForm, useWatch } from "react-hook-form";
@@ -8,9 +8,24 @@ import MySelect from "../MySelect";
 import { MODULES } from "../../constants";
 import FileInput from "../FileInput";
 import { addPlantDataState } from "../../utils/recoil_atoms";
+import { iterateConvertFileToBase64 } from "../../utils/functions";
 
-export default function PenyiramanForm({ formId, onSubmit }) {
+const wateringPeriodOptions = [
+  { value: 1, label: "1 kali sehari" },
+  { value: 2, label: "2 kali sehari" },
+];
+
+const PenyiramanForm = forwardRef(function PenyiramanForm(
+  { formId, onSubmit },
+  ref
+) {
   const addPlantData = useRecoilValue(addPlantDataState);
+
+  const wateringPeriodDefaultOption =
+    wateringPeriodOptions.find(
+      (option) => option.value === addPlantData?.watering_info?.watering_period
+    ) || addPlantData?.watering_info?.watering_period;
+
   const [editorFocus, setEditorFocus] = useState(false);
   const {
     register,
@@ -18,9 +33,18 @@ export default function PenyiramanForm({ formId, onSubmit }) {
     trigger,
     watch,
     control,
+    getValues,
     handleSubmit,
     formState: { errors },
-  } = useForm({ defaultValues: addPlantData });
+  } = useForm({
+    defaultValues: {
+      ...addPlantData,
+      watering_info: {
+        ...addPlantData.watering_info,
+        watering_period: wateringPeriodDefaultOption,
+      },
+    },
+  });
 
   useEffect(() => {
     register("watering_info.watering_description", {
@@ -35,6 +59,18 @@ export default function PenyiramanForm({ formId, onSubmit }) {
   };
 
   let wateringDescriptionContent = watch("watering_info.watering_description");
+
+  useImperativeHandle(ref, () => {
+    return {
+      getFormValues: async () => {
+        const formValues = getValues();
+
+        const newFormValues = await iterateConvertFileToBase64(formValues);
+
+        return newFormValues;
+      },
+    };
+  });
 
   return (
     <form
@@ -56,10 +92,7 @@ export default function PenyiramanForm({ formId, onSubmit }) {
                 autoFocus
                 errors={errors.watering_info?.watering_period}
                 field={field}
-                options={[
-                  { value: 1, label: "1 kali sehari" },
-                  { value: 2, label: "2 kali sehari" },
-                ]}
+                options={wateringPeriodOptions}
                 placeholder="Pilih penyiraman"
                 className="max-w-[421px] mt-1"
               />
@@ -67,6 +100,7 @@ export default function PenyiramanForm({ formId, onSubmit }) {
             name="watering_info.watering_period"
             control={control}
             defaultValue=""
+            defaultInputValue={addPlantData?.watering_info?.watering_period}
             rules={{
               required: "Waktu penyiraman tidak boleh kosong",
             }}
@@ -145,4 +179,6 @@ export default function PenyiramanForm({ formId, onSubmit }) {
       </div>
     </form>
   );
-}
+});
+
+export default PenyiramanForm;

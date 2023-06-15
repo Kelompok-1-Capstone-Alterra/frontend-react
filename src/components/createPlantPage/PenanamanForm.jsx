@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, forwardRef, useImperativeHandle } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useRecoilValue } from "recoil";
 
@@ -6,16 +6,26 @@ import LokasiPenanamanCheckbox from "./LokasiPenanamanCheckbox";
 import PlantingWithPotForm from "./PlantingWithPotForm";
 import PlantingWithoutPotForm from "./PlantingWithoutPot";
 import { addPlantDataState } from "../../utils/recoil_atoms";
+import {
+  iterateConvertFileToBase64,
+  // convertFileToBase64,
+} from "../../utils/functions";
 
-export default function PenanamanForm({ formId, onSubmit }) {
+const PenanamanForm = forwardRef(function PenanamanForm(
+  { formId, onSubmit },
+  ref
+) {
   const addPlantData = useRecoilValue(addPlantDataState);
 
   const methods = useForm({ defaultValues: addPlantData });
   const {
     handleSubmit,
     unregister,
+    getValues,
     formState: { defaultValues, errors },
   } = methods;
+
+  // console.log(defaultValues);
 
   const [checkedCheckboxes, setCheckedCheckboxes] = useState({
     container: defaultValues.planting_info?.planting_container ?? false,
@@ -37,6 +47,18 @@ export default function PenanamanForm({ formId, onSubmit }) {
       ]);
     }
   }, [checkedCheckboxes]);
+
+  useImperativeHandle(ref, () => {
+    return {
+      getFormValues: async () => {
+        const formValues = getValues();
+
+        const newFormValues = await iterateConvertFileToBase64(formValues);
+
+        return newFormValues;
+      },
+    };
+  });
 
   return (
     <FormProvider {...methods}>
@@ -69,4 +91,6 @@ export default function PenanamanForm({ formId, onSubmit }) {
       </form>
     </FormProvider>
   );
-}
+});
+
+export default PenanamanForm;

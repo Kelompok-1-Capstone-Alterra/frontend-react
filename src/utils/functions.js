@@ -77,3 +77,68 @@ export const generatePlantSubmitData = (data, imageUrls) => {
 
   return newData;
 };
+
+// Function from https://stackoverflow.com/questions/35940290/how-to-convert-base64-string-to-javascript-file-object-like-as-from-file-input-f
+export function dataURLtoFile(dataurl, filename) {
+  var arr = dataurl.split(","),
+    mime = arr[0].match(/:(.*?);/)[1],
+    type = mime.split("/")[1],
+    bstr = atob(arr[arr.length - 1]),
+    n = bstr.length,
+    u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], `${filename}.${type}`, { type: mime });
+}
+
+// Function inspired from https://stackoverflow.com/questions/8085004/iterate-through-nested-javascript-objects
+export const iterateConvertFileToBase64 = async (obj) => {
+  const newObj = {
+    ...obj,
+    planting_info: {
+      ...obj.planting_info,
+      container_info: { ...obj.planting_info.container_info },
+      ground_info: { ...obj.planting_info.ground_info },
+    },
+    fertilizing_info: { ...obj.fertilizing_info },
+    watering_info: { ...obj.watering_info },
+    temperature_info: { ...obj.temperature_info },
+  };
+
+  const stack = [newObj];
+  while (stack?.length > 0) {
+    const currentObj = stack.pop();
+
+    for (let key in currentObj) {
+      if (key.includes("pictures") && currentObj[key] instanceof File) {
+        currentObj[key] = await toBase64(currentObj[key]);
+      }
+      if (typeof currentObj[key] === "object" && currentObj[key] !== null) {
+        stack.push(currentObj[key]);
+      }
+    }
+  }
+  return newObj;
+};
+
+export const iterateConvertBase64ToFile = (obj) => {
+  const stack = [obj];
+  while (stack?.length > 0) {
+    const currentObj = stack.pop();
+    Object.keys(currentObj).forEach((key) => {
+      if (
+        key.includes("pictures") &&
+        currentObj[key] !== null &&
+        typeof currentObj[key] === "string"
+      ) {
+        currentObj[key] = dataURLtoFile(currentObj[key], key);
+        console.log(key, currentObj[key]);
+      }
+
+      if (typeof currentObj[key] === "object" && currentObj[key] !== null) {
+        stack.push(currentObj[key]);
+      }
+    });
+  }
+};

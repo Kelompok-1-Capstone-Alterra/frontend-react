@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { Info12Regular } from "@fluentui/react-icons";
 import ReactQuill from "react-quill";
@@ -8,12 +8,41 @@ import MySelect from "../MySelect";
 import { MODULES } from "../../constants";
 import FileInput from "../FileInput";
 import { addPlantDataState } from "../../utils/recoil_atoms";
+import { iterateConvertFileToBase64 } from "../../utils/functions";
 
-export default function PemupukkanForm({ formId, onSubmit }) {
+const fertilizingLimitOptions = [
+  { value: 3, label: "3 Kali" },
+  { value: 4, label: "4 Kali" },
+  { value: 5, label: "5 Kali" },
+  { value: 6, label: "6 Kali" },
+];
+
+const fertilizingPeriodOptions = [
+  { value: 10, label: "10 Hari Sekali" },
+  { value: 15, label: "15 Hari Sekali" },
+  { value: 20, label: "20 Hari Sekali" },
+  { value: 30, label: "30 Hari Sekali" },
+];
+
+const PemupukkanForm = forwardRef(function PemupukkanForm(
+  { formId, onSubmit },
+  ref
+) {
   const addPlantData = useRecoilValue(addPlantDataState);
-
   const [editorFocus, setEditorFocus] = useState(false);
+  const fertilizingLimitDefaultOption =
+    fertilizingLimitOptions.find(
+      (option) =>
+        option.value === addPlantData?.fertilizing_info?.fertilizing_limit
+    ) || addPlantData?.fertilizing_info?.fertilizing_limit;
 
+  const fertilizingPeriodDefaultOption =
+    fertilizingPeriodOptions.find(
+      (option) =>
+        option.value === addPlantData?.fertilizing_info?.fertilizing_period
+    ) || addPlantData?.fertilizing_info?.fertilizing_period;
+
+  console.log(fertilizingLimitDefaultOption);
   const {
     register,
     setValue,
@@ -21,8 +50,18 @@ export default function PemupukkanForm({ formId, onSubmit }) {
     watch,
     control,
     handleSubmit,
+    getValues,
     formState: { errors },
-  } = useForm({ defaultValues: addPlantData });
+  } = useForm({
+    defaultValues: {
+      ...addPlantData,
+      fertilizing_info: {
+        ...addPlantData.fertilizing_info,
+        fertilizing_limit: fertilizingLimitDefaultOption,
+        fertilizing_period: fertilizingPeriodDefaultOption,
+      },
+    },
+  });
 
   console.log(errors);
 
@@ -39,6 +78,18 @@ export default function PemupukkanForm({ formId, onSubmit }) {
   };
 
   let descContent = watch("fertilizing_info.fertilizing_description");
+
+  useImperativeHandle(ref, () => {
+    return {
+      getFormValues: async () => {
+        const formValues = getValues();
+
+        const newFormValues = await iterateConvertFileToBase64(formValues);
+
+        return newFormValues;
+      },
+    };
+  });
 
   return (
     <form
@@ -60,12 +111,7 @@ export default function PemupukkanForm({ formId, onSubmit }) {
                 errors={errors.fertilizing_info?.fertilizing_limit}
                 field={field}
                 autoFocus
-                options={[
-                  { value: 3, label: "3 Kali" },
-                  { value: 4, label: "4 Kali" },
-                  { value: 5, label: "5 Kali" },
-                  { value: 6, label: "6 Kali" },
-                ]}
+                options={fertilizingLimitOptions}
                 placeholder="Pilih berapa kali pemupukkan"
                 className="max-w-[421px] mt-1"
               />
@@ -97,12 +143,7 @@ export default function PemupukkanForm({ formId, onSubmit }) {
                 id="fertilizationTimeSelect"
                 errors={errors.fertilizing_info?.fertilizing_period}
                 field={field}
-                options={[
-                  { value: 10, label: "10 Hari Sekali" },
-                  { value: 15, label: "15 Hari Sekali" },
-                  { value: 20, label: "20 Hari Sekali" },
-                  { value: 30, label: "30 Hari Sekali" },
-                ]}
+                options={fertilizingPeriodOptions}
                 placeholder="Pilih waktu pemupukkan"
                 className="max-w-[421px] mt-1"
               />
@@ -193,4 +234,6 @@ export default function PemupukkanForm({ formId, onSubmit }) {
       </div>
     </form>
   );
-}
+});
+
+export default PemupukkanForm;

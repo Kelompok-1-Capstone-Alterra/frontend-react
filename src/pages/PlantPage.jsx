@@ -9,6 +9,7 @@ import {
   Edit20Regular,
   Filter20Filled,
 } from "@fluentui/react-icons";
+import { useResetRecoilState } from "recoil";
 import Cookies from "js-cookie";
 
 import MainContainer from "../components/layouts/MainContainer";
@@ -21,6 +22,7 @@ import EmptyPlant from "../assets/EmptyPlant.png";
 import useDebounce from "../hooks/useDebounce";
 import fetcher from "../utils/fetcher";
 import usePlant from "../hooks/usePlant";
+import { addPlantDataState } from "../utils/recoil_atoms";
 
 const PLANT_PER_PAGE = 8;
 const DEBOUNCE_DELAY = 500;
@@ -40,6 +42,7 @@ export default function PlantPage() {
     (url) => fetcher(url, Cookies.get("token"))
   );
   const [modalDelete, setModalDelete] = useState(false);
+  const resetAddPlantData = useResetRecoilState(addPlantDataState);
   const [showModal, setShowModal] = useState({
     show: false,
     icon: "",
@@ -47,8 +50,6 @@ export default function PlantPage() {
     title: "",
   });
   const { deletePlant } = usePlant();
-
-  console.log(modalDelete);
 
   const handleDelete = async (id) => {
     setModalDelete(false);
@@ -158,6 +159,12 @@ export default function PlantPage() {
           <Button
             size="sm"
             className={"flex rounded-md shadow-elevation-2 px-[20px] h-[48px]"}
+            onClick={() => {
+              if (!localStorage.getItem("addPlantData") === null) {
+                console.log("reset");
+                resetAddPlantData();
+              }
+            }}
           >
             <Add16Filled className="me-1" />
             <span>Tambah</span>
@@ -192,8 +199,9 @@ export default function PlantPage() {
                     <td className="flex justify-center">
                       <img
                         src={
-                          plant.Pictures.length > 0 &&
-                          `${BASE_URL}/pictures/${plant.Pictures[0]?.url}`
+                          plant.Pictures.length > 0
+                            ? `${BASE_URL}/pictures/${plant.Pictures[0]?.url}`
+                            : undefined
                         }
                         alt="Gambar Tanaman"
                         className="w-14 h-12"
@@ -274,8 +282,8 @@ export default function PlantPage() {
         </>
       )}
       <ConfirmModal
-        cancelText={"Batal"}
-        confirmText={"Hapus"}
+        cancelText={"Tidak"}
+        confirmText={"Ya"}
         icon={"delete"}
         isOpen={modalDelete ? true : false}
         text={"Yakin ingin menghapus data tanaman ini?"}

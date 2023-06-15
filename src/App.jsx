@@ -100,25 +100,6 @@ function App() {
         {
           path: "/admin/products/update/:id",
           element: <UpdateProductPage />,
-          loader: async ({ params }) => {
-            try {
-              const {
-                data: { data },
-              } = await axios.get(
-                `${import.meta.env.VITE_API_BASE_URL}/auth/admins/products/${
-                  params.id
-                }/detail`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${Cookies.get("token")}`,
-                  },
-                }
-              );
-              return data;
-            } catch (error) {
-              return null;
-            }
-          },
         },
         {
           path: "/admin/products/:id",

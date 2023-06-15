@@ -53,7 +53,7 @@ export default function PlantingWithoutPotForm() {
   );
 
   return (
-    <div className="flex flex-col gap-10 ps-10">
+    <div className="flex flex-col gap-10">
       <h6 className="text-h-6 font-bold">Menanam tanpa pot</h6>
       <div>
         <label

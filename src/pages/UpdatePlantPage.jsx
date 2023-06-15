@@ -1,6 +1,13 @@
+import { useState, useEffect } from "react";
 import { SaveRegular } from "@fluentui/react-icons";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import axios from "axios";
+import { useRecoilState, useResetRecoilState } from "recoil";
+import Cookies from "js-cookie";
+import useSWR from "swr";
+
 import Button from "../components/Button";
-import { NotifModal } from "../components/Modal";
+import { ConfirmModal, NotifModal } from "../components/Modal";
 import SecondaryContainer from "../components/layouts/SecondaryContainer";
 import Step from "../components/Step";
 import TemperaturForm from "../components/createPlantPage/TemperaturForm";
@@ -10,13 +17,32 @@ import PenanamanForm from "../components/createPlantPage/PenanamanForm";
 import DetailTanamanForm from "../components/createPlantPage/DetailTanamanForm";
 import useMultistepForm from "../hooks/useMultistepForm";
 import { addPlantDataState } from "../utils/recoil_atoms";
-import { useSetRecoilState } from "recoil";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import {
+  generatePlantSubmitData,
+  handleImagesUpload,
+} from "../utils/functions";
+import usePlant from "../hooks/usePlant";
+import useImage from "../hooks/useImage";
+import {} from "react-router-dom";
+import fetcher from "../utils/fetcher";
 
 export default function UpdatePlantPage() {
-  const setAddPlantData = useSetRecoilState(addPlantDataState);
+  const param = useParams();
+  console.log(param.id);
+  const { data } = useSWR(
+    `${import.meta.env.VITE_API_BASE_URL}/auth/admins/plants/${
+      param.id
+    }/detail`,
+    (url) => fetcher(url, Cookies.get("token"))
+  );
+  const plant = data?.data;
+  const [addPlantData, setAddPlantData] = useRecoilState(addPlantDataState);
+  const resetAddPlantData = useResetRecoilState(addPlantDataState);
   const navigate = useNavigate();
+  const { updatePlant } = usePlant();
+  const location = useLocation();
+  const { uploadImage } = useImage();
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [notifModal, setNotifModal] = useState({
     show: false,
     icon: "",
@@ -24,20 +50,127 @@ export default function UpdatePlantPage() {
     title: "",
   });
 
-  async function onSubmit(data) {
-    console.log(data);
+  const getPlantImages = async (imageUrls) => {
+    const images = {};
 
+    for (let key in imageUrls) {
+      if (!imageUrls[key]) continue;
+
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/pictures/${imageUrls[key]}`,
+        {
+          responseType: "blob",
+        }
+      );
+      const file = new File([response.data], imageUrls[key], {
+        type: response.data.type,
+      });
+
+      images[key] = file;
+    }
+    return images;
+  };
+
+  useEffect(() => {
+    if (plant) {
+      console.log("test");
+      const imageUrls = {
+        plant_pictures: plant?.plant_pictures?.[0]?.url,
+        container_pictures:
+          plant.planting_info?.container_info?.container_pictures?.[0]?.url,
+        ground_pictures:
+          plant.planting_info?.ground_info?.ground_pictures?.[0]?.url,
+        fertilizing_pictures:
+          plant.fertilizing_info.fertilizing_pictures?.[0]?.url,
+        watering_pictures: plant.watering_info.watering_pictures?.[0]?.url,
+        temperature_pictures:
+          plant.temperature_info.temperature_pictures?.[0]?.url,
+      };
+
+      getPlantImages(imageUrls).then((images) => {
+        const completePlant = {
+          ...plant,
+          plant_pictures: images?.plant_pictures ?? null,
+          planting_info: {
+            ...plant.planting_info,
+            container_info: {
+              ...plant.planting_info.container_info,
+              container_pictures: images?.container_pictures ?? null,
+            },
+            ground_info: {
+              ...plant.planting_info.ground_info,
+              ground_pictures: images?.ground_pictures ?? null,
+            },
+          },
+          fertilizing_info: {
+            ...plant.fertilizing_info,
+            fertilizing_pictures: images?.fertilizing_pictures ?? null,
+          },
+          watering_info: {
+            ...plant.watering_info,
+            watering_pictures: images?.watering_pictures ?? null,
+          },
+          temperature_info: {
+            ...plant.temperature_info,
+            temperature_pictures: images?.temperature_pictures ?? null,
+          },
+        };
+        setAddPlantData(completePlant);
+      });
+    }
+  }, [plant]);
+
+  async function onSubmit(data) {
     setAddPlantData((prevData) => ({
       ...prevData,
       ...data,
     }));
 
     if (isLastStep) {
-      insertPlantData(data);
+      setIsConfirmModalOpen(true);
     }
 
     handleNextStep();
   }
+
+  const insertPlantData = async (data) => {
+    try {
+      const images = {
+        plant_pictures: data.plant_pictures,
+        container_pictures:
+          data.planting_info?.container_info?.container_pictures,
+        ground_pictures: data.planting_info?.ground_info?.ground_pictures,
+        fertilizing_pictures: data.fertilizing_info.fertilizing_pictures,
+        watering_pictures: data.watering_info.watering_pictures,
+        temperature_pictures: data.temperature_info.temperature_pictures,
+      };
+
+      const imageUrls = await handleImagesUpload(images, uploadImage);
+
+      const newData = generatePlantSubmitData(data, imageUrls);
+
+      const response = await updatePlant(param.id, newData);
+
+      if (response.status !== 200) throw new Error(response.data.message);
+
+      setNotifModal({
+        show: true,
+        icon: "success",
+        text: "Data tanaman berhasil diubah",
+        title: "Ubah Data Tanaman",
+      });
+    } catch (error) {
+      console.log(error);
+      setNotifModal({
+        show: true,
+        icon: "info",
+        text: "Data tanaman gagal diubah",
+        title: "Aksi Gagal",
+      });
+    } finally {
+      resetAddPlantData();
+    }
+  };
 
   const {
     steps,
@@ -99,43 +232,9 @@ export default function UpdatePlantPage() {
     },
   ]);
 
-  const insertPlantData = async (data) => {
-    console.log(data);
-    // try {
-    //   const response = await axios.post(
-    //     "https://646df4e19c677e23218ab701.mockapi.io/plant",
-    //     {
-    //       ...data,
-    //       fertilization: {
-    //         ...data.fertilization,
-    //         limit: data.fertilization.limit.value,
-    //         period: data.fertilization.period.value,
-    //       },
-    //       watering: { ...data.watering, period: data.watering.period.value },
-    //     }
-    //   );
-
-    //   if (response.status === 201) {
-    //     setNotifModal({
-    //       show: true,
-    //       icon: "success",
-    //       text: `Produk kamu berhasil ditambahkan ke ${
-    //         data.status === "etalase" ? "etalase" : "arsip"
-    //       }`,
-    //       title: "Simpan Produk",
-    //     });
-    //   } else {
-    //     setNotifModal({
-    //       show: true,
-    //       icon: "info",
-    //       text: "Simpan Produk",
-    //       title: "Produk Gagal Disimpan",
-    //     });
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
-  };
+  useEffect(() => {
+    resetAddPlantData();
+  }, [location]);
 
   return (
     <SecondaryContainer
@@ -175,11 +274,26 @@ export default function UpdatePlantPage() {
           {isLastStep ? "Simpan" : "Lanjut"}
         </Button>
       </div>
+      <ConfirmModal
+        cancelText={"Kembali"}
+        title={"Informasi Ubah Data Tanaman"}
+        text={"Kamu yakin ingin mengubah data tanaman ini?"}
+        confirmText={"Simpan"}
+        icon={"info"}
+        isOpen={isConfirmModalOpen}
+        onCancel={() => {
+          setIsConfirmModalOpen(false);
+        }}
+        onConfirm={() => {
+          setIsConfirmModalOpen(false);
+          insertPlantData(addPlantData);
+        }}
+      />
       <NotifModal
         title={notifModal.title}
         text={notifModal.text}
         icon={notifModal.icon}
-        confirmText={"Kembali"}
+        confirmText={"Tutup"}
         isOpen={notifModal.show}
         onConfirm={() => {
           setNotifModal({
@@ -188,8 +302,7 @@ export default function UpdatePlantPage() {
             text: "",
             title: "",
           });
-          // setAddPlantData({});
-          navigate("/admin/products");
+          navigate("/admin/plants");
         }}
       />
     </SecondaryContainer>

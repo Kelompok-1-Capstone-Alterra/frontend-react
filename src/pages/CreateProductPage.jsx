@@ -1,12 +1,12 @@
 import { Image24Regular, Info12Regular } from "@fluentui/react-icons";
 import SecondaryContainer from "../components/layouts/SecondaryContainer";
-import { NotifModal, ConfirmModal } from "../components/Modal";
+import { ConfirmModal, NotifModal } from "../components/Modal";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import TextField from "../components/TextField";
 import MySelect from "../components/MySelect";
 import TextFieldGroup from "../components/TextFieldGroup";
-import { useForm, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import Button from "../components/Button";
 import ReactQuill from "react-quill";
 import { MODULES } from "../constants";
@@ -298,7 +298,7 @@ export default function CreateProductPage() {
                         {...register("status", {
                           required: {
                             value: true,
-                            message: "Status harus dipilih",
+                            message: "Pilih status produk tidak boleh kosong",
                           },
                         })}
                       />
@@ -538,7 +538,7 @@ export default function CreateProductPage() {
                     ...register("sellerName", {
                       required: {
                         value: true,
-                        message: "Nama seller tidak boleh kosong",
+                        message: "Nama tidak boleh kosong",
                       },
                     }),
                   }}
@@ -608,8 +608,8 @@ export default function CreateProductPage() {
             </Button>
           </div>
           <ConfirmModal
-            cancelText={"Kembali"}
-            title={"Konfirmasi Simpan Produk"}
+            cancelText={"Batal"}
+            title={"Informasi Simpan Data Produk"}
             text={"Kamu yakin ingin menyimpan produk ini?"}
             confirmText={"Simpan"}
             icon={"info"}
@@ -626,7 +626,7 @@ export default function CreateProductPage() {
             title={notifModal.title}
             text={notifModal.text}
             icon={notifModal.icon}
-            confirmText={"Kembali"}
+            confirmText={"Tutup"}
             isOpen={notifModal.show}
             onConfirm={() => {
               setNotifModal({

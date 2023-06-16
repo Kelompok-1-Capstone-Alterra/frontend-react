@@ -27,7 +27,7 @@ const useImage = () => {
   const getImage = async (imageUrl) => {
     setIsLoading(true);
     try {
-      const res = await axios.get(
+      const res = await axiosInstance.get(
         `${import.meta.env.VITE_API_BASE_URL}/pictures/${imageUrl}`,
         {
           responseType: "blob",

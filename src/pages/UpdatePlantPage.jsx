@@ -25,16 +25,18 @@ import usePlant from "../hooks/usePlant";
 import useImage from "../hooks/useImage";
 import {} from "react-router-dom";
 import fetcher from "../utils/fetcher";
+import Loading from "../components/Loading";
 
 export default function UpdatePlantPage() {
   const param = useParams();
   console.log(param.id);
-  const { data } = useSWR(
+  const { data, isLoading } = useSWR(
     `${import.meta.env.VITE_API_BASE_URL}/auth/admins/plants/${
       param.id
     }/detail`,
     (url) => fetcher(url, Cookies.get("token"))
   );
+
   const plant = data?.data;
   const [addPlantData, setAddPlantData] = useRecoilState(addPlantDataState);
   const resetAddPlantData = useResetRecoilState(addPlantDataState);
@@ -235,6 +237,13 @@ export default function UpdatePlantPage() {
   useEffect(() => {
     resetAddPlantData();
   }, [location]);
+
+  if (isLoading)
+    return (
+      <div className="h-screen w-full flex justify-center items-center">
+        <Loading />
+      </div>
+    );
 
   return (
     <SecondaryContainer

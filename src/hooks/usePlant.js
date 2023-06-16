@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../utils/axiosInstance";
 import Cookies from "js-cookie";
 
 const usePlant = () => {
@@ -8,7 +8,7 @@ const usePlant = () => {
   const deletePlant = async (id) => {
     setIsLoading(true);
     try {
-      const response = await axios.delete(
+      const response = await axiosInstance.delete(
         `${import.meta.env.VITE_API_BASE_URL}/auth/admins/plants/${id}/detail`,
         {
           headers: {
@@ -30,7 +30,7 @@ const usePlant = () => {
   const createPlant = async (body) => {
     setIsLoading(true);
     try {
-      const res = await axios.post(
+      const res = await axiosInstance.post(
         `${import.meta.env.VITE_API_BASE_URL}/auth/admins/plants/add`,
         body,
         {
@@ -51,7 +51,7 @@ const usePlant = () => {
   const updatePlant = async (id, body) => {
     setIsLoading(true);
     try {
-      const res = await axios.put(
+      const res = await axiosInstance.put(
         `${import.meta.env.VITE_API_BASE_URL}/auth/admins/plants/${id}/detail`,
         body,
         {

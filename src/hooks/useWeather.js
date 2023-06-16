@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../utils/axiosInstance";
 import Cookies from "js-cookie";
 
 const useWeather = () => {
@@ -8,13 +8,14 @@ const useWeather = () => {
   const deleteWeather = async (id) => {
     setIsLoading(true);
     try {
-      const response = await axios.delete(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/weathers/${id}`,{
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${Cookies.get("token")}`,
-            },
-          }
+      const response = await axiosInstance.delete(
+        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/weathers/${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
       );
 
       return response;
@@ -27,8 +28,9 @@ const useWeather = () => {
   const fetchWeather = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/weathers`,{
+      const response = await axiosInstance.get(
+        `${import.meta.env.VITE_API_BASE_URL}/auth/admins/weathers`,
+        {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${Cookies.get("token")}`,
@@ -46,7 +48,7 @@ const useWeather = () => {
 
   const createWeather = async (body) => {
     try {
-      const res = await axios.post(
+      const res = await axiosInstance.post(
         `${import.meta.env.VITE_API_BASE_URL}/auth/admins/weathers/add`,
         body,
         {
@@ -63,9 +65,9 @@ const useWeather = () => {
       setIsLoading(false);
     }
   };
-  const updateWeather = async (id,body) => {
+  const updateWeather = async (id, body) => {
     try {
-      const res = await axios.put(
+      const res = await axiosInstance.put(
         `${import.meta.env.VITE_API_BASE_URL}/auth/admins/weathers/${id}`,
         body,
         {
@@ -88,7 +90,7 @@ const useWeather = () => {
     deleteWeather,
     createWeather,
     updateWeather,
-    fetchWeather
+    fetchWeather,
   };
 };
 

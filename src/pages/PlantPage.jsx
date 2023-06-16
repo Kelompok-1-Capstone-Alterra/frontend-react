@@ -23,6 +23,7 @@ import useDebounce from "../hooks/useDebounce";
 import fetcher from "../utils/fetcher";
 import usePlant from "../hooks/usePlant";
 import { addPlantDataState } from "../utils/recoil_atoms";
+import Loading from "../components/Loading";
 
 const PLANT_PER_PAGE = 8;
 const DEBOUNCE_DELAY = 500;
@@ -111,7 +112,7 @@ export default function PlantPage() {
   return (
     <MainContainer>
       <h4 className="text-h-4 font-bold">Penambahan Tanaman</h4>
-      <div className="flex justify-between items-center mt-[70px]">
+      <div className="flex justify-between items-center mt-[70px] mb-7">
         <div className="flex w-[770px] justify-between items-stretch h-10">
           <div className="shrink-0 inline-flex">
             <span className="me-2 font- self-center text-caption-lg">
@@ -172,7 +173,7 @@ export default function PlantPage() {
         </Link>
       </div>
       {isLoading ? (
-        <p>Loading...</p>
+        <Loading />
       ) : (
         <>
           {totalPlant > 0 ? (
@@ -188,7 +189,7 @@ export default function PlantPage() {
                   "Aksi",
                 ]}
                 className={
-                  "overflow-y-scroll mt-7 w-full overflow-x-hidden text-[#030712]"
+                  "overflow-y-scroll w-full overflow-x-hidden text-[#030712]"
                 }
               >
                 {filteredPlant?.map((plant, index) => (

@@ -33,8 +33,8 @@ export default function CreatePlantPage() {
   });
   const resetAddPlantData = useResetRecoilState(addPlantDataState);
   const navigate = useNavigate();
-  const { createPlant } = usePlant();
-  const { uploadImage } = useImage();
+  const { createPlant, isLoading: isUploading } = usePlant();
+  const { uploadImage, isLoading: isSaving } = useImage();
   const formRef = useRef(null);
 
   async function onSubmit(data) {
@@ -195,6 +195,7 @@ export default function CreatePlantPage() {
           type="Button"
           variant="text"
           className="px-[10.5px] flex items-center gap-1.5"
+          disabled={isUploading || isSaving}
           onClick={handleSaveDraft}
         >
           Simpan draf <SaveRegular className="text-[22px] -mt-1" />
@@ -204,6 +205,7 @@ export default function CreatePlantPage() {
             id="previousStepButton"
             onClick={handlePreviousStep}
             size="md"
+            disabled={isUploading || isSaving}
             type="button"
           >
             Kembali
@@ -213,6 +215,7 @@ export default function CreatePlantPage() {
           id="nextStepButton"
           size="md"
           type="submit"
+          disabled={isUploading || isSaving}
           form={`form${activeStepIndex}`}
         >
           {isLastStep ? "Simpan" : "Lanjut"}

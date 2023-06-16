@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../utils/axiosInstance";
 import Cookies from "js-cookie";
 
 const useProduct = () => {
@@ -8,7 +8,7 @@ const useProduct = () => {
   const deleteProduct = async (id) => {
     setIsLoading(true);
     try {
-      const response = await axios.delete(
+      const response = await axiosInstance.delete(
         `${import.meta.env.VITE_API_BASE_URL}/auth/admins/products/${id}`,
         {
           headers: {
@@ -28,7 +28,7 @@ const useProduct = () => {
   const createProduct = async (body) => {
     setIsLoading(true);
     try {
-      const res = await axios.post(
+      const res = await axiosInstance.post(
         `${import.meta.env.VITE_API_BASE_URL}/auth/admins/products/add`,
         body,
         {
@@ -49,7 +49,7 @@ const useProduct = () => {
   const updateProduct = async (id, body) => {
     setIsLoading(true);
     try {
-      const res = await axios.put(
+      const res = await axiosInstance.put(
         `${import.meta.env.VITE_API_BASE_URL}/auth/admins/products/${id}`,
         body,
         {

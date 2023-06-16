@@ -6,6 +6,12 @@ import ProtectedLoginRoute from "./components/hoc/ProtectedLoginRoute";
 import GuestLayout from "./components/layouts/GuestLayout";
 import AdminLayout from "./components/layouts/AdminLayout";
 
+import Error504 from "./pages/errors/504";
+import Error500 from "./pages/errors/500";
+import Error404 from "./pages/errors/404";
+import Error403 from "./pages/errors/403";
+import Error401 from "./pages/errors/401";
+
 import Login from "./pages/Login";
 import LandingPage from "./pages/LandingPage";
 import ArticlePage from "./pages/ArticlePage";
@@ -118,24 +124,24 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/error500",
-    element: <h1>500 Internal Server Error</h1>,
+    path: "/error504",
+    element: <Error504 to={"/"} />,
   },
   {
-    path: "/error404",
-    element: <h1>404 Not Found</h1>,
+    path: "/error500",
+    element: <Error500 to={"/"} />,
   },
   {
     path: "/error403",
-    element: <h1>403 Forbidden</h1>,
+    element: <Error403 />,
   },
   {
     path: "/error401",
-    element: <h1>401 Unauthorized</h1>,
+    element: <Error401 />,
   },
   {
     path: "*",
-    element: <h1>404 Not Found</h1>,
+    element: <Error404 to={"/"} />,
   },
 ]);
 

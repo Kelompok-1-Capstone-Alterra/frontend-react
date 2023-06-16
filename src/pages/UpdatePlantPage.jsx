@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { SaveRegular } from "@fluentui/react-icons";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import axios from "axios";
 import { useRecoilState, useResetRecoilState } from "recoil";
 import Cookies from "js-cookie";
 import useSWR from "swr";
@@ -23,27 +22,26 @@ import {
 } from "../utils/functions";
 import usePlant from "../hooks/usePlant";
 import useImage from "../hooks/useImage";
-import {} from "react-router-dom";
 import fetcher from "../utils/fetcher";
 import Loading from "../components/Loading";
 
 export default function UpdatePlantPage() {
   const param = useParams();
-  console.log(param.id);
+  const [imageLoading, setImageLoading] = useState(true);
+
   const { data, isLoading } = useSWR(
     `${import.meta.env.VITE_API_BASE_URL}/auth/admins/plants/${
       param.id
     }/detail`,
     (url) => fetcher(url, Cookies.get("token"))
   );
-
   const plant = data?.data;
   const [addPlantData, setAddPlantData] = useRecoilState(addPlantDataState);
   const resetAddPlantData = useResetRecoilState(addPlantDataState);
   const navigate = useNavigate();
-  const { updatePlant } = usePlant();
+  const { updatePlant, isLoading: isSaving } = usePlant();
+  const { uploadImage, getImage, isLoading: isUploading } = useImage();
   const location = useLocation();
-  const { uploadImage } = useImage();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [notifModal, setNotifModal] = useState({
     show: false,
@@ -58,13 +56,14 @@ export default function UpdatePlantPage() {
     for (let key in imageUrls) {
       if (!imageUrls[key]) continue;
 
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/pictures/${imageUrls[key]}`,
-        {
-          responseType: "blob",
-        }
-      );
-      const file = new File([response.data], imageUrls[key], {
+      const response = await getImage(imageUrls[key]);
+      console.log(response);
+
+      if (response.status !== 200)
+        throw new Error(`Failed to get image, ${response.statusText}`);
+
+      const fileSuffix = response.data.type.split("/")[1];
+      const file = new File([response.data], `${key}.${fileSuffix}`, {
         type: response.data.type,
       });
 
@@ -75,7 +74,6 @@ export default function UpdatePlantPage() {
 
   useEffect(() => {
     if (plant) {
-      console.log("test");
       const imageUrls = {
         plant_pictures: plant?.plant_pictures?.[0]?.url,
         container_pictures:
@@ -89,36 +87,41 @@ export default function UpdatePlantPage() {
           plant.temperature_info.temperature_pictures?.[0]?.url,
       };
 
-      getPlantImages(imageUrls).then((images) => {
-        const completePlant = {
-          ...plant,
-          plant_pictures: images?.plant_pictures ?? null,
-          planting_info: {
-            ...plant.planting_info,
-            container_info: {
-              ...plant.planting_info.container_info,
-              container_pictures: images?.container_pictures ?? null,
+      getPlantImages(imageUrls)
+        .then((images) => {
+          const completePlant = {
+            ...plant,
+            plant_pictures: images?.plant_pictures ?? null,
+            planting_info: {
+              ...plant.planting_info,
+              container_info: {
+                ...plant.planting_info.container_info,
+                container_pictures: images?.container_pictures ?? null,
+              },
+              ground_info: {
+                ...plant.planting_info.ground_info,
+                ground_pictures: images?.ground_pictures ?? null,
+              },
             },
-            ground_info: {
-              ...plant.planting_info.ground_info,
-              ground_pictures: images?.ground_pictures ?? null,
+            fertilizing_info: {
+              ...plant.fertilizing_info,
+              fertilizing_pictures: images?.fertilizing_pictures ?? null,
             },
-          },
-          fertilizing_info: {
-            ...plant.fertilizing_info,
-            fertilizing_pictures: images?.fertilizing_pictures ?? null,
-          },
-          watering_info: {
-            ...plant.watering_info,
-            watering_pictures: images?.watering_pictures ?? null,
-          },
-          temperature_info: {
-            ...plant.temperature_info,
-            temperature_pictures: images?.temperature_pictures ?? null,
-          },
-        };
-        setAddPlantData(completePlant);
-      });
+            watering_info: {
+              ...plant.watering_info,
+              watering_pictures: images?.watering_pictures ?? null,
+            },
+            temperature_info: {
+              ...plant.temperature_info,
+              temperature_pictures: images?.temperature_pictures ?? null,
+            },
+          };
+          setAddPlantData(completePlant);
+          setImageLoading(false);
+        })
+        .catch((error) => {
+          console.error("Terjadi kesalahan:", error);
+        });
     }
   }, [plant]);
 
@@ -238,7 +241,7 @@ export default function UpdatePlantPage() {
     resetAddPlantData();
   }, [location]);
 
-  if (isLoading)
+  if (isLoading || imageLoading)
     return (
       <div className="h-screen w-full flex justify-center items-center">
         <Loading />
@@ -260,6 +263,7 @@ export default function UpdatePlantPage() {
           size="md"
           type="Button"
           variant="text"
+          disabled={isSaving || isUploading}
           className="px-[10.5px] flex items-center gap-1.5"
         >
           Simpan draf <SaveRegular className="text-[22px] -mt-1" />
@@ -269,6 +273,7 @@ export default function UpdatePlantPage() {
             id="previousStepButton"
             onClick={handlePreviousStep}
             size="md"
+            disabled={isSaving || isUploading}
             type="button"
           >
             Kembali
@@ -278,6 +283,7 @@ export default function UpdatePlantPage() {
           id="nextStepButton"
           size="md"
           type="submit"
+          disabled={isSaving || isUploading}
           form={`form${activeStepIndex}`}
         >
           {isLastStep ? "Simpan" : "Lanjut"}
@@ -314,6 +320,11 @@ export default function UpdatePlantPage() {
           navigate("/admin/plants");
         }}
       />
+      <div
+        className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
+          isConfirmModalOpen || notifModal.show ? "block" : "hidden"
+        } cursor-pointer top-0 bottom-0 left-0 right-0`}
+      ></div>
     </SecondaryContainer>
   );
 }

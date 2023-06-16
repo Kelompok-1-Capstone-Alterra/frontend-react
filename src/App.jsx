@@ -1,6 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "react-quill/dist/quill.snow.css";
-import axios from "axios";
 import PrivateRoute from "./components/hoc/PrivateRoute";
 import ProtectedLoginRoute from "./components/hoc/ProtectedLoginRoute";
 
@@ -28,7 +27,6 @@ import DetailWeatherPage from "./pages/DetailWeatherPage";
 import UpdateWeatherPage from "./pages/UpdateWeatherPage";
 import WeatherManagementPage from "./pages/WeatherManagementPage";
 import OverviewPage from "./pages/OverviewPage";
-import Cookies from "js-cookie";
 
 function App() {
   const router = createBrowserRouter([
@@ -65,48 +63,10 @@ function App() {
         {
           path: "/admin/plants/update/:id",
           element: <UpdatePlantPage />,
-          loader: async ({ params }) => {
-            try {
-              const {
-                data: { data },
-              } = await axios.get(
-                `${import.meta.env.VITE_API_BASE_URL}/auth/admins/plants/${
-                  params.id
-                }/detail`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${Cookies.get("token")}`,
-                  },
-                }
-              );
-              return data;
-            } catch (error) {
-              return null;
-            }
-          },
         },
         {
           path: "/admin/plants/:id",
           element: <DetailPlantPage />,
-          loader: async ({ params }) => {
-            try {
-              const {
-                data: { data },
-              } = await axios.get(
-                `${import.meta.env.VITE_API_BASE_URL}/auth/admins/plants/${
-                  params.id
-                }/detail`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${Cookies.get("token")}`,
-                  },
-                }
-              );
-              return data;
-            } catch (error) {
-              return null;
-            }
-          },
         },
         {
           path: "/admin/products",

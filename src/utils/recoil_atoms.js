@@ -1,4 +1,5 @@
 import { atom } from "recoil";
+import { iterateConvertBase64ToFile } from "./functions";
 
 export const addPlantDataState = atom({
   key: "addPlantData",
@@ -39,4 +40,16 @@ export const addPlantDataState = atom({
       },
     },
   },
+  effects: [
+    ({ setSelf }) => {
+      const data = localStorage.getItem("plantFormDraft");
+      if (data) {
+        const parsedData = JSON.parse(data);
+
+        iterateConvertBase64ToFile(parsedData);
+
+        setSelf(parsedData);
+      }
+    },
+  ],
 });

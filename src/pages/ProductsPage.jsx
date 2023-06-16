@@ -382,11 +382,11 @@ export default function ProductsPage() {
         } cursor-pointer top-0 bottom-0 left-0 right-0`}
       ></div>
       <ConfirmModal
-        icon={"info"}
+        icon={"delete"}
         title={"Konfirmasi Hapus Data Produk"}
         text={"Yakin ingin menghapus data produk ini?"}
-        cancelText={"Kembali"}
-        confirmText={"Hapus"}
+        cancelText={"Tidak"}
+        confirmText={"Ya"}
         onConfirm={() => handleDelete(confirmModalId)}
         onCancel={() => setConfirmModalId(null)}
         isOpen={confirmModalId ? true : false}

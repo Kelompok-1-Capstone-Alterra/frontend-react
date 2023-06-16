@@ -16,6 +16,7 @@ import Cookies from "js-cookie";
 import fetcher from "../utils/fetcher";
 import useWeather from "../hooks/useWeather";
 import useImages from "../hooks/useImage";
+import Loading from "../components/Loading";
 
 const CreateWeatherPage = () => {
   const {
@@ -45,10 +46,15 @@ const CreateWeatherPage = () => {
   const { createWeather, isLoading: isSaving } = useWeather();
   const weatherOptions = ["Cerah", "Mendung", "Berawan", "Hujan"];
   const url = `${import.meta.env.VITE_API_BASE_URL}/auth/admins/weathers`;
-  const { data: weatherData } = useSWR(url, async (url) =>
+  const { data: weatherData, isLoading } = useSWR(url, async (url) =>
     fetcher(url, Cookies.get("token"))
   );
-
+  if (isLoading)
+    return (
+      <div className="h-screen w-full flex justify-center items-center">
+        <Loading />
+      </div>
+    );
   useEffect(() => {
     const fetchWeatherData = async () => {
       try {
@@ -160,7 +166,7 @@ const CreateWeatherPage = () => {
                 isError={errors.judul}
                 message={
                   errors.judul && (
-                    <span>
+                    <span id="errors-judul-message">
                       <Info12Regular className="-mt-0.5" />{" "}
                       {errors.judul.message}
                     </span>
@@ -193,6 +199,7 @@ const CreateWeatherPage = () => {
                           .map((option) => ({
                             label: option,
                             value: option,
+                            id: `label-option-${option.toLowerCase()}`,
                           }))}
                         placeholder="Pilih Label"
                         className="w-96"
@@ -211,7 +218,9 @@ const CreateWeatherPage = () => {
                   />
 
                   {errors.label && (
-                    <p className="text-error text-caption-lg mt-1 ">
+                    <p
+                      className="text-error text-caption-lg mt-1 "
+                      id="errors-label-message">
                       <span>
                         <Info12Regular className="-mt-0.5 mr-1" />
                       </span>
@@ -222,7 +231,7 @@ const CreateWeatherPage = () => {
 
                 <FileInput
                   id="gambar"
-                  label={"Gambar Tanaman"}
+                  label="Masukkan Gambar"
                   value={gambar}
                   rules={{
                     required: true,
@@ -238,7 +247,7 @@ const CreateWeatherPage = () => {
                   control={control}
                   name="gambar"
                   message={
-                    <span>
+                    <span id="errors-gambar-message">
                       <Info12Regular className="me-1.5" />
                       Wajib di isi maksimal 1MB, Hanya file berformat .JPG,
                       .JPEG, .PNG
@@ -270,7 +279,9 @@ const CreateWeatherPage = () => {
                 />
                 <div className="mt-12">
                   {errors.deskripsi && (
-                    <p className="text-error text-caption-lg mt-1 ">
+                    <p
+                      className="text-error text-caption-lg mt-1 "
+                      id="errors-deskripsi-message">
                       <span>
                         <Info12Regular className="-mt-0.5 mr-1" />
                       </span>

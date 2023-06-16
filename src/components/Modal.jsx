@@ -93,7 +93,9 @@ const NotifModal = ({ isOpen, text, title, confirmText, icon, onConfirm }) => {
         <ModalContainer>
           <div className="flex flex-col items-center justify-center">
             {SelectedIcon && <SelectedIcon className="mb-3 w-10 h-10" />}
-            <h5 className="font-bold text-h-5 text-neutral-80 mb-2">{title}</h5>
+            <h5 className="font-bold text-h-5 text-neutral-80 mb-2 text-center">
+              {title}
+            </h5>
             <p className="font-normal text-center text-body-lg text-[#637381] mb-6">
               {text}
             </p>

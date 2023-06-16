@@ -26,17 +26,23 @@ const DetailWeatherPage = () => {
     <>
       <SecondaryContainer
         backTo="/admin/weathers"
-        title="Preview Informasi Cuaca"
+        title="Data Informasi Cuaca"
         className="pe-3">
         <div className="px-8 mb-[8px]">
-          <p className="text-h-5 font-bold mb-3">{weathers.weather_title}</p>
+          <p
+            className="text-h-5 font-bold mb-3"
+            id={`detail-title-${weathers.id}`}>
+            {weathers.weather_title}
+          </p>
           <img
             src={`https://34.128.85.215:8080/pictures/${weathers.weather_pictures[0]}`}
             alt="Gambar Cuaca"
             className="w-[262px] h-36 mb-3"
+            id={`detail-image-${weathers.id}`}
           />
           <div
             className="styled-content"
+            id={`detail-description-${weathers.id}`}
             dangerouslySetInnerHTML={{
               __html: weathers.weather_description,
             }}></div>

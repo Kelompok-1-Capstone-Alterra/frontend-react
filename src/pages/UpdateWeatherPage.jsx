@@ -96,16 +96,26 @@ const UpdateWeatherPage = () => {
         { label: "Mendung", value: "Mendung" },
         { label: "Berawan", value: "Berawan" },
       ];
-      const newOptions = options.filter(
-        (option) =>
-          !existingLabels.includes(option.value) ||
-          option.value === weatherData?.weather_label
-      );
+
+      const newOptions = options
+        .filter(
+          (option) =>
+            !existingLabels.includes(option.value) ||
+            option.value === weatherData?.weather_label
+        )
+        .map((option) => ({
+          ...option,
+          id: `weather-option-${option.value
+            .toLowerCase()
+            .replace(/\s/g, "-")}`, // Menambahkan ID unik berdasarkan nilai option
+        }));
+
       setWeatherOptions(newOptions);
     } catch (error) {
       console.error("Terjadi kesalahan:", error);
     }
   };
+
   useEffect(() => {
     fetchWeatherData();
     fetchWeatherOptions();
@@ -188,6 +198,12 @@ const UpdateWeatherPage = () => {
     const file = event.target.files[0];
     setSelectedImageFile(file);
   };
+  if (isLoading)
+    return (
+      <div className="h-screen w-full flex justify-center items-center">
+        <Loading />
+      </div>
+    );
 
   return (
     <>
@@ -196,7 +212,6 @@ const UpdateWeatherPage = () => {
         title="Edit Informasi cuaca"
         className="pe-3">
         <div className="mx-8">
-          {isLoading && <Loading />}
           <form onSubmit={handleSubmit(onSubmit)}>
             <TextField
               label="Judul"
@@ -205,7 +220,7 @@ const UpdateWeatherPage = () => {
               isError={errors.judul}
               message={
                 errors.judul && (
-                  <span>
+                  <span id="errors-judul-message">
                     <Info12Regular className="-mt-0.5" /> {errors.judul.message}
                   </span>
                 )
@@ -239,7 +254,9 @@ const UpdateWeatherPage = () => {
                   control={control}
                 />
                 {errors.label && (
-                  <p className="text-error text-caption-lg mt-1">
+                  <p
+                    className="text-error text-caption-lg mt-1"
+                    id="errors-label-message">
                     <span>
                       <Info12Regular className="-mt-0.5 mr-1" />
                     </span>
@@ -250,13 +267,13 @@ const UpdateWeatherPage = () => {
               <div className="">
                 <FileInput
                   id="gambar"
-                  label="Upload File"
+                  label="Masukkan Gambar"
                   rules={{ required: true }}
                   control={control}
                   name="gambar"
                   value={watch("gambar")}
                   message={
-                    <span>
+                    <span id="errors-gambar-message">
                       <Info12Regular className="me-1.5" />
                       Wajib di isi maksimal 1MB, Hanya file berformat .JPG,
                       .JPEG, .PNG
@@ -290,7 +307,9 @@ const UpdateWeatherPage = () => {
               />
               <div className="mt-12">
                 {errors.deskripsi && (
-                  <p className="text-error text-caption-lg mt-1 ">
+                  <p
+                    className="text-error text-caption-lg mt-1 "
+                    id="errors-deskripsi-message">
                     <span>
                       <Info12Regular className="-mt-0.5 mr-1" />
                     </span>

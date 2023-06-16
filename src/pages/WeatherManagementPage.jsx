@@ -16,6 +16,7 @@ import Cookies from "js-cookie";
 import useWeather from "../hooks/useWeather";
 import { NotifModal } from "../components/Modal";
 import Loading from "../components/Loading";
+import ImageOverlay from "../components/ImageOverlay";
 
 const WeatherManagementPage = () => {
   const navigate = useNavigate();
@@ -32,6 +33,11 @@ const WeatherManagementPage = () => {
     text: "",
     title: "",
   });
+  const [imageOverlay, setImageOverlay] = useState({
+    isOpen: false,
+    image: null,
+  });
+
   const { deleteWeather } = useWeather();
 
   const handleDelete = (itemId) => {
@@ -110,24 +116,35 @@ const WeatherManagementPage = () => {
                         src={`https://34.128.85.215:8080/pictures/${item.weather_pictures[0]}`}
                         alt="Gambar"
                         className="w-[85px] h-[51px] mx-auto"
+                        onClick={() =>
+                          setImageOverlay({
+                            isOpen: true,
+                            image: `https://34.128.85.215:8080/pictures/${item.weather_pictures[0]}`,
+                          })
+                        }
+                        id={`image-weather-${item.id}`}
                       />
                     </td>
-                    <td className="text-caption-lg  text-neutral-80">
+                    <td
+                      className="text-caption-lg  text-neutral-80"
+                      id={`weather-label-${item.id}`}>
                       {item.weather_label}
                     </td>
-                    <td className="text-caption-lg  text-neutral-80">
+                    <td
+                      className="text-caption-lg  text-neutral-80"
+                      id={`weather-title-${item.id}`}>
                       {item.weather_title}
                     </td>
                     <td className="space-x-3">
                       <Eye20Regular
                         onClick={() => navigate(`/admin/weathers/${item.id}`)}
                         className="cursor-pointer hover:text-info w-5"
-                        id="detail-button"
+                        id={`detail-button-${item.id}`}
                       />
                       <Delete20Regular
                         onClick={() => handleDelete(item.id)}
                         className="cursor-pointer hover:text-info w-5"
-                        id="delete-button"
+                        id={`delete-button-${item.id}`}
                       />
 
                       <Edit20Regular
@@ -135,7 +152,7 @@ const WeatherManagementPage = () => {
                         onClick={() =>
                           navigate(`/admin/weathers/update/${item.id}`)
                         }
-                        id="edit-button"
+                        id={`edit-button-${item.id}`}
                       />
                     </td>
                   </tr>
@@ -144,38 +161,42 @@ const WeatherManagementPage = () => {
             )}
           </div>
         </div>
+        <ImageOverlay
+          image={imageOverlay.image}
+          isOpen={imageOverlay.isOpen}
+          onClose={() => setImageOverlay({ isOpen: false, image: null })}
+        />
+        <ConfirmModal
+          isOpen={showConfirmModal}
+          title="Konfirmasi Hapus Data Informasi Cuaca"
+          text="Yakin ingin menghapus data informasi cuaca ini ?"
+          cancelText="Tidak"
+          confirmText="Ya"
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+          icon="delete"
+          id="confirm-modal"
+        />
+        <NotifModal
+          title={showModal.title}
+          text={showModal.text}
+          icon={showModal.icon}
+          confirmText={"Tutup"}
+          isOpen={showModal.show}
+          onConfirm={() => {
+            setShowModal({
+              show: false,
+              icon: "",
+              text: "",
+              title: "",
+            });
+          }}
+          id="notif-modal"
+        />
         <div
           className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
             showConfirmModal || showModal.show ? "block" : "hidden"
-          } cursor-pointer top-0 bottom-0 left-0 right-0`}>
-          <ConfirmModal
-            isOpen={showConfirmModal}
-            title="Konfirmasi Hapus Data Informasi Cuaca"
-            text="Yakin ingin menghapus data informasi cuaca ini ?"
-            cancelText="Tidak"
-            confirmText="Ya"
-            onConfirm={handleConfirmDelete}
-            onCancel={handleCancelDelete}
-            icon="delete"
-            id="confirm-modal"
-          />
-          <NotifModal
-            title={showModal.title}
-            text={showModal.text}
-            icon={showModal.icon}
-            confirmText={"Tutup"}
-            isOpen={showModal.show}
-            onConfirm={() => {
-              setShowModal({
-                show: false,
-                icon: "",
-                text: "",
-                title: "",
-              });
-            }}
-            id="notif-modal"
-          />
-        </div>
+          } cursor-pointer top-0 bottom-0 left-0 right-0`}></div>
       </MainContainer>
     </>
   );

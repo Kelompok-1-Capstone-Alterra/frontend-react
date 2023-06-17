@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { SaveRegular } from "@fluentui/react-icons";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useRecoilState, useResetRecoilState } from "recoil";
 import Cookies from "js-cookie";
@@ -259,16 +258,6 @@ export default function UpdatePlantPage() {
         activeStepIndex={activeStepIndex}
       />
       <div className="flex justify-end gap-5 mt-11 items-stretch">
-        <Button
-          id="saveDraftButton"
-          size="md"
-          type="Button"
-          variant="text"
-          disabled={isSaving || isUploading}
-          className="px-[10.5px] flex items-center gap-1.5"
-        >
-          Simpan draf <SaveRegular className="text-[22px] -mt-1" />
-        </Button>
         {!isFirstStep && (
           <Button
             id="previousStepButton"

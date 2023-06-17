@@ -24,6 +24,7 @@ import fetcher from "../utils/fetcher";
 import usePlant from "../hooks/usePlant";
 import { addPlantDataState } from "../utils/recoil_atoms";
 import Loading from "../components/Loading";
+import ImageOverlay from "../components/ImageOverlay";
 
 const PLANT_PER_PAGE = 8;
 const DEBOUNCE_DELAY = 500;
@@ -49,6 +50,10 @@ export default function PlantPage() {
     icon: "",
     text: "",
     title: "",
+  });
+  const [imageOverlay, setImageOverlay] = useState({
+    isOpen: false,
+    image: null,
   });
   const { deletePlant } = usePlant();
 
@@ -161,8 +166,7 @@ export default function PlantPage() {
             size="sm"
             className={"flex rounded-md shadow-elevation-2 px-[20px] h-[48px]"}
             onClick={() => {
-              if (!localStorage.getItem("addPlantData") === null) {
-                console.log("reset");
+              if (localStorage.getItem("plantFormDraft") === null) {
                 resetAddPlantData();
               }
             }}
@@ -206,6 +210,12 @@ export default function PlantPage() {
                         }
                         alt="Gambar Tanaman"
                         className="w-14 h-12"
+                        onClick={() =>
+                          setImageOverlay({
+                            isOpen: true,
+                            image: `https://34.128.85.215:8080/pictures/${plant.Pictures[0]?.url}`,
+                          })
+                        }
                       />
                     </td>
                     <td className="text-left ps-3">
@@ -223,19 +233,19 @@ export default function PlantPage() {
                     </td>
                     <td>
                       <Link
-                        id="viewIcon"
+                        id={`viewIcon${plant.ID}`}
                         to={`/admin/plants/${plant.ID}`}
                       >
                         <Eye20Regular className="cursor-pointer me-3 hover:text-info" />
                       </Link>
                       <Delete20Regular
-                        id="deleteIcon"
+                        id={`deleteIcon${plant.ID}`}
                         className="cursor-pointer me-3 hover:text-info"
                         onClick={() => setModalDelete(plant.ID)}
                       />
                       <Link to={`/admin/plants/update/${plant.ID}`}>
                         <Edit20Regular
-                          id="editIcon"
+                          id={`editIcon${plant.ID}}`}
                           className="cursor-pointer hover:text-info"
                         />
                       </Link>
@@ -282,6 +292,11 @@ export default function PlantPage() {
           )}
         </>
       )}
+      <ImageOverlay
+        image={imageOverlay.image}
+        isOpen={imageOverlay.isOpen}
+        onClose={() => setImageOverlay({ isOpen: false, image: null })}
+      />
       <ConfirmModal
         cancelText={"Tidak"}
         confirmText={"Ya"}

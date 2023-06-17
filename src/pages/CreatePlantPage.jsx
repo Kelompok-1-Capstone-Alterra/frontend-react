@@ -207,6 +207,7 @@ export default function CreatePlantPage() {
             size="md"
             disabled={isUploading || isSaving}
             type="button"
+            className="basis-[154px]"
           >
             Kembali
           </Button>
@@ -217,6 +218,7 @@ export default function CreatePlantPage() {
           type="submit"
           disabled={isUploading || isSaving}
           form={`form${activeStepIndex}`}
+          className="basis-[154px]"
         >
           {isLastStep ? "Simpan" : "Lanjut"}
         </Button>

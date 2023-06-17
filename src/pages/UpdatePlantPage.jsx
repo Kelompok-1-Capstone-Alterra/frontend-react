@@ -252,6 +252,7 @@ export default function UpdatePlantPage() {
     <SecondaryContainer
       title="Edit Tanaman"
       backTo="/admin/plants"
+      className="overflow-scroll"
     >
       <Step
         steps={steps}
@@ -274,6 +275,7 @@ export default function UpdatePlantPage() {
             onClick={handlePreviousStep}
             size="md"
             disabled={isSaving || isUploading}
+            isLoading={isSaving || isUploading}
             type="button"
           >
             Kembali

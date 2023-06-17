@@ -24,7 +24,7 @@ function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { login } = useAuth();
+  const { login, isLoading } = useAuth();
 
   useEffect(() => {
     let timer;
@@ -149,10 +149,9 @@ function Login() {
             <Button
               id="submit-button"
               variant={"green"}
+              disabled={isLoading}
               className={"rounded-full mt-10 w-full"}
-              onClick={() => {
-                handleSubmit(onSubmit);
-              }}
+              type="submit"
             >
               Masuk
             </Button>

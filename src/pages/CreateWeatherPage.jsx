@@ -149,7 +149,8 @@ const CreateWeatherPage = () => {
       <SecondaryContainer
         backTo="/admin/weathers"
         title="Upload Informasi cuaca"
-        className={"pe-3"}>
+        className={"pe-3"}
+      >
         <div className="mx-8">
           <div className="form-create">
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -176,7 +177,10 @@ const CreateWeatherPage = () => {
 
               <div className="flex justify-between mt-3">
                 <div>
-                  <label className="text-body-sm font-semibold" htmlFor="label">
+                  <label
+                    className="text-body-sm font-semibold"
+                    htmlFor="label"
+                  >
                     Label Cuaca
                   </label>
                   <div className="mb-1"></div>
@@ -247,7 +251,10 @@ const CreateWeatherPage = () => {
                   isError={errors.gambar}
                 />
               </div>
-              <label htmlFor="deskripsi" className="text-body-lg font-semibold">
+              <label
+                htmlFor="deskripsi"
+                className="text-body-lg font-semibold"
+              >
                 Deskripsi
               </label>
               <div className="mb-6">
@@ -313,7 +320,9 @@ const CreateWeatherPage = () => {
                   size="md"
                   onClick={handleSubmit(onSubmit)}
                   disabled={isUploading || isSaving}
-                  id="btn-submit">
+                  isLoading={isUploading || isSaving}
+                  id="btn-submit"
+                >
                   Kirim
                 </Button>
               </div>
@@ -324,7 +333,8 @@ const CreateWeatherPage = () => {
       <div
         className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
           isConfirmModalOpen || showModal.show ? "block" : "hidden"
-        } cursor-pointer top-0 bottom-0 left-0 right-0`}></div>
+        } cursor-pointer top-0 bottom-0 left-0 right-0`}
+      ></div>
     </>
   );
 };

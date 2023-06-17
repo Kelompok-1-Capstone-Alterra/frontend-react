@@ -152,6 +152,7 @@ function Login() {
               disabled={isLoading}
               className={"rounded-full mt-10 w-full"}
               type="submit"
+              isLoading={isLoading}
             >
               Masuk
             </Button>

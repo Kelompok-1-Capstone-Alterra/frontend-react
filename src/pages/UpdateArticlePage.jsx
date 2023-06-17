@@ -17,7 +17,6 @@ import Cookies from "js-cookie";
 import fetcher from "../utils/fetcher";
 import { useParams } from "react-router-dom";
 import Loading from "../components/Loading";
-import axios from "axios";
 
 export default function UpdateArticlePage() {
   const {
@@ -39,7 +38,7 @@ export default function UpdateArticlePage() {
     title: "",
   });
   const [editorFocus, setEditorFocus] = useState(false);
-  const { uploadImage, isLoading: isUploading } = useImages();
+  const { uploadImage, getImage, isLoading: isUploading } = useImages();
   const [selectedImageFile, setSelectedImageFile] = useState(null);
   const { updateArticle, isLoading: isUpdating } = useArticle();
   const { data, isLoading, error } = useSWR(
@@ -70,14 +69,7 @@ export default function UpdateArticlePage() {
       if (article) {
         setValue("article_title", article.article_title);
         setValue("description", article.article_description);
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/pictures/${
-            article.article_pictures[0]
-          }`,
-          {
-            responseType: "blob",
-          }
-        );
+        const response = await getImage(article.article_pictures[0]);
         // Nama file bedasarkan label
         const fileName = `artikel.${response.data.type.split("/")[1]}`;
         const file = new File([response.data], fileName, {
@@ -256,6 +248,7 @@ export default function UpdateArticlePage() {
             variant={"green"}
             size="md"
             disabled={isUploading || isUpdating}
+            isLoading={isUploading || isUpdating}
             className={"rounded-full"}
           >
             Simpan

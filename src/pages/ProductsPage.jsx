@@ -20,9 +20,10 @@ import { toRupiah } from "../utils/functions";
 import Cookies from "js-cookie";
 import useProduct from "../hooks/useProduct";
 import useDebounce from "../hooks/useDebounce";
+import ImageOverlay from "../components/ImageOverlay";
 import Loading from "../components/Loading";
 
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 8;
 const DEBOUNCE_DELAY = 500;
 
 const RenderContent = ({
@@ -35,6 +36,7 @@ const RenderContent = ({
   setConfirmModalId,
   isLoading,
   tab,
+  setImageOverlay,
 }) => {
   return (
     <>
@@ -44,10 +46,11 @@ const RenderContent = ({
         </p>
         <Link
           to={"/admin/products/create"}
-          id="add-product"
+          id="add-product-link"
         >
           <Button
             size="sm"
+            id="add-product-button"
             className={"rounded-lg px-0 w-[243px] h-[42px]"}
           >
             <Add20Filled className="me-2" />
@@ -88,7 +91,14 @@ const RenderContent = ({
                             : "http://via.placeholder.com/56x48"
                         }
                         alt="gambar"
-                        className="w-[56px] h-[48px] mx-auto"
+                        className="w-[56px] h-[48px] mx-auto cursor-pointer"
+                        onClick={() =>
+                          setImageOverlay(
+                            `${import.meta.env.VITE_API_BASE_URL}/pictures/${
+                              product.product_picture
+                            }`
+                          )
+                        }
                       />
                     </td>
                     <td className="text-caption-lg">{product.product_name}</td>
@@ -106,21 +116,27 @@ const RenderContent = ({
                     </td>
                     <td>
                       <div className="flex gap-3 justify-center">
-                        <Link to={`/admin/products/${product.id}`}>
+                        <Link
+                          id={`detail-product-link-${product.id}`}
+                          to={`/admin/products/${product.id}`}
+                        >
                           <Eye20Regular
                             className="cursor-pointer hover:text-info"
-                            id="detail-product"
+                            id={`detail-product-icon-${product.id}`}
                           />
                         </Link>
                         <Delete20Regular
                           className="cursor-pointer hover:text-info"
                           onClick={() => setConfirmModalId(product.id)}
-                          id="delete-product"
+                          id={`delete-product-icon-${product.id}`}
                         />
-                        <Link to={`/admin/products/update/${product.id}`}>
+                        <Link
+                          id={`detail-product-link-${product.id}`}
+                          to={`/admin/products/update/${product.id}`}
+                        >
                           <Edit20Regular
                             className="cursor-pointer hover:text-info"
-                            id="update-product"
+                            id={`update-product-icon-${product.id}`}
                           />
                         </Link>
                       </div>
@@ -186,6 +202,7 @@ export default function ProductsPage() {
   });
   const [activeTabIndex, setActiveTabIndex] = useState(0); // 0: semua, 1: etalase, 2: arsip
   const { deleteProduct } = useProduct();
+  const [imageOverlay, setImageOverlay] = useState(null);
 
   const getUrl = (tab, keyword) => {
     let resource = "";
@@ -299,6 +316,7 @@ export default function ProductsPage() {
             totalProducts={totalProducts}
             setConfirmModalId={setConfirmModalId}
             isLoading={isLoading}
+            setImageOverlay={setImageOverlay}
             tab="semua"
           />
         </>
@@ -318,6 +336,7 @@ export default function ProductsPage() {
             totalProducts={totalProducts}
             totalPages={totalPages}
             isLoading={isLoading}
+            setImageOverlay={setImageOverlay}
             tab="etalase"
           />
         </>
@@ -335,6 +354,7 @@ export default function ProductsPage() {
             handlePageChange={handlePageChange}
             setConfirmModalId={setConfirmModalId}
             totalProducts={totalProducts}
+            setImageOverlay={setImageOverlay}
             totalPages={totalPages}
             isLoading={isLoading}
             tab="arsip"
@@ -403,6 +423,11 @@ export default function ProductsPage() {
         confirmText={"Tutup"}
         title={notifModal.title}
         text={notifModal.text}
+      />
+      <ImageOverlay
+        image={imageOverlay}
+        isOpen={imageOverlay ? true : false}
+        onClose={() => setImageOverlay(null)}
       />
     </>
   );

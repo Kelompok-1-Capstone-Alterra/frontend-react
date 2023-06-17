@@ -25,6 +25,7 @@ import useImage from "../hooks/useImage";
 export default function CreatePlantPage() {
   const [addPlantData, setAddPlantData] = useRecoilState(addPlantDataState);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [draftLoading, setDraftLoading] = useState(false);
   const [notifModal, setNotifModal] = useState({
     show: false,
     icon: "",
@@ -106,11 +107,15 @@ export default function CreatePlantPage() {
 
   const handleSaveDraft = async () => {
     if (formRef.current) {
+      setDraftLoading(true);
       const formValues = await formRef.current.getFormValues();
 
       saveFormDraft(formValues);
 
       setLocalStorageToState();
+      setTimeout(() => {
+        setDraftLoading(false);
+      }, 500);
     }
   };
 
@@ -183,6 +188,7 @@ export default function CreatePlantPage() {
     <SecondaryContainer
       title="Tambah Tanaman"
       backTo="/admin/plants"
+      className="overflow-scroll"
     >
       <Step
         steps={steps}
@@ -196,6 +202,7 @@ export default function CreatePlantPage() {
           variant="text"
           className="px-[10.5px] flex items-center gap-1.5"
           disabled={isUploading || isSaving}
+          isLoading={draftLoading}
           onClick={handleSaveDraft}
         >
           Simpan draf <SaveRegular className="text-[22px] -mt-1" />
@@ -216,9 +223,10 @@ export default function CreatePlantPage() {
           id="nextStepButton"
           size="md"
           type="submit"
+          isLoading={isUploading || isSaving}
           disabled={isUploading || isSaving}
           form={`form${activeStepIndex}`}
-          className="basis-[154px]"
+          className={`basis-[154px]`}
         >
           {isLastStep ? "Simpan" : "Lanjut"}
         </Button>

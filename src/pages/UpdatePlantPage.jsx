@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { SaveRegular } from "@fluentui/react-icons";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useRecoilState, useResetRecoilState } from "recoil";
 import Cookies from "js-cookie";
@@ -252,29 +251,22 @@ export default function UpdatePlantPage() {
     <SecondaryContainer
       title="Edit Tanaman"
       backTo="/admin/plants"
+      className="overflow-scroll"
     >
       <Step
         steps={steps}
         activeStepIndex={activeStepIndex}
       />
       <div className="flex justify-end gap-5 mt-11 items-stretch">
-        <Button
-          id="saveDraftButton"
-          size="md"
-          type="Button"
-          variant="text"
-          disabled={isSaving || isUploading}
-          className="px-[10.5px] flex items-center gap-1.5"
-        >
-          Simpan draf <SaveRegular className="text-[22px] -mt-1" />
-        </Button>
         {!isFirstStep && (
           <Button
             id="previousStepButton"
             onClick={handlePreviousStep}
             size="md"
             disabled={isSaving || isUploading}
+            isLoading={isSaving || isUploading}
             type="button"
+            className={`basis-[154px]`}
           >
             Kembali
           </Button>
@@ -285,6 +277,7 @@ export default function UpdatePlantPage() {
           type="submit"
           disabled={isSaving || isUploading}
           form={`form${activeStepIndex}`}
+          className={`basis-[154px]`}
         >
           {isLastStep ? "Simpan" : "Lanjut"}
         </Button>

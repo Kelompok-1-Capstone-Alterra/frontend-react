@@ -6,9 +6,11 @@ import logo from "../assets/Logo.png";
 import TextField from "../components/TextField";
 import { Eye24Regular, EyeOff24Regular } from "@fluentui/react-icons";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import Alert from "../components/Alert";
 import Cookies from "js-cookie";
+import { useEffect } from "react";
+import useAuth from "../hooks/useAuth";
+import { AnimatePresence } from "framer-motion";
 
 function Login() {
   const navigate = useNavigate();
@@ -22,36 +24,22 @@ function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const { login, isLoading } = useAuth();
 
-  const login = async (email, password) => {
-    try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/admins/login`,
-        {
-          admin_email: email,
-          admin_password: password,
-        }
-      );
-
-      if (res.status === 200) {
-        const user = {
-          admin_id: res.data.data.admin.ID,
-          admin_name: res.data.data.admin.admin_name,
-          admin_email: res.data.data.admin.admin_email,
-        };
-        localStorage.setItem("user", JSON.stringify(user));
-        Cookies.set("token", res.data.data.token);
-        navigate("/admin");
-      }
-    } catch (err) {
-      setAlert({
-        show: true,
-        message: "Email atau Password Salah",
-      });
+  useEffect(() => {
+    let timer;
+    if (alert.show) {
+      timer = setTimeout(() => {
+        setAlert({
+          show: false,
+          message: "",
+        });
+      }, 2500);
     }
-  };
+    return () => clearTimeout(timer);
+  }, [alert.show]);
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const { email, password } = data;
     if (email === "" || password === "") {
       setAlert({
@@ -60,27 +48,56 @@ function Login() {
       });
       return;
     }
-    login(email, password);
+    const res = await login(email, password);
+    if (res.status === 200) {
+      const user = {
+        admin_id: res.data.data.admin.ID,
+        admin_name: res.data.data.admin.admin_name,
+        admin_email: res.data.data.admin.admin_email,
+      };
+      localStorage.setItem("user", JSON.stringify(user));
+      Cookies.set("token", res.data.data.token);
+      navigate("/admin");
+    } else {
+      if (res.status === 500 || res.status === 504) {
+        setAlert({
+          show: true,
+          message: "Terjadi Kesalahan pada Server",
+        });
+      } else {
+        setAlert({
+          show: true,
+          message: "Email atau Password Salah",
+        });
+      }
+    }
   };
+
   const showEye = () => {
     setShowPassword(!showPassword);
   };
 
   return (
     <>
+      <div className="flex w-full justify-center">
+        <AnimatePresence>
+          {alert.show && (
+            <Alert
+              className={`fixed w-4/6 mt-8`}
+              variant="error"
+              message={alert.message}
+            />
+          )}
+        </AnimatePresence>
+      </div>
       <div
-        className="h-[calc(100vh-152px)] py-8 flex flex-col items-center w-full"
+        className="h-[calc(100vh-152px)] py-8 flex flex-col items-center justify-center w-full"
         style={{
           backgroundImage: `url('${gambar}')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        <Alert
-          className={`${alert.show ? "visible" : "invisible"} w-4/6 mb-5`}
-          variant="error"
-          message={alert.message}
-        />
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="bg-white rounded-md p-7">
             <div className="space-y-4">
@@ -132,10 +149,9 @@ function Login() {
             <Button
               id="submit-button"
               variant={"green"}
+              disabled={isLoading}
               className={"rounded-full mt-10 w-full"}
-              onClick={() => {
-                handleSubmit(onSubmit);
-              }}
+              type="submit"
             >
               Masuk
             </Button>

@@ -4,17 +4,22 @@ import {
   Delete24Regular,
 } from "@fluentui/react-icons";
 import Button from "./Button";
+import { motion } from "framer-motion";
 
 const ModalContainer = ({ children }) => {
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="border bg-neutral-10 w-[487px] rounded-[10px] p-[32px] shadow-elevation-2 border-1 top-1/2 left-1/2 h-auto">
+    <motion.div className="fixed inset-0 flex items-center justify-center z-50">
+      <motion.div
+        className="border bg-neutral-10 w-[487px] rounded-[10px] p-[32px] shadow-elevation-2 border-1 top-1/2 left-1/2 h-auto"
+        initial={{ opacity: 0, y: +70 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.2 }}
+      >
         {children}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
-
 const ConfirmModal = ({
   isOpen,
   text,

@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { Info24Filled } from "@fluentui/react-icons";
 
 export default function Alert({ variant, message, className }) {
@@ -9,13 +10,17 @@ export default function Alert({ variant, message, className }) {
   };
 
   return (
-    <div
-      className={`${className} alert font-semibold border ${variants[variant]} shadow-lg`}
+    <motion.div
+      initial={{ opacity: 0, y: -50 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: +50 }}
+      transition={{ duration: 0.17 }}
+      className={`alert font-semibold border ${variants[variant]} shadow-lg ${className}`}
     >
       <div>
         <Info24Filled className="alert-icon" />
         <span>{message}</span>
       </div>
-    </div>
+    </motion.div>
   );
 }

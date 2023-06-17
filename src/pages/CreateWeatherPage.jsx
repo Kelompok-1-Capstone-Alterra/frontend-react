@@ -49,12 +49,7 @@ const CreateWeatherPage = () => {
   const { data: weatherData, isLoading } = useSWR(url, async (url) =>
     fetcher(url, Cookies.get("token"))
   );
-  if (isLoading)
-    return (
-      <div className="h-screen w-full flex justify-center items-center">
-        <Loading />
-      </div>
-    );
+
   useEffect(() => {
     const fetchWeatherData = async () => {
       try {
@@ -91,6 +86,7 @@ const CreateWeatherPage = () => {
     setFormData(data);
     setIsConfirmModalOpen(true);
   };
+
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     setSelectedImageFile(file);
@@ -104,15 +100,14 @@ const CreateWeatherPage = () => {
       setShowModal({
         show: true,
         icon: "info",
-        text: "Informasi cuaca gagal dit ambahkan",
+        text: "Informasi cuaca gagal ditambahkan",
         title: "Informasi cuaca",
       });
       return;
     }
 
-    //save the image url
+    // Save the image URL
     const imageUrl = upload.data.urls[0];
-    // console.log(imageUrl);
     const save = await createWeather({
       weather_title: formData.judul,
       weather_label: formData.label.label,
@@ -127,7 +122,7 @@ const CreateWeatherPage = () => {
       setShowModal({
         show: true,
         icon: "info",
-        text: "Informasi cuaca gagal di tambahkan",
+        text: "Informasi cuaca gagal ditambahkan",
         title: "Tambah Informasi cuaca",
       });
       return;
@@ -136,7 +131,7 @@ const CreateWeatherPage = () => {
     setShowModal({
       show: true,
       icon: "success",
-      text: "Informasi cuaca berhasil di tambahkan",
+      text: "Informasi cuaca berhasil ditambahkan",
       title: "Tambah Informasi cuaca",
     });
     reset();
@@ -150,6 +145,13 @@ const CreateWeatherPage = () => {
     setIsConfirmModalOpen(false);
   };
 
+  if (isLoading) {
+    return (
+      <div className="h-screen w-full flex justify-center items-center">
+        <Loading />
+      </div>
+    );
+  }
   return (
     <>
       <SecondaryContainer

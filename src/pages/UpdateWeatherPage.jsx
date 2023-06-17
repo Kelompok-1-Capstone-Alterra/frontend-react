@@ -105,7 +105,7 @@ const UpdateWeatherPage = () => {
         )
         .map((option) => ({
           ...option,
-          id: `label-${option.toLowerCase()}`,
+          id: `label-${option.value.toLowerCase()}`,
         }));
 
       setWeatherOptions(newOptions);

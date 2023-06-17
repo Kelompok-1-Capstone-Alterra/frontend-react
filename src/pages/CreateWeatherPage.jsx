@@ -199,7 +199,7 @@ const CreateWeatherPage = () => {
                           .map((option) => ({
                             label: option,
                             value: option,
-                            id: `label-option-${option.toLowerCase()}`,
+                            id: `label-${option.toLowerCase()}`,
                           }))}
                         placeholder="Pilih Label"
                         className="w-96"

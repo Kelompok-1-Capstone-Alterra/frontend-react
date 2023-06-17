@@ -105,9 +105,7 @@ const UpdateWeatherPage = () => {
         )
         .map((option) => ({
           ...option,
-          id: `weather-option-${option.value
-            .toLowerCase()
-            .replace(/\s/g, "-")}`, // Menambahkan ID unik berdasarkan nilai option
+          id: `label-${option.toLowerCase()}`,
         }));
 
       setWeatherOptions(newOptions);

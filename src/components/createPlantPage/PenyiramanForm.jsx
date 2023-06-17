@@ -9,6 +9,7 @@ import { MODULES } from "../../constants";
 import FileInput from "../FileInput";
 import { addPlantDataState } from "../../utils/recoil_atoms";
 import { iterateConvertFileToBase64 } from "../../utils/functions";
+import useScrollToTop from "../../hooks/useScrollToTop";
 
 const wateringPeriodOptions = [
   { value: 1, label: "1 kali sehari" },
@@ -45,6 +46,8 @@ const PenyiramanForm = forwardRef(function PenyiramanForm(
       },
     },
   });
+
+  useScrollToTop();
 
   useEffect(() => {
     register("watering_info.watering_description", {

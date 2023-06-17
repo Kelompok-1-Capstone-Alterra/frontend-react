@@ -10,6 +10,7 @@ import {
   iterateConvertFileToBase64,
   // convertFileToBase64,
 } from "../../utils/functions";
+import useScrollToTop from "../../hooks/useScrollToTop";
 
 const PenanamanForm = forwardRef(function PenanamanForm(
   { formId, onSubmit },
@@ -24,8 +25,6 @@ const PenanamanForm = forwardRef(function PenanamanForm(
     getValues,
     formState: { defaultValues, errors },
   } = methods;
-
-  // console.log(defaultValues);
 
   const [checkedCheckboxes, setCheckedCheckboxes] = useState({
     container: defaultValues.planting_info?.planting_container ?? false,
@@ -47,6 +46,8 @@ const PenanamanForm = forwardRef(function PenanamanForm(
       ]);
     }
   }, [checkedCheckboxes]);
+
+  useScrollToTop();
 
   useImperativeHandle(ref, () => {
     return {

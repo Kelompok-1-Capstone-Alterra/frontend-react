@@ -602,6 +602,7 @@ export default function CreateProductPage() {
               id="submit-button"
               type="submit"
               disabled={loadingImage || loadingProduct}
+              isLoading={loadingImage || loadingProduct}
               size="md"
             >
               Simpan

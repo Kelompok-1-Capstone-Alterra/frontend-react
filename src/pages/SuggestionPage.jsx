@@ -1,45 +1,44 @@
-import { Eye20Regular } from "@fluentui/react-icons";
+import { Eye20Regular, Dismiss20Filled } from "@fluentui/react-icons";
 import Table from "../components/Table";
-import axios from "axios";
 import useSWR from "swr";
 import { useState } from "react";
 import PaginationButton from "../components/PaginationButton";
 import MainContainer from "../components/layouts/MainContainer";
-import gambar from "../assets/Logo.png";
+import gambar from "../assets/support.png";
+import Cookies from "js-cookie";
+import fetcher from "../utils/fetcher";
+import Loading from "../components/Loading";
+import { useNavigate } from "react-router-dom";
 
-const ITEMS_PER_PAGE = 8;
 
-export default function Support() {
-  const url = "https://647348bad784bccb4a3c6bcf.mockapi.io/help";
-  const fetcher = (url) => axios.get(url).then((res) => res.data);
-  const { data, error } = useSWR(url, fetcher);
-
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+export default function Suggestion() {
+  const navigate = useNavigate()
+  const url = `${import.meta.env.VITE_API_BASE_URL}/auth/admins/suggestions`;
+  const { data, isLoading } = useSWR(url, () =>
+    fetcher(url, Cookies.get("token"))
+  );
+  const ITEMS_PER_PAGE = 8;
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [filter, setFilter] = useState({ currentPage: 1 });
   const [showModal, setShowModal] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
   const { currentPage } = filter;
   const support = data;
 
-  let filteredSupport = support;
-  filteredSupport = filteredSupport?.filter((value) => {
-    const supportDate = new Date(value.date);
-    return (
-      supportDate >= startDate && supportDate <= endDate
-    );
-  });
+  let filteredSupport = Array.isArray(support) ? support : [];
+
+  if (startDate && endDate && Array.isArray(filteredSupport)) {
+    filteredSupport = filteredSupport.filter((value) => {
+      const supportDate = new Date(value.date);
+      return supportDate >= startDate && supportDate <= endDate;
+    });
+  } else {
+    filteredSupport = [];
+  }
 
   const totalPages = Math.ceil(filteredSupport?.length / ITEMS_PER_PAGE);
 
-  filteredSupport = filteredSupport?.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
-
-  if (error) {
-    return <p>Error: {error.message}</p>;
-  }
   const handlePageChange = (page) => {
     setFilter({
       ...filter,
@@ -50,35 +49,52 @@ export default function Support() {
   const openModal = (data) => {
     setSelectedData(data);
     setShowModal(true);
+    navigate(`/auth/admins/suggestions/${data.suggestion_id}`);
   };
 
   const handleStartDateChange = (e) => {
-    const startDateValue = new Date(e.target.value);
+    const startDateValue = e.target.value ? new Date(e.target.value) : null;
     setStartDate(startDateValue);
   };
 
   const handleEndDateChange = (e) => {
-    const endDateValue = new Date(e.target.value);
+    const endDateValue = e.target.value ? new Date(e.target.value) : null;
     setEndDate(endDateValue);
   };
 
+  console.log(support);
+
   return (
     <MainContainer>
-      {/* title */}
       <h4 className="text-h-4 font-bold">Masukan & Saran</h4>
       <div className="mt-[20px] flex">
         <div className="mr-[10px]">
-          <input type="date" className="border border-gray-500 pl-[10px] rounded-md" onChange={handleStartDateChange} />
+          <input
+            type="date"
+            className="border border-gray-500 pl-[10px] rounded-md px-2 py-1"
+            onChange={handleStartDateChange}
+          />
         </div>
         <p>-</p>
         <div className="ml-[10px]">
-          <input type="date" className="border border-gray-500 pl-[10px] rounded-md" onChange={handleEndDateChange}  />
+          <input
+            type="date"
+            className="border border-gray-500 pl-[10px] rounded-md px-2 py-1"
+            onChange={handleEndDateChange}
+          />
         </div>
       </div>
       <div className="w-full">
         <div>
-          {filteredSupport?.length <= 0 ? (
-            <p className="text-center">Tidak Ada Masukan</p>
+          {isLoading ? (
+            <Loading />
+          ) : filteredSupport?.length <= 0 ? (
+            <div className="flex flex-col items-center justify-center mt-20">
+              <img src={gambar} className="" alt="Error 400" />
+              <p className="text-center text-neutral-40">
+                Belum ada data masukan & saran
+              </p>
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <Table
@@ -90,24 +106,24 @@ export default function Support() {
                 {filteredSupport?.map((value, index) => {
                   const kata = value.deskripsi.split(" ");
                   const maxKata = kata.slice(0, 15).join(" ");
-                  const Desc =kata.length > 15 ? maxKata+ "..." : maxKata;
+                  const Desc = kata.length > 15 ? maxKata + "..." : maxKata;
                   return (
                     <tr
                       key={index}
                       className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
                     >
                       <td className="text-caption-lg pt-[17.5px] pb-[17.5px]">
-                        {value.date}
+                        {new Date(value.date).toLocaleDateString("id-ID")}
                       </td>
                       <td className="text-caption-lg">{value.id}</td>
-                      <td className="text-caption-lg text-left max-w-[642px]">
+                      <td className="text-caption-lg w-[674px] text-left">
                         {Desc}
                       </td>
                       <td>
                         <div className="flex gap-3 justify-center">
                           <Eye20Regular
                             className="cursor-pointer hover:text-info"
-                            id="modal-support"
+                            id={`detail-suggestion-${value.id}`}
                             onClick={() => openModal(value)}
                           />
                         </div>
@@ -134,7 +150,10 @@ export default function Support() {
             <div className="border bg-neutral-10 w-[895px] rounded-[10px] p-[32px] shadow-elevation-2 border-1 top-1/2 left-1/2">
               <div className="flex justify-between mb-[10px]">
                 <p className="font-bold">Masukan Dan Saran</p>
-                <button onClick={() => setShowModal(false)}>X</button>
+                <Dismiss20Filled
+                  onClick={() => setShowModal(false)}
+                  className="cursor-pointer hover:text-info"
+                />
               </div>
               <div className="flex">
                 <div className="">
@@ -173,6 +192,11 @@ export default function Support() {
           </div>
         </>
       )}
+      <div
+        className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
+          showModal ? "block" : "hidden"
+        } cursor-pointer top-0 bottom-0 left-0 right-0`}
+      ></div>
     </MainContainer>
   );
 }

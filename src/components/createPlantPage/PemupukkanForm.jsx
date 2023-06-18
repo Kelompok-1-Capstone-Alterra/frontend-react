@@ -43,7 +43,6 @@ const PemupukkanForm = forwardRef(function PemupukkanForm(
         option.value === addPlantData?.fertilizing_info?.fertilizing_period
     ) || addPlantData?.fertilizing_info?.fertilizing_period;
 
-  console.log(fertilizingLimitDefaultOption);
   const {
     register,
     setValue,

@@ -16,6 +16,7 @@ import Cookies from "js-cookie";
 import fetcher from "../utils/fetcher";
 import useWeather from "../hooks/useWeather";
 import useImages from "../hooks/useImage";
+import Loading from "../components/Loading";
 
 const CreateWeatherPage = () => {
   const {
@@ -45,7 +46,7 @@ const CreateWeatherPage = () => {
   const { createWeather, isLoading: isSaving } = useWeather();
   const weatherOptions = ["Cerah", "Mendung", "Berawan", "Hujan"];
   const url = `${import.meta.env.VITE_API_BASE_URL}/auth/admins/weathers`;
-  const { data: weatherData } = useSWR(url, async (url) =>
+  const { data: weatherData, isLoading } = useSWR(url, async (url) =>
     fetcher(url, Cookies.get("token"))
   );
 
@@ -85,6 +86,7 @@ const CreateWeatherPage = () => {
     setFormData(data);
     setIsConfirmModalOpen(true);
   };
+
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     setSelectedImageFile(file);
@@ -98,15 +100,14 @@ const CreateWeatherPage = () => {
       setShowModal({
         show: true,
         icon: "info",
-        text: "Informasi cuaca gagal dit ambahkan",
+        text: "Informasi cuaca gagal ditambahkan",
         title: "Informasi cuaca",
       });
       return;
     }
 
-    //save the image url
+    // Save the image URL
     const imageUrl = upload.data.urls[0];
-    // console.log(imageUrl);
     const save = await createWeather({
       weather_title: formData.judul,
       weather_label: formData.label.label,
@@ -121,8 +122,8 @@ const CreateWeatherPage = () => {
       setShowModal({
         show: true,
         icon: "info",
-        text: "Informasi cuaca gagal di tambahkan",
-        title: "Informasi cuaca",
+        text: "Informasi cuaca gagal ditambahkan",
+        title: "Tambah Informasi cuaca",
       });
       return;
     }
@@ -130,8 +131,8 @@ const CreateWeatherPage = () => {
     setShowModal({
       show: true,
       icon: "success",
-      text: "Informasi cuaca berhasil di tambahkan",
-      title: "Informasi cuaca",
+      text: "Informasi cuaca berhasil ditambahkan",
+      title: "Tambah Informasi cuaca",
     });
     reset();
     const updatedLabels = [...existingWeatherLabels, formData.label.label];
@@ -144,13 +145,19 @@ const CreateWeatherPage = () => {
     setIsConfirmModalOpen(false);
   };
 
+  if (isLoading) {
+    return (
+      <div className="h-screen w-full flex justify-center items-center">
+        <Loading />
+      </div>
+    );
+  }
   return (
     <>
       <SecondaryContainer
         backTo="/admin/weathers"
         title="Upload Informasi cuaca"
-        className={"pe-3"}
-      >
+        className={"pe-3"}>
         <div className="mx-8">
           <div className="form-create">
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -161,7 +168,7 @@ const CreateWeatherPage = () => {
                 isError={errors.judul}
                 message={
                   errors.judul && (
-                    <span>
+                    <span id="errors-judul-message">
                       <Info12Regular className="-mt-0.5" />{" "}
                       {errors.judul.message}
                     </span>
@@ -177,10 +184,7 @@ const CreateWeatherPage = () => {
 
               <div className="flex justify-between mt-3">
                 <div>
-                  <label
-                    className="text-body-sm font-semibold"
-                    htmlFor="label"
-                  >
+                  <label className="text-body-sm font-semibold" htmlFor="label">
                     Label Cuaca
                   </label>
                   <div className="mb-1"></div>
@@ -197,6 +201,7 @@ const CreateWeatherPage = () => {
                           .map((option) => ({
                             label: option,
                             value: option,
+                            id: `label-${option.toLowerCase()}`,
                           }))}
                         placeholder="Pilih Label"
                         className="w-96"
@@ -215,7 +220,9 @@ const CreateWeatherPage = () => {
                   />
 
                   {errors.label && (
-                    <p className="text-error text-caption-lg mt-1 ">
+                    <p
+                      className="text-error text-caption-lg mt-1 "
+                      id="errors-label-message">
                       <span>
                         <Info12Regular className="-mt-0.5 mr-1" />
                       </span>
@@ -226,7 +233,7 @@ const CreateWeatherPage = () => {
 
                 <FileInput
                   id="gambar"
-                  label={"Gambar Tanaman"}
+                  label="Masukkan Gambar"
                   value={gambar}
                   rules={{
                     required: true,
@@ -242,7 +249,7 @@ const CreateWeatherPage = () => {
                   control={control}
                   name="gambar"
                   message={
-                    <span>
+                    <span id="errors-gambar-message">
                       <Info12Regular className="me-1.5" />
                       Wajib di isi maksimal 1MB, Hanya file berformat .JPG,
                       .JPEG, .PNG
@@ -251,10 +258,7 @@ const CreateWeatherPage = () => {
                   isError={errors.gambar}
                 />
               </div>
-              <label
-                htmlFor="deskripsi"
-                className="text-body-lg font-semibold"
-              >
+              <label htmlFor="deskripsi" className="text-body-lg font-semibold">
                 Deskripsi
               </label>
               <div className="mb-6">
@@ -277,7 +281,9 @@ const CreateWeatherPage = () => {
                 />
                 <div className="mt-12">
                   {errors.deskripsi && (
-                    <p className="text-error text-caption-lg mt-1 ">
+                    <p
+                      className="text-error text-caption-lg mt-1 "
+                      id="errors-deskripsi-message">
                       <span>
                         <Info12Regular className="-mt-0.5 mr-1" />
                       </span>
@@ -288,10 +294,11 @@ const CreateWeatherPage = () => {
               </div>
               <ConfirmModal
                 isOpen={isConfirmModalOpen}
-                text="Pastikan kembali informasi yang akan dikirim sudah sesuai"
-                title="Upload Informasi Cuaca"
+                icon="info"
+                text="Kamu yakin ingin menyimpan data cuaca ini?"
+                title="Informasi Simpan Data Cuaca"
                 cancelText="Batal"
-                confirmText="Kirim"
+                confirmText="Simpan"
                 onConfirm={handleConfirmModal}
                 onCancel={handleCancelModal}
                 disabled={isUploading || isSaving}
@@ -321,9 +328,8 @@ const CreateWeatherPage = () => {
                   onClick={handleSubmit(onSubmit)}
                   disabled={isUploading || isSaving}
                   isLoading={isUploading || isSaving}
-                  id="btn-submit"
-                >
-                  Kirim
+                  id="btn-submit">
+                  Simpan
                 </Button>
               </div>
             </form>
@@ -333,8 +339,7 @@ const CreateWeatherPage = () => {
       <div
         className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
           isConfirmModalOpen || showModal.show ? "block" : "hidden"
-        } cursor-pointer top-0 bottom-0 left-0 right-0`}
-      ></div>
+        } cursor-pointer top-0 bottom-0 left-0 right-0`}></div>
     </>
   );
 };

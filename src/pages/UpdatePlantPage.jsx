@@ -85,41 +85,45 @@ export default function UpdatePlantPage() {
         temperature_pictures:
           plant.temperature_info.temperature_pictures?.[0]?.url,
       };
+      let imagesFiles = {};
 
       getPlantImages(imageUrls)
         .then((images) => {
+          imagesFiles = images;
+        })
+        .catch((error) => {
+          console.error("Terjadi kesalahan:", error);
+        })
+        .finally(() => {
           const completePlant = {
             ...plant,
-            plant_pictures: images?.plant_pictures ?? null,
+            plant_pictures: imagesFiles?.plant_pictures ?? null,
             planting_info: {
               ...plant.planting_info,
               container_info: {
                 ...plant.planting_info.container_info,
-                container_pictures: images?.container_pictures ?? null,
+                container_pictures: imagesFiles?.container_pictures ?? null,
               },
               ground_info: {
                 ...plant.planting_info.ground_info,
-                ground_pictures: images?.ground_pictures ?? null,
+                ground_pictures: imagesFiles?.ground_pictures ?? null,
               },
             },
             fertilizing_info: {
               ...plant.fertilizing_info,
-              fertilizing_pictures: images?.fertilizing_pictures ?? null,
+              fertilizing_pictures: imagesFiles?.fertilizing_pictures ?? null,
             },
             watering_info: {
               ...plant.watering_info,
-              watering_pictures: images?.watering_pictures ?? null,
+              watering_pictures: imagesFiles?.watering_pictures ?? null,
             },
             temperature_info: {
               ...plant.temperature_info,
-              temperature_pictures: images?.temperature_pictures ?? null,
+              temperature_pictures: imagesFiles?.temperature_pictures ?? null,
             },
           };
           setAddPlantData(completePlant);
           setImageLoading(false);
-        })
-        .catch((error) => {
-          console.error("Terjadi kesalahan:", error);
         });
     }
   }, [plant]);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useImperativeHandle, forwardRef } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { Info12Regular } from "@fluentui/react-icons";
 import ReactQuill from "react-quill";
@@ -8,8 +8,13 @@ import FileInput from "../FileInput";
 import { MODULES } from "../../constants";
 import { useRecoilValue } from "recoil";
 import { addPlantDataState } from "../../utils/recoil_atoms";
+import { iterateConvertFileToBase64 } from "../../utils/functions";
+import useScrollToTop from "../../hooks/useScrollToTop";
 
-export default function DetailTanamanForm({ formId, onSubmit }) {
+const DetailTanamanForm = forwardRef(function DetailTanamanForm(
+  { formId, onSubmit },
+  ref
+) {
   const addPlantData = useRecoilValue(addPlantDataState);
 
   const {
@@ -19,9 +24,29 @@ export default function DetailTanamanForm({ formId, onSubmit }) {
     control,
     watch,
     handleSubmit,
+    getValues,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: addPlantData,
+  });
+
+  useEffect(() => {
+    if (addPlantData?.plant_name) {
+      reset(addPlantData);
+    }
+  }, [addPlantData, reset]);
+
+  useImperativeHandle(ref, () => {
+    return {
+      getFormValues: async () => {
+        const formValues = getValues();
+
+        const newFormValues = await iterateConvertFileToBase64(formValues);
+
+        return newFormValues;
+      },
+    };
   });
 
   const [editorFocus, setEditorFocus] = useState(false);
@@ -32,6 +57,8 @@ export default function DetailTanamanForm({ formId, onSubmit }) {
       validate: (value) => value !== "<p><br></p>",
     });
   }, [register]);
+
+  useScrollToTop();
 
   const onPlantDescriptionStateChange = (state) => {
     setValue("plant_description", state);
@@ -147,4 +174,6 @@ export default function DetailTanamanForm({ formId, onSubmit }) {
       </div>
     </form>
   );
-}
+});
+
+export default DetailTanamanForm;

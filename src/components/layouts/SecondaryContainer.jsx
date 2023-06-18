@@ -36,7 +36,7 @@ export default function SecondaryContainer({
           id="backChevronIcon"
           onClick={handleOnClick}
         >
-          <ChevronLeftRegular className="text-[32px]" />
+          <ChevronLeftRegular className="text-[32px] hover:text-info transition-colors duration-150" />
         </Link>
         <h4 className="text-h-4 font-bold">{title}</h4>
       </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useImperativeHandle, forwardRef } from "react";
 import ReactQuill from "react-quill";
 import { Info12Regular } from "@fluentui/react-icons";
 import { useForm, useWatch } from "react-hook-form";
@@ -8,8 +8,13 @@ import { MODULES } from "../../constants";
 import FileInput from "../FileInput";
 import { addPlantDataState } from "../../utils/recoil_atoms";
 import TextFieldGroup from "../TextFieldGroup";
+import { iterateConvertFileToBase64 } from "../../utils/functions";
+import useScrollToTop from "../../hooks/useScrollToTop";
 
-export default function TemperaturForm({ formId, onSubmit }) {
+const TemperaturForm = forwardRef(function TemperaturForm(
+  { formId, onSubmit },
+  ref
+) {
   const addPlantData = useRecoilValue(addPlantDataState);
   const [editorFocus, setEditorFocus] = useState(false);
   const {
@@ -18,6 +23,7 @@ export default function TemperaturForm({ formId, onSubmit }) {
     trigger,
     watch,
     control,
+    getValues,
     handleSubmit,
     formState: { errors },
   } = useForm({ defaultValues: addPlantData });
@@ -37,6 +43,20 @@ export default function TemperaturForm({ formId, onSubmit }) {
   let temperatureDescriptionContent = watch(
     "temperature_info.temperature_description"
   );
+
+  useScrollToTop();
+
+  useImperativeHandle(ref, () => {
+    return {
+      getFormValues: async () => {
+        const formValues = getValues();
+
+        const newFormValues = await iterateConvertFileToBase64(formValues);
+
+        return newFormValues;
+      },
+    };
+  });
 
   return (
     <form
@@ -166,4 +186,6 @@ export default function TemperaturForm({ formId, onSubmit }) {
       </div>
     </form>
   );
-}
+});
+
+export default TemperaturForm;

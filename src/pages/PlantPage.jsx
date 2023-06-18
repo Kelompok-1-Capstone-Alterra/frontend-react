@@ -9,6 +9,7 @@ import {
   Edit20Regular,
   Filter20Filled,
 } from "@fluentui/react-icons";
+import { useResetRecoilState } from "recoil";
 import Cookies from "js-cookie";
 
 import MainContainer from "../components/layouts/MainContainer";
@@ -21,6 +22,9 @@ import EmptyPlant from "../assets/EmptyPlant.png";
 import useDebounce from "../hooks/useDebounce";
 import fetcher from "../utils/fetcher";
 import usePlant from "../hooks/usePlant";
+import { addPlantDataState } from "../utils/recoil_atoms";
+import Loading from "../components/Loading";
+import ImageOverlay from "../components/ImageOverlay";
 
 const PLANT_PER_PAGE = 8;
 const DEBOUNCE_DELAY = 500;
@@ -40,15 +44,18 @@ export default function PlantPage() {
     (url) => fetcher(url, Cookies.get("token"))
   );
   const [modalDelete, setModalDelete] = useState(false);
+  const resetAddPlantData = useResetRecoilState(addPlantDataState);
   const [showModal, setShowModal] = useState({
     show: false,
     icon: "",
     text: "",
     title: "",
   });
+  const [imageOverlay, setImageOverlay] = useState({
+    isOpen: false,
+    image: null,
+  });
   const { deletePlant } = usePlant();
-
-  console.log(modalDelete);
 
   const handleDelete = async (id) => {
     setModalDelete(false);
@@ -110,7 +117,7 @@ export default function PlantPage() {
   return (
     <MainContainer>
       <h4 className="text-h-4 font-bold">Penambahan Tanaman</h4>
-      <div className="flex justify-between items-center mt-[70px]">
+      <div className="flex justify-between items-center mt-[70px] mb-7">
         <div className="flex w-[770px] justify-between items-stretch h-10">
           <div className="shrink-0 inline-flex">
             <span className="me-2 font- self-center text-caption-lg">
@@ -158,6 +165,11 @@ export default function PlantPage() {
           <Button
             size="sm"
             className={"flex rounded-md shadow-elevation-2 px-[20px] h-[48px]"}
+            onClick={() => {
+              if (localStorage.getItem("plantFormDraft") === null) {
+                resetAddPlantData();
+              }
+            }}
           >
             <Add16Filled className="me-1" />
             <span>Tambah</span>
@@ -165,7 +177,7 @@ export default function PlantPage() {
         </Link>
       </div>
       {isLoading ? (
-        <p>Loading...</p>
+        <Loading />
       ) : (
         <>
           {totalPlant > 0 ? (
@@ -181,7 +193,7 @@ export default function PlantPage() {
                   "Aksi",
                 ]}
                 className={
-                  "overflow-y-scroll mt-7 w-full overflow-x-hidden text-[#030712]"
+                  "overflow-y-scroll w-full overflow-x-hidden text-[#030712]"
                 }
               >
                 {filteredPlant?.map((plant, index) => (
@@ -192,11 +204,18 @@ export default function PlantPage() {
                     <td className="flex justify-center">
                       <img
                         src={
-                          plant.Pictures.length > 0 &&
-                          `${BASE_URL}/pictures/${plant.Pictures[0]?.url}`
+                          plant.Pictures.length > 0
+                            ? `${BASE_URL}/pictures/${plant.Pictures[0]?.url}`
+                            : undefined
                         }
                         alt="Gambar Tanaman"
                         className="w-14 h-12"
+                        onClick={() =>
+                          setImageOverlay({
+                            isOpen: true,
+                            image: `https://34.128.85.215:8080/pictures/${plant.Pictures[0]?.url}`,
+                          })
+                        }
                       />
                     </td>
                     <td className="text-left ps-3">
@@ -214,19 +233,19 @@ export default function PlantPage() {
                     </td>
                     <td>
                       <Link
-                        id="viewIcon"
+                        id={`viewIcon${plant.ID}`}
                         to={`/admin/plants/${plant.ID}`}
                       >
                         <Eye20Regular className="cursor-pointer me-3 hover:text-info" />
                       </Link>
                       <Delete20Regular
-                        id="deleteIcon"
+                        id={`deleteIcon${plant.ID}`}
                         className="cursor-pointer me-3 hover:text-info"
                         onClick={() => setModalDelete(plant.ID)}
                       />
                       <Link to={`/admin/plants/update/${plant.ID}`}>
                         <Edit20Regular
-                          id="editIcon"
+                          id={`editIcon${plant.ID}}`}
                           className="cursor-pointer hover:text-info"
                         />
                       </Link>
@@ -273,9 +292,14 @@ export default function PlantPage() {
           )}
         </>
       )}
+      <ImageOverlay
+        image={imageOverlay.image}
+        isOpen={imageOverlay.isOpen}
+        onClose={() => setImageOverlay({ isOpen: false, image: null })}
+      />
       <ConfirmModal
-        cancelText={"Batal"}
-        confirmText={"Hapus"}
+        cancelText={"Tidak"}
+        confirmText={"Ya"}
         icon={"delete"}
         isOpen={modalDelete ? true : false}
         text={"Yakin ingin menghapus data tanaman ini?"}

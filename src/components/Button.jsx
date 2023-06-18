@@ -1,6 +1,7 @@
 export default function Button({
   children,
   className,
+  isLoading,
   variant = "green",
   size = "lg",
   ...props
@@ -24,7 +25,11 @@ export default function Button({
 
   return (
     <button
-      className={`${className} btn normal-case min-h-max disabled:pointer-events-auto disabled:cursor-not-allowed rounded-[41px] ${variants[variant]} ${sizes[size]}`}
+      className={`${className} ${
+        isLoading ? "loading" : ""
+      } btn flex-nowrap normal-case min-h-max disabled:pointer-events-auto disabled:cursor-not-allowed rounded-[41px] ${
+        variants[variant]
+      } ${sizes[size]}`}
       {...props}
     >
       {children}

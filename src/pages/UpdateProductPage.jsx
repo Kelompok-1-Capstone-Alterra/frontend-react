@@ -5,7 +5,7 @@ import {
 } from "@fluentui/react-icons";
 import SecondaryContainer from "../components/layouts/SecondaryContainer";
 import { NotifModal, ConfirmModal } from "../components/Modal";
-import { useNavigate, useLoaderData } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import TextField from "../components/TextField";
 import MySelect from "../components/MySelect";
@@ -18,7 +18,11 @@ import "react-quill/dist/quill.snow.css";
 import { Navigate } from "react-router-dom";
 import useImage from "../hooks/useImage";
 import useProduct from "../hooks/useProduct";
-import axios from "axios";
+// import axios from "axios";
+import useSWR from "swr";
+import Cookies from "js-cookie";
+import fetcher from "../utils/fetcher";
+import Loading from "../components/Loading";
 
 const options = [
   { value: "Alat Tani", label: "Alat Tani" },
@@ -28,7 +32,15 @@ const options = [
 ];
 
 export default function UpdateProductPage() {
-  const product = useLoaderData();
+  // const product = useLoaderData();
+  const { id } = useParams();
+
+  const { data, error, isLoading } = useSWR(
+    `${import.meta.env.VITE_API_BASE_URL}/auth/admins/products/${id}/detail`,
+    (url) => fetcher(url, Cookies.get("token"))
+  );
+
+  const product = data?.data;
 
   const defaultOption = options.find(
     (option) => option.value === product?.product_category
@@ -42,28 +54,13 @@ export default function UpdateProductPage() {
     reset,
     clearErrors,
     trigger,
+    watch,
     control,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
-      name: product?.product_name,
-      category: defaultOption,
-      status: product?.product_status ? "etalase" : "arsip",
-      price: product?.product_price,
-      unit: product?.product_unit,
-      brand: product?.product_brand,
-      weight: product?.product_weight,
-      condition: product?.product_condition,
-      form: product?.product_form,
-      sellerName: product?.product_seller_name,
-      sellerPhone: product?.product_seller_phone,
-    },
-  });
+  } = useForm();
 
   const [editorFocus, setEditorFocus] = useState(false);
-  const [editorContent, setEditorContent] = useState(
-    product?.product_description
-  );
+  let editorContent = watch("description");
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const defaultPictures = product?.product_pictures.map(
     (pic) => `${import.meta.env.VITE_API_BASE_URL}/pictures/${pic}`
@@ -75,7 +72,7 @@ export default function UpdateProductPage() {
     text: "",
     title: "",
   });
-  const { uploadImage, isLoading: imageLoading } = useImage();
+  const { uploadImage, getImage, isLoading: imageLoading } = useImage();
   const { updateProduct, isLoading: uploadLoading } = useProduct();
 
   const navigate = useNavigate();
@@ -89,14 +86,27 @@ export default function UpdateProductPage() {
 
   useEffect(() => {
     if (product) {
-      setValue("description", product.product_description);
+      reset({
+        name: product?.product_name,
+        category: defaultOption,
+        status: product?.product_status ? "etalase" : "arsip",
+        price: product?.product_price,
+        unit: product?.product_unit,
+        brand: product?.product_brand,
+        weight: product?.product_weight,
+        condition: product?.product_condition,
+        form: product?.product_form,
+        sellerName: product?.product_seller_name,
+        sellerPhone: product?.product_seller_phone,
+      });
+      setValue("description", product?.product_description);
     }
+    setValue("description", product?.product_description);
   }, [product, setValue]);
 
   const onEditorStateChange = (editorState) => {
     setValue("description", editorState);
     trigger("description");
-    setEditorContent(editorState);
   };
 
   const saveProduct = async (data) => {
@@ -123,12 +133,7 @@ export default function UpdateProductPage() {
     } else {
       try {
         const promises = product?.product_pictures.map(async (pic) => {
-          const response = await axios.get(
-            `${import.meta.env.VITE_API_BASE_URL}/pictures/${pic}`,
-            {
-              responseType: "blob",
-            }
-          );
+          const response = await getImage(pic);
           const blob = await response.data;
           const file = new File([blob], pic, { type: blob.type });
           const formData = new FormData();
@@ -200,9 +205,14 @@ export default function UpdateProductPage() {
     setIsConfirmModalOpen(true);
   };
 
-  if (product === null) {
-    return <Navigate to="/admin/products" />;
-  }
+  if (isLoading)
+    return (
+      <div className="h-screen w-full flex justify-center items-center">
+        <Loading />
+      </div>
+    );
+
+  if (error) return <Navigate to="/admin/products" />;
 
   return (
     <SecondaryContainer
@@ -400,7 +410,7 @@ export default function UpdateProductPage() {
                         {...register("status", {
                           required: {
                             value: true,
-                            message: "Status harus dipilih",
+                            message: "Pilih status produk tidak boleh kosong",
                           },
                         })}
                       />
@@ -637,7 +647,7 @@ export default function UpdateProductPage() {
                     ...register("sellerName", {
                       required: {
                         value: true,
-                        message: "Nama seller tidak boleh kosong",
+                        message: "Nama tidak boleh kosong",
                       },
                     }),
                   }}
@@ -702,15 +712,16 @@ export default function UpdateProductPage() {
               type="submit"
               size="md"
               disabled={imageLoading || uploadLoading}
+              isLoading={imageLoading || uploadLoading}
             >
               Simpan
             </Button>
           </div>
           <ConfirmModal
-            cancelText={"Kembali"}
-            title={"Konfirmasi Ubah Data Produk"}
+            cancelText={"Batal"}
+            title={"Informasi Ubah Data Produk"}
             text={"Kamu yakin ingin mengubah data produk ini?"}
-            confirmText={"Edit"}
+            confirmText={"Ubah"}
             icon={"info"}
             isOpen={isConfirmModalOpen}
             onCancel={() => {
@@ -725,7 +736,7 @@ export default function UpdateProductPage() {
             title={notifModal.title}
             text={notifModal.text}
             icon={notifModal.icon}
-            confirmText={"Kembali"}
+            confirmText={"Tutup"}
             isOpen={notifModal.show}
             onConfirm={() => {
               setNotifModal({

@@ -1,13 +1,29 @@
-import { useLoaderData, Navigate } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 import SecondaryContainer from "../components/layouts/SecondaryContainer";
 import { toRupiah } from "../utils/functions";
+import useSWR from "swr";
+import fetcher from "../utils/fetcher";
+import Loading from "../components/Loading";
+import Cookies from "js-cookie";
 
 export default function DetailProductPage() {
-  const product = useLoaderData();
+  const { id } = useParams();
 
-  if (product === null) {
-    return <Navigate to="/admin/products" />;
-  }
+  const { data, isLoading, error } = useSWR(
+    `${import.meta.env.VITE_API_BASE_URL}/auth/admins/products/${id}/detail`,
+    (url) => fetcher(url, Cookies.get("token"))
+  );
+
+  const product = data?.data;
+
+  if (isLoading)
+    return (
+      <div className="h-screen w-full flex justify-center items-center">
+        <Loading />
+      </div>
+    );
+
+  if (error) return <Navigate to="/admin/products" />;
 
   return (
     <SecondaryContainer
@@ -39,34 +55,34 @@ export default function DetailProductPage() {
           {toRupiah(product.product_price)}
         </p>
         <p className="text-body-lg font-bold mb-3">Spesifikasi:</p>
-        <div className="grid grid-cols-3 gap-3 w-1/2 mb-4">
+        <div className="grid grid-cols-3 gap-x-5 gap-y-2 w-1/2 mb-4">
           <div>
-            <p className="text-body-sm font-semibold">Kategori:</p>
-            <p className="text-body-sm">{product.product_category}</p>
+            <span className="text-body-sm font-semibold">Kategori: </span>
+            <span className="text-body-sm">{product.product_category}</span>
           </div>
           <div>
-            <p className="text-body-sm font-semibold">Merek:</p>
-            <p className="text-body-sm">{product.product_brand}</p>
+            <span className="text-body-sm font-semibold">Merek: </span>
+            <span className="text-body-sm">{product.product_brand}</span>
           </div>
           <div>
-            <p className="text-body-sm font-semibold">Isi:</p>
-            <p className="text-body-sm">
+            <span className="text-body-sm font-semibold">Isi: </span>
+            <span className="text-body-sm">
               {product.product_unit ? product.product_unit : "-"} Pcs
-            </p>
+            </span>
           </div>
           <div>
-            <p className="text-body-sm font-semibold">Berat:</p>
-            <p className="text-body-sm">{product.product_weight} Gram</p>
+            <span className="text-body-sm font-semibold">Berat: </span>
+            <span className="text-body-sm">{product.product_weight} Gram</span>
           </div>
           <div>
-            <p className="text-body-sm font-semibold">Wujud:</p>
-            <p className="text-body-sm">
+            <span className="text-body-sm font-semibold">Wujud: </span>
+            <span className="text-body-sm">
               {product.product_form ? product.product_form : "-"}
-            </p>
+            </span>
           </div>
           <div>
-            <p className="text-body-sm font-semibold">Condition:</p>
-            <p className="text-body-sm">{product.product_condition}</p>
+            <span className="text-body-sm font-semibold">Condition: </span>
+            <span className="text-body-sm">{product.product_condition}</span>
           </div>
         </div>
         <p className="text-body-lg font-bold mb-3">Deskripsi:</p>
@@ -84,7 +100,7 @@ export default function DetailProductPage() {
         </div>
         <div>
           <p className="text-body-sm">
-            <span className="font-semibold">Nomor Whatsapp: </span>
+            <span className="font-semibold">Nomor: </span>
             {product.product_seller_phone}
           </p>
         </div>

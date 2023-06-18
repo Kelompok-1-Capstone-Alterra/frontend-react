@@ -10,9 +10,8 @@ import fetcher from "../utils/fetcher";
 import Loading from "../components/Loading";
 import { useNavigate } from "react-router-dom";
 
-
 export default function Suggestion() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const url = `${import.meta.env.VITE_API_BASE_URL}/auth/admins/suggestions`;
   const { data, isLoading } = useSWR(url, () =>
     fetcher(url, Cookies.get("token"))
@@ -73,6 +72,7 @@ export default function Suggestion() {
             type="date"
             className="border border-gray-500 pl-[10px] rounded-md px-2 py-1"
             onChange={handleStartDateChange}
+            id="start-date"
           />
         </div>
         <p>-</p>
@@ -81,6 +81,7 @@ export default function Suggestion() {
             type="date"
             className="border border-gray-500 pl-[10px] rounded-md px-2 py-1"
             onChange={handleEndDateChange}
+            id="end-date"
           />
         </div>
       </div>
@@ -90,7 +91,11 @@ export default function Suggestion() {
             <Loading />
           ) : filteredSupport?.length <= 0 ? (
             <div className="flex flex-col items-center justify-center mt-20">
-              <img src={gambar} className="" alt="Error 400" />
+              <img
+                src={gambar}
+                className=""
+                alt="Error 400"
+              />
               <p className="text-center text-body-lg mt-2 text-neutral-40">
                 Belum ada data masukan & saran
               </p>
@@ -153,6 +158,7 @@ export default function Suggestion() {
                 <Dismiss20Filled
                   onClick={() => setShowModal(false)}
                   className="cursor-pointer hover:text-info"
+                  id="close-modal"
                 />
               </div>
               <div className="flex">

@@ -17,6 +17,7 @@ import useMultistepForm from "../hooks/useMultistepForm";
 import { addPlantDataState } from "../utils/recoil_atoms";
 import {
   generatePlantSubmitData,
+  getPlantImages,
   handleImagesUpload,
 } from "../utils/functions";
 import usePlant from "../hooks/usePlant";
@@ -49,36 +50,6 @@ export default function UpdatePlantPage() {
     title: "",
   });
 
-  const getPlantImages = async (imageUrls) => {
-    const imagePromises = Object.entries(imageUrls).map(
-      async ([key, imageUrl]) => {
-        if (!imageUrl) {
-          return null;
-        }
-
-        const response = await getImage(imageUrl);
-        if (response.status !== 200) {
-          throw new Error(
-            `Failed to get image for ${key}: ${response.statusText}`
-          );
-        }
-
-        const fileSuffix = response.data.type.split("/")[1];
-        const file = new File([response.data], `${key}.${fileSuffix}`, {
-          type: response.data.type,
-        });
-
-        return [key, file];
-      }
-    );
-
-    const imageResults = await Promise.all(imagePromises);
-    // Filter out null values and turn array of arrays into object
-    const images = Object.fromEntries(imageResults.filter(Boolean));
-
-    return images;
-  };
-
   useEffect(() => {
     if (plant) {
       const imageUrls = {
@@ -95,7 +66,7 @@ export default function UpdatePlantPage() {
       };
       let imagesFiles = {};
 
-      getPlantImages(imageUrls)
+      getPlantImages(imageUrls, getImage)
         .then((images) => {
           imagesFiles = images;
         })

@@ -37,24 +37,35 @@ export const handleImagesUpload = async (images, uploadImage) => {
   return imageUrls;
 };
 
-// export const handleImagesUpload = async (images, uploadImage) => {
-//   const imageUrls = {};
+export const getPlantImages = async (imageUrls, getImage) => {
+  const imagePromises = Object.entries(imageUrls).map(
+    async ([key, imageUrl]) => {
+      if (!imageUrl) {
+        return null;
+      }
 
-//   for (let key in images) {
-//     if (!images[key]) continue;
+      const response = await getImage(imageUrl);
+      if (response.status !== 200) {
+        throw new Error(
+          `Failed to get image for ${key}: ${response.statusText}`
+        );
+      }
 
-//     const formData = new FormData();
-//     formData.append("pictures", images[key]);
+      const fileSuffix = response.data.type.split("/")[1];
+      const file = new File([response.data], `${key}.${fileSuffix}`, {
+        type: response.data.type,
+      });
 
-//     const response = await uploadImage(formData);
+      return [key, file];
+    }
+  );
 
-//     if (response.status !== 200) throw new Error(response.data.message);
+  const imageResults = await Promise.all(imagePromises);
+  // Filter out null values and turn array of arrays into object
+  const images = Object.fromEntries(imageResults.filter(Boolean));
 
-//     imageUrls[key] = response.data.urls[0];
-//   }
-
-//   return imageUrls;
-// };
+  return images;
+};
 
 export const generatePlantSubmitData = (data, imageUrls) => {
   const newData = {

@@ -15,23 +15,46 @@ export const toBase64 = (file) =>
   });
 
 export const handleImagesUpload = async (images, uploadImage) => {
-  const imageUrls = {};
-
-  for (let key in images) {
-    if (!images[key]) continue;
+  const imagePromises = Object.entries(images).map(async ([key, image]) => {
+    if (!image) {
+      return null;
+    }
 
     const formData = new FormData();
-    formData.append("pictures", images[key]);
+    formData.append("pictures", image);
 
     const response = await uploadImage(formData);
+    if (response.status !== 200) {
+      throw new Error(`Failed to get image for ${key}: ${response.statusText}`);
+    }
 
-    if (response.status !== 200) throw new Error(response.data.message);
-
-    imageUrls[key] = response.data.urls[0];
-  }
+    return [key, response.data.urls[0]];
+  });
+  const imageResults = await Promise.all(imagePromises);
+  // Filter out null values and turn array of arrays into object
+  const imageUrls = Object.fromEntries(imageResults.filter(Boolean));
 
   return imageUrls;
 };
+
+// export const handleImagesUpload = async (images, uploadImage) => {
+//   const imageUrls = {};
+
+//   for (let key in images) {
+//     if (!images[key]) continue;
+
+//     const formData = new FormData();
+//     formData.append("pictures", images[key]);
+
+//     const response = await uploadImage(formData);
+
+//     if (response.status !== 200) throw new Error(response.data.message);
+
+//     imageUrls[key] = response.data.urls[0];
+//   }
+
+//   return imageUrls;
+// };
 
 export const generatePlantSubmitData = (data, imageUrls) => {
   const newData = {

@@ -5,7 +5,7 @@ import {
   WeatherCloudy20Regular,
   Box20Regular,
   News20Regular,
-  ChatHelp20Regular
+  ChatHelp20Regular,
 } from "@fluentui/react-icons";
 
 import logoAdmin from "./../../assets/Logo Admin.png";
@@ -118,7 +118,7 @@ export default function Sidebar({ children }) {
             <li>
               <Link
                 className="px-8 py-4 hover:bg-primary-surface"
-                to={"/admin/support"}
+                to={"/admin/suggestions"}
               >
                 <ChatHelp20Regular />
                 Masukan & Saran

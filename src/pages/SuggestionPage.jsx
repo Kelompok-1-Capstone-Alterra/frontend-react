@@ -91,7 +91,7 @@ export default function Suggestion() {
           ) : filteredSupport?.length <= 0 ? (
             <div className="flex flex-col items-center justify-center mt-20">
               <img src={gambar} className="" alt="Error 400" />
-              <p className="text-center text-neutral-40">
+              <p className="text-center text-body-lg mt-2 text-neutral-40">
                 Belum ada data masukan & saran
               </p>
             </div>

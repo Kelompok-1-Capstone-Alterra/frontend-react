@@ -51,7 +51,7 @@ export default function MainContainer({ children }) {
             className="flex items-center gap-2"
             onClick={handleLogOut}
           >
-            <SignOut24Regular />
+            <SignOut24Regular className="hover:text-info transition-colors duration-150" />
           </button>
         </div>
       </div>

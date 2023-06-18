@@ -1,7 +1,7 @@
-import axios from "axios";
+import axiosInstance from "./axiosInstance";
 
 const fetcher = (url, token) =>
-  axios
+  axiosInstance
     .get(url, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     })

@@ -9,6 +9,7 @@ import { MODULES } from "../../constants";
 import FileInput from "../FileInput";
 import { addPlantDataState } from "../../utils/recoil_atoms";
 import { iterateConvertFileToBase64 } from "../../utils/functions";
+import useScrollToTop from "../../hooks/useScrollToTop";
 
 const fertilizingLimitOptions = [
   { value: 3, label: "3 Kali" },
@@ -63,14 +64,14 @@ const PemupukkanForm = forwardRef(function PemupukkanForm(
     },
   });
 
-  console.log(errors);
-
   useEffect(() => {
     register("fertilizing_info.fertilizing_description", {
       required: "Wajib diisi",
       validate: (value) => value !== "<p><br></p>",
     });
   }, [register]);
+
+  useScrollToTop();
 
   const onDescStateChange = (state) => {
     setValue("fertilizing_info.fertilizing_description", state);

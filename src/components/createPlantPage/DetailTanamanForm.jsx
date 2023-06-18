@@ -9,6 +9,7 @@ import { MODULES } from "../../constants";
 import { useRecoilValue } from "recoil";
 import { addPlantDataState } from "../../utils/recoil_atoms";
 import { iterateConvertFileToBase64 } from "../../utils/functions";
+import useScrollToTop from "../../hooks/useScrollToTop";
 
 const DetailTanamanForm = forwardRef(function DetailTanamanForm(
   { formId, onSubmit },
@@ -56,6 +57,8 @@ const DetailTanamanForm = forwardRef(function DetailTanamanForm(
       validate: (value) => value !== "<p><br></p>",
     });
   }, [register]);
+
+  useScrollToTop();
 
   const onPlantDescriptionStateChange = (state) => {
     setValue("plant_description", state);

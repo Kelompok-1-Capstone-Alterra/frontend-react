@@ -9,6 +9,7 @@ import FileInput from "../FileInput";
 import { addPlantDataState } from "../../utils/recoil_atoms";
 import TextFieldGroup from "../TextFieldGroup";
 import { iterateConvertFileToBase64 } from "../../utils/functions";
+import useScrollToTop from "../../hooks/useScrollToTop";
 
 const TemperaturForm = forwardRef(function TemperaturForm(
   { formId, onSubmit },
@@ -42,6 +43,8 @@ const TemperaturForm = forwardRef(function TemperaturForm(
   let temperatureDescriptionContent = watch(
     "temperature_info.temperature_description"
   );
+
+  useScrollToTop();
 
   useImperativeHandle(ref, () => {
     return {

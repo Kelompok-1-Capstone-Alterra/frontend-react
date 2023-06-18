@@ -349,6 +349,7 @@ const UpdateWeatherPage = () => {
                 type="submit"
                 size="md"
                 disabled={isUploading || isSaving}
+                isLoading={isUploading || isSaving}
                 id="btn-submit">
                 Simpan
               </Button>

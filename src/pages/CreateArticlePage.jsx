@@ -208,6 +208,7 @@ export default function CreateArticlePage() {
             variant={"green"}
             size="md"
             disabled={isUploading || isSaving}
+            isLoading={isUploading || isSaving}
             className={"rounded-full"}
           >
             Simpan

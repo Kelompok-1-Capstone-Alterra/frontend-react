@@ -22,7 +22,7 @@ export default function Tab({
           <li
             id="tab.id"
             key={tab.id}
-            className={`tab tab-bordered border-b-0 px-3 -mb-0.5 h-full text-neutral-70/100 ${
+            className={`tab hover:text-primary transition-all duration-200  tab-bordered border-b-0 px-3 -mb-0.5 h-full text-neutral-70/100 ${
               widthFull ? "grow" : ""
             } ${activeTabIndex === index ? "tab-active" : ""}`}
             onClick={() => setActiveTabIndex(index)}

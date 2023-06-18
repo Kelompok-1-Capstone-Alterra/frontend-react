@@ -327,6 +327,7 @@ const CreateWeatherPage = () => {
                   size="md"
                   onClick={handleSubmit(onSubmit)}
                   disabled={isUploading || isSaving}
+                  isLoading={isUploading || isSaving}
                   id="btn-submit">
                   Simpan
                 </Button>

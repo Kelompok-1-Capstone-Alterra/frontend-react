@@ -18,7 +18,7 @@ import "react-quill/dist/quill.snow.css";
 import { Navigate } from "react-router-dom";
 import useImage from "../hooks/useImage";
 import useProduct from "../hooks/useProduct";
-import axios from "axios";
+// import axios from "axios";
 import useSWR from "swr";
 import Cookies from "js-cookie";
 import fetcher from "../utils/fetcher";
@@ -72,7 +72,7 @@ export default function UpdateProductPage() {
     text: "",
     title: "",
   });
-  const { uploadImage, isLoading: imageLoading } = useImage();
+  const { uploadImage, getImage, isLoading: imageLoading } = useImage();
   const { updateProduct, isLoading: uploadLoading } = useProduct();
 
   const navigate = useNavigate();
@@ -133,12 +133,7 @@ export default function UpdateProductPage() {
     } else {
       try {
         const promises = product?.product_pictures.map(async (pic) => {
-          const response = await axios.get(
-            `${import.meta.env.VITE_API_BASE_URL}/pictures/${pic}`,
-            {
-              responseType: "blob",
-            }
-          );
+          const response = await getImage(pic);
           const blob = await response.data;
           const file = new File([blob], pic, { type: blob.type });
           const formData = new FormData();
@@ -717,6 +712,7 @@ export default function UpdateProductPage() {
               type="submit"
               size="md"
               disabled={imageLoading || uploadLoading}
+              isLoading={imageLoading || uploadLoading}
             >
               Simpan
             </Button>

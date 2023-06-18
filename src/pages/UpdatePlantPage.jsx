@@ -50,24 +50,32 @@ export default function UpdatePlantPage() {
   });
 
   const getPlantImages = async (imageUrls) => {
-    const images = {};
+    const imagePromises = Object.entries(imageUrls).map(
+      async ([key, imageUrl]) => {
+        if (!imageUrl) {
+          return null;
+        }
 
-    for (let key in imageUrls) {
-      if (!imageUrls[key]) continue;
+        const response = await getImage(imageUrl);
+        if (response.status !== 200) {
+          throw new Error(
+            `Failed to get image for ${key}: ${response.statusText}`
+          );
+        }
 
-      const response = await getImage(imageUrls[key]);
-      console.log(response);
+        const fileSuffix = response.data.type.split("/")[1];
+        const file = new File([response.data], `${key}.${fileSuffix}`, {
+          type: response.data.type,
+        });
 
-      if (response.status !== 200)
-        throw new Error(`Failed to get image, ${response.statusText}`);
+        return [key, file];
+      }
+    );
 
-      const fileSuffix = response.data.type.split("/")[1];
-      const file = new File([response.data], `${key}.${fileSuffix}`, {
-        type: response.data.type,
-      });
+    const imageResults = await Promise.all(imagePromises);
+    // Filter out null values and turn array of arrays into object
+    const images = Object.fromEntries(imageResults.filter(Boolean));
 
-      images[key] = file;
-    }
     return images;
   };
 

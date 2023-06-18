@@ -247,7 +247,6 @@ export default function UpdatePlantPage() {
             onClick={handlePreviousStep}
             size="md"
             disabled={isSaving || isUploading}
-            isLoading={isSaving || isUploading}
             type="button"
             className={`basis-[154px]`}
           >
@@ -259,6 +258,7 @@ export default function UpdatePlantPage() {
           size="md"
           type="submit"
           disabled={isSaving || isUploading}
+          isLoading={isSaving || isUploading}
           form={`form${activeStepIndex}`}
           className={`basis-[154px]`}
         >

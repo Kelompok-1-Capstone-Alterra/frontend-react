@@ -209,7 +209,7 @@ export default function PlantPage() {
                             : undefined
                         }
                         alt="Gambar Tanaman"
-                        className="w-14 h-12"
+                        className="w-14 h-12 cursor-pointer"
                         onClick={() =>
                           setImageOverlay({
                             isOpen: true,

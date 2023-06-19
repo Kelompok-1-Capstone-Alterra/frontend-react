@@ -2,7 +2,6 @@ import Cookies from "js-cookie";
 import useSWR from "swr";
 import AnimatedNumbers from "react-animated-numbers";
 import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
 
 import Table from "../components/Table";
 import MainContainer from "../components/layouts/MainContainer";

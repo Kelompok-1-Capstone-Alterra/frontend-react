@@ -13,7 +13,7 @@ export default function ImageOverlay({ image, isOpen, onClose }) {
     <>
       {isOpen && (
         <div
-          className="fixed inset-0 flex items-center justify-center bg-black/40"
+          className="fixed inset-0 flex items-center justify-center bg-black/40 z-[9999]"
           ref={overlayRef}
           onClick={handleOverlayClick}
         >

@@ -223,21 +223,27 @@ export default function ArticlePage() {
                       </td>
                       <td>
                         <div className="flex gap-3 justify-center">
-                          <Link to={`/admin/articles/${article.id}`}>
+                          <Link
+                            to={`/admin/articles/${article.id}`}
+                            id={`detail-link-${article.id}`}
+                          >
                             <Eye20Regular
                               className="cursor-pointer hover:text-info"
-                              id="detail-article"
+                              id={`detail-article-${article.id}`}
                             />
                           </Link>
                           <Delete20Regular
                             className="cursor-pointer hover:text-info"
                             onClick={() => setModalDelete(article.id)}
-                            id="delete-article"
+                            id={`delete-article-${article.id}`}
                           />
-                          <Link to={`/admin/articles/update/${article.id}`}>
+                          <Link
+                            to={`/admin/articles/update/${article.id}`}
+                            id={`update-link-${article.id}`}
+                          >
                             <Edit20Regular
                               className="cursor-pointer hover:text-info"
-                              id="update-article"
+                              id={`update-article-${article.id}`}
                             />
                           </Link>
                         </div>

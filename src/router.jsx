@@ -33,6 +33,7 @@ import DetailWeatherPage from "./pages/DetailWeatherPage";
 import UpdateWeatherPage from "./pages/UpdateWeatherPage";
 import WeatherManagementPage from "./pages/WeatherManagementPage";
 import OverviewPage from "./pages/OverviewPage";
+import SuggestionPage from "./pages/SuggestionPage";
 
 const router = createBrowserRouter([
   {
@@ -56,6 +57,10 @@ const router = createBrowserRouter([
       {
         path: "/admin",
         element: <OverviewPage />,
+      },
+      {
+        path: "/admin/suggestions",
+        element: <SuggestionPage />,
       },
       {
         path: "/admin/plants",

@@ -1,7 +1,8 @@
 import { useState, useRef } from "react";
-import { SaveRegular } from "@fluentui/react-icons";
+import { SaveRegular, Checkmark20Regular } from "@fluentui/react-icons";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState, useResetRecoilState, useRecoilCallback } from "recoil";
+import { motion, AnimatePresence } from "framer-motion";
 
 import Button from "../components/Button";
 import useMultistepForm from "../hooks/useMultistepForm";
@@ -26,6 +27,7 @@ export default function CreatePlantPage() {
   const [addPlantData, setAddPlantData] = useRecoilState(addPlantDataState);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [draftLoading, setDraftLoading] = useState(false);
+  const [isDraftSuccess, setIsDraftSuccess] = useState(false);
   const [notifModal, setNotifModal] = useState({
     show: false,
     icon: "",
@@ -108,14 +110,18 @@ export default function CreatePlantPage() {
   const handleSaveDraft = async () => {
     if (formRef.current) {
       setDraftLoading(true);
+      setIsDraftSuccess(false);
       const formValues = await formRef.current.getFormValues();
 
       saveFormDraft(formValues);
-
       setLocalStorageToState();
+
+      setDraftLoading(false);
+      setIsDraftSuccess(true);
+
       setTimeout(() => {
-        setDraftLoading(false);
-      }, 500);
+        setIsDraftSuccess(false);
+      }, 2000);
     }
   };
 
@@ -205,6 +211,18 @@ export default function CreatePlantPage() {
           isLoading={draftLoading}
           onClick={handleSaveDraft}
         >
+          {isDraftSuccess && (
+            <AnimatePresence>
+              <motion.div
+                initial={{ opacity: 0, y: -40 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: +40 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Checkmark20Regular />
+              </motion.div>
+            </AnimatePresence>
+          )}{" "}
           Simpan draf <SaveRegular className="text-[22px] -mt-1" />
         </Button>
         {!isFirstStep && (

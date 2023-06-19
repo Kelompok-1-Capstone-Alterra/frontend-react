@@ -34,7 +34,7 @@ export default function OverviewPage() {
                 }}
               ></AnimatedNumbers>
             ) : (
-              <Skeleton />
+              <Skeleton width={40} />
             )}
           </div>
         </div>

@@ -5,7 +5,6 @@ import TextField from "../components/TextField";
 import Button from "../components/Button";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { ConfirmModal, NotifModal } from "../components/Modal";
 import useSWR from "swr";
@@ -42,7 +41,7 @@ const UpdateWeatherPage = () => {
   const [formData, setFormData] = useState(null);
   const [weatherOptions, setWeatherOptions] = useState([]);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
-  const { uploadImage, isLoading: isUploading } = useImage();
+  const { uploadImage, getImage, isLoading: isUploading } = useImage();
   const { updateWeather, isLoading: isSaving } = useWeather();
   const { fetchWeather } = useWeather();
   const url = `${
@@ -62,21 +61,16 @@ const UpdateWeatherPage = () => {
           value: weatherData.weather_label,
         });
         setValue("deskripsi", weatherData.weather_description);
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/pictures/${
-            weatherData.weather_pictures[0]
-          }`,
-          {
-            responseType: "blob",
-          }
-        );
-        const blob = new Blob([response.data], { type: response.data.type });
+        const response = await getImage(weatherData.weather_pictures[0]);
         // Nama file bedasarkan label
-        const fileName = `${weatherData.weather_label}.png`;
-
-        const file = new File([blob], fileName, { type: response.data.type });
+        const fileName = ` ${weatherData.weather_label}.${
+          response.data.type.split("/")[1]
+        }`;
+        const file = new File([response.data], fileName, {
+          type: response.data.type,
+        });
         setValue("gambar", file);
-        setSelectedImageFile(blob);
+        setSelectedImageFile(response.data);
       }
     } catch (error) {
       console.error("Terjadi kesalahan:", error);
@@ -115,10 +109,11 @@ const UpdateWeatherPage = () => {
   };
 
   useEffect(() => {
-    fetchWeatherData();
-    fetchWeatherOptions();
-  }, [weatherData]);
-
+    if (data) {
+      fetchWeatherData();
+      fetchWeatherOptions();
+    }
+  }, [data]);
   useEffect(() => {
     register("label", {
       required: "Label cuaca tidak boleh kosong",

@@ -115,7 +115,7 @@ const WeatherManagementPage = () => {
                       <img
                         src={`https://34.128.85.215:8080/pictures/${item.weather_pictures[0]}`}
                         alt="Gambar"
-                        className="w-[85px] h-[51px] mx-auto"
+                        className="w-[85px] h-[51px] mx-auto cursor-pointer"
                         onClick={() =>
                           setImageOverlay({
                             isOpen: true,
@@ -138,17 +138,17 @@ const WeatherManagementPage = () => {
                     <td className="space-x-3">
                       <Eye20Regular
                         onClick={() => navigate(`/admin/weathers/${item.id}`)}
-                        className="cursor-pointer hover:text-info w-5"
+                        className="cursor-pointer hover:text-info"
                         id={`detail-button-${item.id}`}
                       />
                       <Delete20Regular
                         onClick={() => handleDelete(item.id)}
-                        className="cursor-pointer hover:text-info w-5"
+                        className="cursor-pointer hover:text-info"
                         id={`delete-button-${item.id}`}
                       />
 
                       <Edit20Regular
-                        className="cursor-pointer hover:text-info w-5"
+                        className="cursor-pointer hover:text-info"
                         onClick={() =>
                           navigate(`/admin/weathers/update/${item.id}`)
                         }

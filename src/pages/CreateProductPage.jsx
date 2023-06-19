@@ -96,7 +96,7 @@ export default function CreateProductPage() {
         product_weight: Number(product.weight),
         product_form: product.form,
         product_seller_name: product.sellerName,
-        product_seller_phone: product.sellerPhone,
+        product_seller_phone: `+${product.sellerPhone}`,
         product_seen: 0,
         admin_id: 1,
       },
@@ -567,6 +567,17 @@ export default function CreateProductPage() {
                       required: {
                         value: true,
                         message: "Nomor tidak boleh kosong",
+                      },
+                      validate: (value) => {
+                        //diawali dengan 62
+                        const phoneRegex = /^62/;
+                        if (!phoneRegex.test(value)) {
+                          return "Nomor tidak valid, harus diawali dengan 62";
+                        }
+                        //panjang 11-13
+                        if (value.length < 11 || value.length > 13) {
+                          return "Nomor tidak valid, panjang nomor 11-13 karakter";
+                        }
                       },
                       onChange: (e) => {
                         //value must be number

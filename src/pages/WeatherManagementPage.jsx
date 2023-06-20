@@ -17,6 +17,7 @@ import useWeather from "../hooks/useWeather";
 import { NotifModal } from "../components/Modal";
 import Loading from "../components/Loading";
 import ImageOverlay from "../components/ImageOverlay";
+import ImageWithSkeleton from "../components/ImageWithSkeleton";
 
 const WeatherManagementPage = () => {
   const navigate = useNavigate();
@@ -112,10 +113,12 @@ const WeatherManagementPage = () => {
                     className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80">
                     <td className="text-caption-lg">{index + 1}</td>
                     <td>
-                      <img
+                      <ImageWithSkeleton
                         src={`https://34.128.85.215:8080/pictures/${item.weather_pictures[0]}`}
                         alt="Gambar"
-                        className="w-[85px] h-[51px] mx-auto cursor-pointer"
+                        width={85}
+                        height={51}
+                        className="mx-auto cursor-pointer"
                         onClick={() =>
                           setImageOverlay({
                             isOpen: true,

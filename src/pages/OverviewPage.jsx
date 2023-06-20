@@ -1,6 +1,7 @@
 import Cookies from "js-cookie";
 import useSWR from "swr";
 import AnimatedNumbers from "react-animated-numbers";
+import Skeleton from "react-loading-skeleton";
 
 import Table from "../components/Table";
 import MainContainer from "../components/layouts/MainContainer";
@@ -23,47 +24,63 @@ export default function OverviewPage() {
       <div className="flex w-full mb-6">
         <div className="border py-6 px-8 border-neutral-30 flex-1 h-[120px]">
           <p className="text-body-sm text-neutral-60">Total User</p>
-          <p className="text-[#030712] font-bold text-h-4 text-end ms-auto block max-w-max">
-            <AnimatedNumbers
-              animateToNumber={metricsSummary?.total_users}
-              configs={(number, index) => {
-                return { mass: 1, tension: 230 * (index + 1), friction: 140 };
-              }}
-            ></AnimatedNumbers>
-          </p>
+          <div className="text-[#030712] font-bold text-h-4 text-end ms-auto block max-w-max">
+            {metricsSummary?.total_users ? (
+              <AnimatedNumbers
+                animateToNumber={metricsSummary?.total_users}
+                configs={(_, index) => {
+                  return { mass: 1, tension: 230 * (index + 1), friction: 140 };
+                }}
+              ></AnimatedNumbers>
+            ) : (
+              <Skeleton width={40} />
+            )}
+          </div>
         </div>
         <div className="border-t py-6 px-8 border-r border-b border-neutral-30 flex-1 h-[120px]">
           <p className="text-body-sm text-neutral-60">Total Tanaman</p>
-          <p className="text-[#030712] font-bold text-h-4 text-end ms-auto block max-w-max">
-            <AnimatedNumbers
-              animateToNumber={metricsSummary?.total_plants}
-              configs={(number, index) => {
-                return { mass: 1, tension: 230 * (index + 1), friction: 140 };
-              }}
-            ></AnimatedNumbers>
-          </p>
+          <div className="text-[#030712] font-bold text-h-4 text-end ms-auto block max-w-max">
+            {metricsSummary?.total_plants ? (
+              <AnimatedNumbers
+                animateToNumber={metricsSummary?.total_plants}
+                configs={(_, index) => {
+                  return { mass: 1, tension: 230 * (index + 1), friction: 140 };
+                }}
+              ></AnimatedNumbers>
+            ) : (
+              <Skeleton width={40} />
+            )}
+          </div>
         </div>
         <div className="border-t py-6 px-8 border-r border-b border-neutral-30 flex-1 h-[120px]">
           <p className="text-body-sm text-neutral-60">Total Artikel</p>
-          <p className="text-[#030712] font-bold text-h-4 text-end ms-auto block max-w-max">
-            <AnimatedNumbers
-              animateToNumber={metricsSummary?.total_articles}
-              configs={(number, index) => {
-                return { mass: 1, tension: 230 * (index + 1), friction: 140 };
-              }}
-            ></AnimatedNumbers>
-          </p>
+          <div className="text-[#030712] font-bold text-h-4 text-end ms-auto block max-w-max">
+            {metricsSummary?.total_articles ? (
+              <AnimatedNumbers
+                animateToNumber={metricsSummary?.total_articles}
+                configs={(_, index) => {
+                  return { mass: 1, tension: 230 * (index + 1), friction: 140 };
+                }}
+              ></AnimatedNumbers>
+            ) : (
+              <Skeleton width={40} />
+            )}
+          </div>
         </div>
         <div className="border-t py-6 px-8 border-r border-b border-neutral-30 flex-1 h-[120px]">
           <p className="text-body-sm text-neutral-60">Total Produk</p>
-          <p className="text-[#030712] font-bold text-h-4 text-end ms-auto block max-w-max">
-            <AnimatedNumbers
-              animateToNumber={metricsSummary?.total_products}
-              configs={(number, index) => {
-                return { mass: 1, tension: 230 * (index + 1), friction: 140 };
-              }}
-            ></AnimatedNumbers>
-          </p>
+          <div className="text-[#030712] font-bold text-h-4 text-end ms-auto block max-w-max">
+            {metricsSummary?.total_products ? (
+              <AnimatedNumbers
+                animateToNumber={metricsSummary?.total_products}
+                configs={(_, index) => {
+                  return { mass: 1, tension: 230 * (index + 1), friction: 140 };
+                }}
+              ></AnimatedNumbers>
+            ) : (
+              <Skeleton width={40} />
+            )}
+          </div>
         </div>
       </div>
       {isLoading ? (

@@ -21,6 +21,7 @@ import EmptyArticle from "../assets/EmptyArticle.png";
 import EmptySearch from "../assets/EmptyArticleSearch.png";
 import ImageOverlay from "../components/ImageOverlay";
 import Loading from "../components/Loading";
+import ImageWithSkeleton from "../components/ImageWithSkeleton";
 
 const ITEMS_PER_PAGE = 8;
 const DEBOUNCE_DELAY = 500;
@@ -189,24 +190,24 @@ export default function ArticlePage() {
                       key={index}
                       className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
                     >
-                      <td className="flex justify-center">
-                        <div className="w-[56px] h-[48px]">
-                          <img
-                            src={
-                              article?.article_pictures?.length > 0
-                                ? `https://34.128.85.215:8080/pictures/${article.article_pictures[0]}`
-                                : "http://via.placeholder.com/56x48"
-                            }
-                            className="w-full h-full object-fill cursor-pointer"
-                            alt="Article avatar"
-                            onClick={() =>
-                              setImageOverlay({
-                                isOpen: true,
-                                image: `https://34.128.85.215:8080/pictures/${article.article_pictures[0]}`,
-                              })
-                            }
-                          />
-                        </div>
+                      <td>
+                        <ImageWithSkeleton
+                          src={
+                            article?.article_pictures?.length > 0
+                              ? `https://34.128.85.215:8080/pictures/${article.article_pictures[0]}`
+                              : "http://via.placeholder.com/56x48"
+                          }
+                          width={56}
+                          height={48}
+                          className="mx-auto cursor-pointer"
+                          alt="Article avatar"
+                          onClick={() =>
+                            setImageOverlay({
+                              isOpen: true,
+                              image: `https://34.128.85.215:8080/pictures/${article.article_pictures[0]}`,
+                            })
+                          }
+                        />
                       </td>
                       <td className="text-caption-lg">
                         {article.article_title}

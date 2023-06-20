@@ -22,6 +22,7 @@ import useProduct from "../hooks/useProduct";
 import useDebounce from "../hooks/useDebounce";
 import ImageOverlay from "../components/ImageOverlay";
 import Loading from "../components/Loading";
+import ImageWithSkeleton from "../components/ImageWithSkeleton";
 
 const ITEMS_PER_PAGE = 8;
 const DEBOUNCE_DELAY = 500;
@@ -82,7 +83,7 @@ const RenderContent = ({
                     className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
                   >
                     <td>
-                      <img
+                      <ImageWithSkeleton
                         src={
                           product.product_picture
                             ? `${import.meta.env.VITE_API_BASE_URL}/pictures/${
@@ -91,7 +92,9 @@ const RenderContent = ({
                             : "http://via.placeholder.com/56x48"
                         }
                         alt="gambar"
-                        className="w-[56px] h-[48px] mx-auto cursor-pointer"
+                        width={56}
+                        height={48}
+                        className="mx-auto cursor-pointer"
                         onClick={() =>
                           setImageOverlay(
                             `${import.meta.env.VITE_API_BASE_URL}/pictures/${

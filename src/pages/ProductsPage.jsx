@@ -82,27 +82,29 @@ const RenderContent = ({
                     key={product.id}
                     className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
                   >
-                    <td>
-                      <ImageWithSkeleton
-                        src={
-                          product.product_picture
-                            ? `${import.meta.env.VITE_API_BASE_URL}/pictures/${
+                    <td className="flex justify-center">
+                      <div className="w-[56px] h-[48px]">
+                        <ImageWithSkeleton
+                          src={
+                            product.product_picture
+                              ? `${
+                                  import.meta.env.VITE_API_BASE_URL
+                                }/pictures/${product.product_picture}`
+                              : "http://via.placeholder.com/56x48"
+                          }
+                          alt="gambar"
+                          width={56}
+                          height={48}
+                          className=" w-full h-full cursor-pointer"
+                          onClick={() =>
+                            setImageOverlay(
+                              `${import.meta.env.VITE_API_BASE_URL}/pictures/${
                                 product.product_picture
                               }`
-                            : "http://via.placeholder.com/56x48"
-                        }
-                        alt="gambar"
-                        width={56}
-                        height={48}
-                        className="mx-auto cursor-pointer"
-                        onClick={() =>
-                          setImageOverlay(
-                            `${import.meta.env.VITE_API_BASE_URL}/pictures/${
-                              product.product_picture
-                            }`
-                          )
-                        }
-                      />
+                            )
+                          }
+                        />
+                      </div>
                     </td>
                     <td className="text-caption-lg">{product.product_name}</td>
                     <td className="text-caption-lg">

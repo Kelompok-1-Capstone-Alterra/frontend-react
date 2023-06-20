@@ -23,6 +23,8 @@ import useSWR from "swr";
 import Cookies from "js-cookie";
 import fetcher from "../utils/fetcher";
 import Loading from "../components/Loading";
+import ImageWithSkeleton from "../components/ImageWithSkeleton";
+import ImageOverlay from "../components/ImageOverlay";
 
 const options = [
   { value: "Alat Tani", label: "Alat Tani" },
@@ -74,6 +76,7 @@ export default function UpdateProductPage() {
   });
   const { uploadImage, getImage, isLoading: imageLoading } = useImage();
   const { updateProduct, isLoading: uploadLoading } = useProduct();
+  const [imageOverlay, setImageOverlay] = useState(null);
 
   const navigate = useNavigate();
 
@@ -281,8 +284,9 @@ export default function UpdateProductPage() {
                             >
                               <img
                                 src={picture}
+                                onClick={() => setImageOverlay(picture)}
                                 alt="product"
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-cover cursor-pointer"
                               />
                             </div>
                           ))
@@ -291,10 +295,15 @@ export default function UpdateProductPage() {
                               key={index}
                               className="relative w-[132px] h-[132px] overflow-hidden"
                             >
-                              <img
+                              <ImageWithSkeleton
+                                onClick={() => setImageOverlay(picture)}
                                 src={picture}
+                                width={132}
+                                height={132}
+                                className={
+                                  "cursor-pointer object-cover w-full h-full"
+                                }
                                 alt="product"
-                                className="w-full h-full object-cover"
                               />
                             </div>
                           ))}
@@ -767,6 +776,14 @@ export default function UpdateProductPage() {
           isConfirmModalOpen || notifModal.show ? "block" : "hidden"
         } cursor-pointer top-0 bottom-0 left-0 right-0`}
       ></div>
+
+      {imageOverlay && (
+        <ImageOverlay
+          image={imageOverlay}
+          onClose={() => setImageOverlay(null)}
+          isOpen={imageOverlay}
+        />
+      )}
     </SecondaryContainer>
   );
 }

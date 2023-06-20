@@ -203,23 +203,25 @@ export default function PlantPage() {
                     className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
                   >
                     <td className="flex justify-center">
-                      <ImageWithSkeleton
-                        src={
-                          plant.Pictures.length > 0
-                            ? `${BASE_URL}/pictures/${plant.Pictures[0]?.url}`
-                            : undefined
-                        }
-                        width={56}
-                        height={48}
-                        alt="Gambar Tanaman"
-                        className="cursor-pointer"
-                        onClick={() =>
-                          setImageOverlay({
-                            isOpen: true,
-                            image: `https://34.128.85.215:8080/pictures/${plant.Pictures[0]?.url}`,
-                          })
-                        }
-                      />
+                      <div className="w-[56px] h-[48px]">
+                        <ImageWithSkeleton
+                          src={
+                            plant.Pictures.length > 0
+                              ? `${BASE_URL}/pictures/${plant.Pictures[0]?.url}`
+                              : undefined
+                          }
+                          width={56}
+                          height={48}
+                          alt="Gambar Tanaman"
+                          className="cursor-pointer w-full h-full object-cover"
+                          onClick={() =>
+                            setImageOverlay({
+                              isOpen: true,
+                              image: `https://34.128.85.215:8080/pictures/${plant.Pictures[0]?.url}`,
+                            })
+                          }
+                        />
+                      </div>
                     </td>
                     <td className="text-left ps-3">
                       {plant.Name} ({plant.Latin})

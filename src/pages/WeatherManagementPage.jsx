@@ -118,21 +118,23 @@ const WeatherManagementPage = () => {
                     className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
                   >
                     <td className="text-caption-lg">{index + 1}</td>
-                    <td>
-                      <ImageWithSkeleton
-                        src={`https://34.128.85.215:8080/pictures/${item.weather_pictures[0]}`}
-                        alt="Gambar"
-                        width={85}
-                        height={51}
-                        className="mx-auto cursor-pointer"
-                        onClick={() =>
-                          setImageOverlay({
-                            isOpen: true,
-                            image: `https://34.128.85.215:8080/pictures/${item.weather_pictures[0]}`,
-                          })
-                        }
-                        id={`image-weather-${item.id}`}
-                      />
+                    <td className="flex justify-center">
+                      <div className="w-[88px] h-[51px]">
+                        <ImageWithSkeleton
+                          src={`https://34.128.85.215:8080/pictures/${item.weather_pictures[0]}`}
+                          alt="Gambar"
+                          width={85}
+                          height={51}
+                          className="w-full h-full object-cover cursor-pointer"
+                          onClick={() =>
+                            setImageOverlay({
+                              isOpen: true,
+                              image: `https://34.128.85.215:8080/pictures/${item.weather_pictures[0]}`,
+                            })
+                          }
+                          id={`image-weather-${item.id}`}
+                        />
+                      </div>
                     </td>
                     <td
                       className="text-caption-lg  text-neutral-80"

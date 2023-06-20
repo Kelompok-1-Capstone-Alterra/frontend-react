@@ -15,7 +15,7 @@ const ImageWithSkeleton = ({
     setImageLoaded(true);
   };
   return (
-    <div>
+    <>
       {!imageLoaded && (
         <AnimatePresence>
           <motion.div
@@ -38,11 +38,11 @@ const ImageWithSkeleton = ({
         width={width}
         height={height}
         style={{ display: imageLoaded ? "block" : "none" }}
-        className={`${className} w-[${width}px] h-[${height}px]`}
+        className={`${className}`}
         onLoad={handleImageLoad}
         {...props}
       />
-    </div>
+    </>
   );
 };
 

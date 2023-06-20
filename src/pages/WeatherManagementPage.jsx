@@ -22,8 +22,16 @@ import ImageWithSkeleton from "../components/ImageWithSkeleton";
 const WeatherManagementPage = () => {
   const navigate = useNavigate();
   const url = `${import.meta.env.VITE_API_BASE_URL}/auth/admins/weathers`;
-  const { data, isLoading, mutate, error } = useSWR(url, async (url) =>
-    fetcher(url, Cookies.get("token"))
+  const { data, isLoading, mutate } = useSWR(
+    url,
+    async (url) => fetcher(url, Cookies.get("token")),
+    {
+      onError: (err) => {
+        if (err.response.status === 500) {
+          console.log("Internal Server Error");
+        }
+      },
+    }
   );
   const weathers = data?.data;
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -70,10 +78,6 @@ const WeatherManagementPage = () => {
   const handleCancelDelete = () => {
     setShowConfirmModal(false);
   };
-
-  if (error) {
-    return <div>Error while fetching data</div>;
-  }
 
   return (
     <>

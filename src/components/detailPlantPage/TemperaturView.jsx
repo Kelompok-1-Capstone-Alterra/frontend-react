@@ -1,3 +1,5 @@
+import ImageWithSkeleton from "../ImageWithSkeleton";
+
 export default function TemperaturView({ plantTemperature }) {
   return (
     <div className="mt-8">
@@ -24,7 +26,7 @@ export default function TemperaturView({ plantTemperature }) {
           Gambar temperature tanaman
         </h5>
         <div className="text-neutral-80 mt-2">
-          <img
+          <ImageWithSkeleton
             src={
               plantTemperature?.temperature_pictures?.length > 0
                 ? `${import.meta.env.VITE_API_BASE_URL}/pictures/${
@@ -33,7 +35,8 @@ export default function TemperaturView({ plantTemperature }) {
                 : ""
             }
             alt="Gambar temperatur tanaman"
-            className="w-[210px]"
+            width={210}
+            height={210}
           />
         </div>
       </section>

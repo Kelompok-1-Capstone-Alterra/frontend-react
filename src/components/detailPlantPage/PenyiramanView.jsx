@@ -1,3 +1,5 @@
+import ImageWithSkeleton from "../ImageWithSkeleton";
+
 export default function PenyiramanView({ plantWatering }) {
   return (
     <div className="mt-8">
@@ -23,7 +25,7 @@ export default function PenyiramanView({ plantWatering }) {
           Gambar informasi penyiraman
         </h5>
         <div className="text-neutral-80 mt-2">
-          <img
+          <ImageWithSkeleton
             src={
               plantWatering?.watering_pictures?.length > 0
                 ? `${import.meta.env.VITE_API_BASE_URL}/pictures/${
@@ -32,7 +34,8 @@ export default function PenyiramanView({ plantWatering }) {
                 : ""
             }
             alt="Gambar Penyiramans"
-            className="w-[210px]"
+            width={210}
+            height={210}
           />
         </div>
       </section>

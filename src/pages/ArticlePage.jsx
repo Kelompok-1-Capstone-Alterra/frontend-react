@@ -190,24 +190,26 @@ export default function ArticlePage() {
                       key={index}
                       className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
                     >
-                      <td>
-                        <ImageWithSkeleton
-                          src={
-                            article?.article_pictures?.length > 0
-                              ? `https://34.128.85.215:8080/pictures/${article.article_pictures[0]}`
-                              : "http://via.placeholder.com/56x48"
-                          }
-                          width={56}
-                          height={48}
-                          className="mx-auto cursor-pointer"
-                          alt="Article avatar"
-                          onClick={() =>
-                            setImageOverlay({
-                              isOpen: true,
-                              image: `https://34.128.85.215:8080/pictures/${article.article_pictures[0]}`,
-                            })
-                          }
-                        />
+                      <td className="flex justify-center">
+                        <div className="h-[48px] w-[56px]">
+                          <ImageWithSkeleton
+                            src={
+                              article?.article_pictures?.length > 0
+                                ? `https://34.128.85.215:8080/pictures/${article.article_pictures[0]}`
+                                : "http://via.placeholder.com/56x48"
+                            }
+                            width={56}
+                            height={48}
+                            className="cursor-pointer w-full h-full object-cover"
+                            alt="Article avatar"
+                            onClick={() =>
+                              setImageOverlay({
+                                isOpen: true,
+                                image: `https://34.128.85.215:8080/pictures/${article.article_pictures[0]}`,
+                              })
+                            }
+                          />
+                        </div>
                       </td>
                       <td className="text-caption-lg">
                         {article.article_title}

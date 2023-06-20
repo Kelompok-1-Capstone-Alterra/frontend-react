@@ -23,20 +23,24 @@ export default function Suggestion() {
   const [showModal, setShowModal] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
   const { currentPage } = filter;
-  const support = data;
+  const support = data?.data;
+
+  if (!data) return null;
 
   let filteredSupport = Array.isArray(support) ? support : [];
 
   if (startDate && endDate && Array.isArray(filteredSupport)) {
     filteredSupport = filteredSupport.filter((value) => {
-      const supportDate = new Date(value.date);
+      const supportDate = new Date(value.post_at);
       return supportDate >= startDate && supportDate <= endDate;
     });
-  } else {
-    filteredSupport = [];
   }
 
-  const totalPages = Math.ceil(filteredSupport?.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredSupport.length / ITEMS_PER_PAGE);
+  filteredSupport = filteredSupport?.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   const handlePageChange = (page) => {
     setFilter({
@@ -48,7 +52,6 @@ export default function Suggestion() {
   const openModal = (data) => {
     setSelectedData(data);
     setShowModal(true);
-    navigate(`/auth/admins/suggestions/${data.suggestion_id}`);
   };
 
   const handleStartDateChange = (e) => {
@@ -60,9 +63,6 @@ export default function Suggestion() {
     const endDateValue = e.target.value ? new Date(e.target.value) : null;
     setEndDate(endDateValue);
   };
-
-  console.log(support);
-
   return (
     <MainContainer>
       <h4 className="text-h-4 font-bold">Masukan & Saran</h4>
@@ -91,11 +91,7 @@ export default function Suggestion() {
             <Loading />
           ) : filteredSupport?.length <= 0 ? (
             <div className="flex flex-col items-center justify-center mt-20">
-              <img
-                src={gambar}
-                className=""
-                alt="Error 400"
-              />
+              <img src={gambar} className="" alt="Error 400" />
               <p className="text-center text-body-lg mt-2 text-neutral-40">
                 Belum ada data masukan & saran
               </p>
@@ -109,7 +105,7 @@ export default function Suggestion() {
                 }
               >
                 {filteredSupport?.map((value, index) => {
-                  const kata = value.deskripsi.split(" ");
+                  const kata = value.message.split(" ");
                   const maxKata = kata.slice(0, 15).join(" ");
                   const Desc = kata.length > 15 ? maxKata + "..." : maxKata;
                   return (
@@ -118,9 +114,9 @@ export default function Suggestion() {
                       className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
                     >
                       <td className="text-caption-lg pt-[17.5px] pb-[17.5px]">
-                        {new Date(value.date).toLocaleDateString("id-ID")}
+                        {new Date(value.post_at).toLocaleDateString("id-ID")}
                       </td>
-                      <td className="text-caption-lg">{value.id}</td>
+                      <td className="text-caption-lg">{value.user_id}</td>
                       <td className="text-caption-lg w-[674px] text-left">
                         {Desc}
                       </td>
@@ -164,9 +160,9 @@ export default function Suggestion() {
               <div className="flex">
                 <div className="">
                   <div className="flex flex-col items-center">
-                    {selectedData.image ? (
+                    {selectedData.picture ? (
                       <img
-                        src={selectedData.image}
+                        src={selectedData.picture}
                         alt=""
                         className="w-[105px] h-[101px] rounded-full mb-[10px]"
                       />
@@ -186,23 +182,18 @@ export default function Suggestion() {
                   </div>
                 </div>
                 <div className="ml-[32px]">
-                  <label className="font-bold mt-[15px]">Tanggal</label>
-                  <p className="mt-[5px] mb-[10px]">{selectedData.date}</p>
-                  <label className="font-bold">Deskripsi</label>
-                  <p className="max-w-[600px] overflow-hidden overflow-ellipsis">
-                    {selectedData.deskripsi}
+                  <label className="font-bold">Tanggal</label>
+                  <p>
+                    {new Date(selectedData.post_at).toLocaleDateString("id-ID")}
                   </p>
+                  <label className="font-bold">Deskripsi</label>
+                  <p>{selectedData.message}</p>
                 </div>
               </div>
             </div>
           </div>
         </>
       )}
-      <div
-        className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
-          showModal ? "block" : "hidden"
-        } cursor-pointer top-0 bottom-0 left-0 right-0`}
-      ></div>
     </MainContainer>
   );
 }

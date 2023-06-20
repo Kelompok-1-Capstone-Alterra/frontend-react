@@ -70,13 +70,14 @@ export default function UpdateArticlePage() {
         setValue("article_title", article.article_title);
         setValue("description", article.article_description);
         const response = await getImage(article.article_pictures[0]);
-        // Nama file bedasarkan label
-        const fileName = `artikel.${response.data.type.split("/")[1]}`;
-        const file = new File([response.data], fileName, {
-          type: response.data.type,
-        });
-        setValue("article_image", file);
-        setSelectedImageFile(response.data);
+        if (response.status === 200) {
+          const fileName = `artikel.${response.data.type.split("/")[1]}`;
+          const file = new File([response.data], fileName, {
+            type: response.data.type,
+          });
+          setValue("article_image", file);
+          setSelectedImageFile(response.data);
+        }
       }
     } catch (error) {
       console.error("Terjadi kesalahan:", error);

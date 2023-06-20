@@ -97,7 +97,7 @@ export default function UpdateProductPage() {
         condition: product?.product_condition,
         form: product?.product_form,
         sellerName: product?.product_seller_name,
-        sellerPhone: product?.product_seller_phone,
+        sellerPhone: product?.product_seller_phone.substring(1),
       });
       setValue("description", product?.product_description);
     }
@@ -178,7 +178,7 @@ export default function UpdateProductPage() {
       product_weight: Number(data.weight),
       product_form: data.form,
       product_seller_name: data.sellerName,
-      product_seller_phone: data.sellerPhone,
+      product_seller_phone: `+${data.sellerPhone}`,
       category: data.category.value,
       status: data.status === "etalase" ? true : false,
     });
@@ -676,6 +676,17 @@ export default function UpdateProductPage() {
                       required: {
                         value: true,
                         message: "Nomor tidak boleh kosong",
+                      },
+                      validate: (value) => {
+                        //diawali dengan 62
+                        const phoneRegex = /^62/;
+                        if (!phoneRegex.test(value)) {
+                          return "Nomor tidak valid, harus diawali dengan 62";
+                        }
+                        //panjang 11-13
+                        if (value.length < 11 || value.length > 13) {
+                          return "Nomor tidak valid, panjang nomor 11-13 karakter";
+                        }
                       },
                       onChange: (e) => {
                         //value must be number

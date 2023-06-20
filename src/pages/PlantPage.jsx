@@ -25,6 +25,7 @@ import usePlant from "../hooks/usePlant";
 import { addPlantDataState } from "../utils/recoil_atoms";
 import Loading from "../components/Loading";
 import ImageOverlay from "../components/ImageOverlay";
+import ImageWithSkeleton from "../components/ImageWithSkeleton";
 
 const PLANT_PER_PAGE = 8;
 const DEBOUNCE_DELAY = 500;
@@ -202,14 +203,16 @@ export default function PlantPage() {
                     className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
                   >
                     <td className="flex justify-center">
-                      <img
+                      <ImageWithSkeleton
                         src={
                           plant.Pictures.length > 0
                             ? `${BASE_URL}/pictures/${plant.Pictures[0]?.url}`
                             : undefined
                         }
+                        width={56}
+                        height={48}
                         alt="Gambar Tanaman"
-                        className="w-14 h-12"
+                        className="cursor-pointer"
                         onClick={() =>
                           setImageOverlay({
                             isOpen: true,

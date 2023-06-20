@@ -183,7 +183,9 @@ export default function Suggestion() {
                 </div>
                 <div className="ml-[32px]">
                   <label className="font-bold">Tanggal</label>
-                  <p>{new Date(selectedData.post_at).toLocaleDateString("id-ID")}</p>
+                  <p>
+                    {new Date(selectedData.post_at).toLocaleDateString("id-ID")}
+                  </p>
                   <label className="font-bold">Deskripsi</label>
                   <p>{selectedData.message}</p>
                 </div>

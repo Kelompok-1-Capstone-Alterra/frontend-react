@@ -1,12 +1,15 @@
 import Cookies from "js-cookie";
 import useSWR from "swr";
+import AnimatedNumbers from "react-animated-numbers";
+import Skeleton from "react-loading-skeleton";
 
 import Table from "../components/Table";
 import MainContainer from "../components/layouts/MainContainer";
 import fetcher from "../utils/fetcher";
+import Loading from "../components/Loading";
 
 export default function OverviewPage() {
-  const { data } = useSWR(
+  const { data, isLoading } = useSWR(
     `${import.meta.env.VITE_API_BASE_URL}/auth/admins/overview`,
     (url) => fetcher(url, Cookies.get("token"))
   );
@@ -21,66 +24,106 @@ export default function OverviewPage() {
       <div className="flex w-full mb-6">
         <div className="border py-6 px-8 border-neutral-30 flex-1 h-[120px]">
           <p className="text-body-sm text-neutral-60">Total User</p>
-          <p className="text-[#030712] font-bold text-h-4 text-end">
-            {metricsSummary?.total_users}
-          </p>
+          <div className="text-[#030712] font-bold text-h-4 text-end ms-auto block max-w-max">
+            {metricsSummary?.total_users ? (
+              <AnimatedNumbers
+                animateToNumber={metricsSummary?.total_users}
+                configs={(_, index) => {
+                  return { mass: 1, tension: 230 * (index + 1), friction: 140 };
+                }}
+              ></AnimatedNumbers>
+            ) : (
+              <Skeleton width={40} />
+            )}
+          </div>
         </div>
         <div className="border-t py-6 px-8 border-r border-b border-neutral-30 flex-1 h-[120px]">
           <p className="text-body-sm text-neutral-60">Total Tanaman</p>
-          <p className="text-[#030712] font-bold text-h-4 text-end">
-            {metricsSummary?.total_plants}
-          </p>
+          <div className="text-[#030712] font-bold text-h-4 text-end ms-auto block max-w-max">
+            {metricsSummary?.total_plants ? (
+              <AnimatedNumbers
+                animateToNumber={metricsSummary?.total_plants}
+                configs={(_, index) => {
+                  return { mass: 1, tension: 230 * (index + 1), friction: 140 };
+                }}
+              ></AnimatedNumbers>
+            ) : (
+              <Skeleton width={40} />
+            )}
+          </div>
         </div>
         <div className="border-t py-6 px-8 border-r border-b border-neutral-30 flex-1 h-[120px]">
           <p className="text-body-sm text-neutral-60">Total Artikel</p>
-          <p className="text-[#030712] font-bold text-h-4 text-end">
-            {metricsSummary?.total_articles}
-          </p>
+          <div className="text-[#030712] font-bold text-h-4 text-end ms-auto block max-w-max">
+            {metricsSummary?.total_articles ? (
+              <AnimatedNumbers
+                animateToNumber={metricsSummary?.total_articles}
+                configs={(_, index) => {
+                  return { mass: 1, tension: 230 * (index + 1), friction: 140 };
+                }}
+              ></AnimatedNumbers>
+            ) : (
+              <Skeleton width={40} />
+            )}
+          </div>
         </div>
         <div className="border-t py-6 px-8 border-r border-b border-neutral-30 flex-1 h-[120px]">
           <p className="text-body-sm text-neutral-60">Total Produk</p>
-          <p className="text-[#030712] font-bold text-h-4 text-end">
-            {metricsSummary?.total_products}
-          </p>
+          <div className="text-[#030712] font-bold text-h-4 text-end ms-auto block max-w-max">
+            {metricsSummary?.total_products ? (
+              <AnimatedNumbers
+                animateToNumber={metricsSummary?.total_products}
+                configs={(_, index) => {
+                  return { mass: 1, tension: 230 * (index + 1), friction: 140 };
+                }}
+              ></AnimatedNumbers>
+            ) : (
+              <Skeleton width={40} />
+            )}
+          </div>
         </div>
       </div>
-      <div className="flex w-full gap-3">
-        <div className="flex-1">
-          <p className="mb-4 text-body-lg">Ringkasan Cuaca</p>
-          <Table
-            headers={["Lokasi", "Suhu", "Cuaca"]}
-            className={"w-full"}
-          >
-            {weatherSummer?.map((weather, index) => (
-              <tr
-                key={index}
-                className="text-center border-b text-caption-lg text-neutral-80"
-              >
-                <td className="py-4">{weather.location}</td>
-                <td>{weather.temperature}</td>
-                <td>{weather.label}</td>
-              </tr>
-            ))}
-          </Table>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <div className="flex w-full gap-3">
+          <div className="flex-1">
+            <p className="mb-4 text-body-lg">Ringkasan Cuaca</p>
+            <Table
+              headers={["Lokasi", "Suhu", "Cuaca"]}
+              className={"w-full"}
+            >
+              {weatherSummer?.map((weather, index) => (
+                <tr
+                  key={index}
+                  className="text-center border-b text-caption-lg text-neutral-80"
+                >
+                  <td className="py-4">{weather.location}</td>
+                  <td>{weather.temperature}</td>
+                  <td>{weather.label}</td>
+                </tr>
+              ))}
+            </Table>
+          </div>
+          <div className="flex-1">
+            <p className="mb-4 text-body-lg">Ringkasan Tanaman</p>
+            <Table
+              headers={["Tanaman", "Jumlah User"]}
+              className={"w-full"}
+            >
+              {plantSummary?.map((plant, index) => (
+                <tr
+                  key={index}
+                  className="text-center border-b text-caption-lg text-neutral-80"
+                >
+                  <td className="py-4">{plant.plant_name}</td>
+                  <td>{plant.total_users}</td>
+                </tr>
+              ))}
+            </Table>
+          </div>
         </div>
-        <div className="flex-1">
-          <p className="mb-4 text-body-lg">Ringkasan Tanaman</p>
-          <Table
-            headers={["Tanaman", "Jumlah User"]}
-            className={"w-full"}
-          >
-            {plantSummary?.map((plant, index) => (
-              <tr
-                key={index}
-                className="text-center border-b text-caption-lg text-neutral-80"
-              >
-                <td className="py-4">{plant.plant_name}</td>
-                <td>{plant.total_users}</td>
-              </tr>
-            ))}
-          </Table>
-        </div>
-      </div>
+      )}
     </MainContainer>
   );
 }

@@ -17,6 +17,7 @@ import useWeather from "../hooks/useWeather";
 import { NotifModal } from "../components/Modal";
 import Loading from "../components/Loading";
 import ImageOverlay from "../components/ImageOverlay";
+import ImageWithSkeleton from "../components/ImageWithSkeleton";
 
 const WeatherManagementPage = () => {
   const navigate = useNavigate();
@@ -83,7 +84,8 @@ const WeatherManagementPage = () => {
             <Button
               size="lg"
               className="px-4"
-              onClick={() => navigate("/admin/weathers/create")}>
+              onClick={() => navigate("/admin/weathers/create")}
+            >
               Tambah Informasi Cuaca
             </Button>
           </div>
@@ -93,7 +95,10 @@ const WeatherManagementPage = () => {
               <>
                 <div className="flex flex-col justify-center items-center mt-16">
                   <div>
-                    <img src={image} alt="gambar" />
+                    <img
+                      src={image}
+                      alt="gambar"
+                    />
                   </div>
                   <p className=" text-body-lg text-[#637381]">
                     Informasi cuaca masih kosong
@@ -105,17 +110,21 @@ const WeatherManagementPage = () => {
               <Table
                 id="table"
                 headers={["No", "Gambar", "Label", "Judul", "Aksi"]}
-                className={"overflow-y-scroll mt-7 w-full overflow-x-hidden"}>
+                className={"overflow-y-scroll mt-7 w-full overflow-x-hidden"}
+              >
                 {weathers.map((item, index) => (
                   <tr
                     key={item.id}
-                    className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80">
+                    className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
+                  >
                     <td className="text-caption-lg">{index + 1}</td>
                     <td>
-                      <img
+                      <ImageWithSkeleton
                         src={`https://34.128.85.215:8080/pictures/${item.weather_pictures[0]}`}
                         alt="Gambar"
-                        className="w-[85px] h-[51px] mx-auto"
+                        width={85}
+                        height={51}
+                        className="mx-auto cursor-pointer"
                         onClick={() =>
                           setImageOverlay({
                             isOpen: true,
@@ -127,28 +136,30 @@ const WeatherManagementPage = () => {
                     </td>
                     <td
                       className="text-caption-lg  text-neutral-80"
-                      id={`weather-label-${item.id}`}>
+                      id={`weather-label-${item.id}`}
+                    >
                       {item.weather_label}
                     </td>
                     <td
                       className="text-caption-lg  text-neutral-80"
-                      id={`weather-title-${item.id}`}>
+                      id={`weather-title-${item.id}`}
+                    >
                       {item.weather_title}
                     </td>
                     <td className="space-x-3">
                       <Eye20Regular
                         onClick={() => navigate(`/admin/weathers/${item.id}`)}
-                        className="cursor-pointer hover:text-info w-5"
+                        className="cursor-pointer hover:text-info"
                         id={`detail-button-${item.id}`}
                       />
                       <Delete20Regular
                         onClick={() => handleDelete(item.id)}
-                        className="cursor-pointer hover:text-info w-5"
+                        className="cursor-pointer hover:text-info"
                         id={`delete-button-${item.id}`}
                       />
 
                       <Edit20Regular
-                        className="cursor-pointer hover:text-info w-5"
+                        className="cursor-pointer hover:text-info"
                         onClick={() =>
                           navigate(`/admin/weathers/update/${item.id}`)
                         }
@@ -196,7 +207,8 @@ const WeatherManagementPage = () => {
         <div
           className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
             showConfirmModal || showModal.show ? "block" : "hidden"
-          } cursor-pointer top-0 bottom-0 left-0 right-0`}></div>
+          } cursor-pointer top-0 bottom-0 left-0 right-0`}
+        ></div>
       </MainContainer>
     </>
   );

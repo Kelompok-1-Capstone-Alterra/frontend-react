@@ -8,10 +8,20 @@ import gambar from "../assets/support.png";
 import Cookies from "js-cookie";
 import fetcher from "../utils/fetcher";
 import Loading from "../components/Loading";
-import { useNavigate } from "react-router-dom";
+import ImageWithSkeleton from "../components/ImageWithSkeleton";
+import { motion } from "framer-motion";
+
+const renderAvatarPlaceHolder = (name) => {
+  return (
+    <div className="avatar placeholder">
+      <div className="bg-primary  rounded-full w-[105px] h-[101px] mb-[10px]">
+        <p className="text-h-3 text-white">{name.charAt(0).toUpperCase()}</p>
+      </div>
+    </div>
+  );
+};
 
 export default function Suggestion() {
-  const navigate = useNavigate();
   const url = `${import.meta.env.VITE_API_BASE_URL}/auth/admins/suggestions`;
   const { data, isLoading } = useSWR(url, () =>
     fetcher(url, Cookies.get("token"))
@@ -22,6 +32,8 @@ export default function Suggestion() {
   const [filter, setFilter] = useState({ currentPage: 1 });
   const [showModal, setShowModal] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
+  const [imageError, setImageError] = useState(false);
+
   const { currentPage } = filter;
   const support = data?.data;
 
@@ -31,8 +43,11 @@ export default function Suggestion() {
 
   if (startDate && endDate && Array.isArray(filteredSupport)) {
     filteredSupport = filteredSupport.filter((value) => {
-      const supportDate = new Date(value.post_at);
-      return supportDate >= startDate && supportDate <= endDate;
+      const supportDate = new Date(value.post_at).setUTCHours(0, 0, 0, 0);
+      const startDateTime = new Date(startDate).setUTCHours(0, 0, 0, 0);
+      const endDateTime = new Date(endDate).setUTCHours(0, 0, 0, 0);
+
+      return supportDate >= startDateTime && supportDate <= endDateTime;
     });
   }
 
@@ -63,6 +78,7 @@ export default function Suggestion() {
     const endDateValue = e.target.value ? new Date(e.target.value) : null;
     setEndDate(endDateValue);
   };
+  console.log(data);
   return (
     <MainContainer>
       <h4 className="text-h-4 font-bold">Masukan & Saran</h4>
@@ -91,7 +107,7 @@ export default function Suggestion() {
             <Loading />
           ) : filteredSupport?.length <= 0 ? (
             <div className="flex flex-col items-center justify-center mt-20">
-              <img src={gambar} className="" alt="Error 400" />
+              <img src={gambar} className="" alt="" />
               <p className="text-center text-body-lg mt-2 text-neutral-40">
                 Belum ada data masukan & saran
               </p>
@@ -146,54 +162,58 @@ export default function Suggestion() {
       </div>
 
       {selectedData && showModal && (
-        <>
-          <div className="fixed inset-0 flex items-center justify-center z-50">
-            <div className="border bg-neutral-10 w-[895px] rounded-[10px] p-[32px] shadow-elevation-2 border-1 top-1/2 left-1/2">
-              <div className="flex justify-between mb-[10px]">
-                <p className="font-bold">Masukan Dan Saran</p>
-                <Dismiss20Filled
-                  onClick={() => setShowModal(false)}
-                  className="cursor-pointer hover:text-info"
-                  id="close-modal"
-                />
-              </div>
-              <div className="flex">
-                <div className="">
-                  <div className="flex flex-col items-center">
-                    {selectedData.picture ? (
+        <motion.div className="fixed inset-0 flex items-center justify-center z-50">
+          <motion.div
+            className="border bg-neutral-10 w-[895px] rounded-[10px] p-[32px] shadow-elevation-2 border-1 top-1/2 left-1/2"
+            initial={{ opacity: 0, y: +70 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="flex justify-between mb-[10px]">
+              <p className="font-bold">Masukan Dan Saran</p>
+              <Dismiss20Filled
+                onClick={() => setShowModal(false)}
+                className="cursor-pointer hover:text-info"
+                id="close-modal"
+              />
+            </div>
+            <div className="flex">
+              <div className="">
+                <div className="flex flex-col items-center">
+                {selectedData.picture && !imageError ? (
                       <img
                         src={selectedData.picture}
                         alt=""
                         className="w-[105px] h-[101px] rounded-full mb-[10px]"
+                        onError={() => setImageError(true)}
                       />
                     ) : (
-                      <div className="avatar placeholder">
-                        <div className="bg-primary  rounded-full w-[105px] h-[101px] mb-[10px]">
-                          <p className="text-h-3 text-white">
-                            {selectedData.name.charAt(0)}
-                          </p>
-                        </div>
-                      </div>
+                      renderAvatarPlaceHolder(selectedData.name)
                     )}
-                    <div className="text-center">
-                      <p>{selectedData.name}</p>
-                      <p>{selectedData.email}</p>
-                    </div>
+                  <div className="text-center">
+                    <p>{selectedData.name}</p>
+                    <p>{selectedData.email}</p>
                   </div>
                 </div>
-                <div className="ml-[32px]">
-                  <label className="font-bold">Tanggal</label>
-                  <p>
-                    {new Date(selectedData.post_at).toLocaleDateString("id-ID")}
-                  </p>
-                  <label className="font-bold">Deskripsi</label>
-                  <p>{selectedData.message}</p>
-                </div>
+              </div>
+              <div className="ml-[32px]">
+                <label className="font-bold">Tanggal</label>
+                <p>
+                  {new Date(selectedData.post_at).toLocaleDateString("id-ID")}
+                </p>
+                <label className="font-bold">Deskripsi</label>
+                <p>{selectedData.message}</p>
               </div>
             </div>
-          </div>
-        </>
+          </motion.div>
+             
+        </motion.div>
       )}
+      <div
+        className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
+          showModal ? "block" : "hidden"
+        } cursor-pointer top-0 bottom-0 left-0 right-0`}
+      ></div>
     </MainContainer>
   );
 }

@@ -62,19 +62,26 @@ const ConfirmModal = ({
               <Button
                 variant="outline-green"
                 className="rounded-full w-[190px] h-[44px]"
-                onClick={handleCancel}>
+                onClick={handleCancel}
+              >
                 {cancelText ? cancelText : "Label"}
               </Button>
               <Button
                 variant="green"
                 className="rounded-full w-[190px] h-[44px]"
-                onClick={handleConfirm}>
+                onClick={handleConfirm}
+              >
                 {confirmText ? confirmText : "Label"}
               </Button>
             </div>
           </div>
         </ModalContainer>
       )}
+      <div
+        className={`fixed bg-black/20 w-[100vw] h-[100vh] z-[10] ${
+          isOpen ? "block" : "hidden"
+        } cursor-pointer top-0 bottom-0 left-0 right-0`}
+      ></div>
     </>
   );
 };
@@ -108,13 +115,19 @@ const NotifModal = ({ isOpen, text, title, confirmText, icon, onConfirm }) => {
               <Button
                 variant="green"
                 className="rounded-full w-[190px] h-[44px]"
-                onClick={handleConfirm}>
+                onClick={handleConfirm}
+              >
                 {confirmText ? confirmText : "Label"}
               </Button>
             </div>
           </div>
         </ModalContainer>
       )}
+      <div
+        className={`fixed bg-black/20 w-[100vw] h-[100vh] z-[10]  ${
+          isOpen ? "block" : "hidden"
+        } cursor-pointer top-0 bottom-0 left-0 right-0`}
+      ></div>
     </>
   );
 };

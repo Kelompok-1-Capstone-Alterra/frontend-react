@@ -22,8 +22,16 @@ import ImageWithSkeleton from "../components/ImageWithSkeleton";
 const WeatherManagementPage = () => {
   const navigate = useNavigate();
   const url = `${import.meta.env.VITE_API_BASE_URL}/auth/admins/weathers`;
-  const { data, isLoading, mutate, error } = useSWR(url, async (url) =>
-    fetcher(url, Cookies.get("token"))
+  const { data, isLoading, mutate } = useSWR(
+    url,
+    async (url) => fetcher(url, Cookies.get("token")),
+    {
+      onError: (err) => {
+        if (err.response.status === 500) {
+          console.log("Internal Server Error");
+        }
+      },
+    }
   );
   const weathers = data?.data;
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -71,10 +79,6 @@ const WeatherManagementPage = () => {
     setShowConfirmModal(false);
   };
 
-  if (error) {
-    return <div>Error while fetching data</div>;
-  }
-
   return (
     <>
       <MainContainer>
@@ -84,8 +88,7 @@ const WeatherManagementPage = () => {
             <Button
               size="lg"
               className="px-4"
-              onClick={() => navigate("/admin/weathers/create")}
-            >
+              onClick={() => navigate("/admin/weathers/create")}>
               Tambah Informasi Cuaca
             </Button>
           </div>
@@ -95,10 +98,7 @@ const WeatherManagementPage = () => {
               <>
                 <div className="flex flex-col justify-center items-center mt-16">
                   <div>
-                    <img
-                      src={image}
-                      alt="gambar"
-                    />
+                    <img src={image} alt="gambar" />
                   </div>
                   <p className=" text-body-lg text-[#637381]">
                     Informasi cuaca masih kosong
@@ -110,13 +110,11 @@ const WeatherManagementPage = () => {
               <Table
                 id="table"
                 headers={["No", "Gambar", "Label", "Judul", "Aksi"]}
-                className={"overflow-y-scroll mt-7 w-full overflow-x-hidden"}
-              >
+                className={"overflow-y-scroll mt-7 w-full overflow-x-hidden"}>
                 {weathers.map((item, index) => (
                   <tr
                     key={item.id}
-                    className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
-                  >
+                    className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80">
                     <td className="text-caption-lg">{index + 1}</td>
                     <td className="flex justify-center">
                       <div className="w-[88px] h-[51px]">
@@ -138,14 +136,12 @@ const WeatherManagementPage = () => {
                     </td>
                     <td
                       className="text-caption-lg  text-neutral-80"
-                      id={`weather-label-${item.id}`}
-                    >
+                      id={`weather-label-${item.id}`}>
                       {item.weather_label}
                     </td>
                     <td
                       className="text-caption-lg  text-neutral-80"
-                      id={`weather-title-${item.id}`}
-                    >
+                      id={`weather-title-${item.id}`}>
                       {item.weather_title}
                     </td>
                     <td className="space-x-3">

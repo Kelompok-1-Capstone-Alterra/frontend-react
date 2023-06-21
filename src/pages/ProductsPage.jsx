@@ -401,11 +401,6 @@ export default function ProductsPage() {
           </div>
         </div>
       </MainContainer>
-      <div
-        className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
-          confirmModalId || notifModal.show ? "block" : "hidden"
-        } cursor-pointer top-0 bottom-0 left-0 right-0`}
-      ></div>
       <ConfirmModal
         icon={"delete"}
         title={"Konfirmasi Hapus Data Produk"}

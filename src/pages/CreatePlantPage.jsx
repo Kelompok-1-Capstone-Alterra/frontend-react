@@ -282,11 +282,6 @@ export default function CreatePlantPage() {
           navigate("/admin/plants");
         }}
       />
-      <div
-        className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
-          isConfirmModalOpen || notifModal.show ? "block" : "hidden"
-        } cursor-pointer top-0 bottom-0 left-0 right-0`}
-      ></div>
     </SecondaryContainer>
   );
 }

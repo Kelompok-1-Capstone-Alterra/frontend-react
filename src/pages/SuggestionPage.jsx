@@ -107,7 +107,7 @@ export default function Suggestion() {
             <Loading />
           ) : filteredSupport?.length <= 0 ? (
             <div className="flex flex-col items-center justify-center mt-20">
-              <img src={gambar} className="" alt="" />
+              <img src={gambar} />
               <p className="text-center text-body-lg mt-2 text-neutral-40">
                 Belum ada data masukan & saran
               </p>

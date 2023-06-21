@@ -32,6 +32,7 @@ export default function LandingPage() {
                     variant={"green"}
                     size="lg"
                     className={"rounded-full"}
+                    id="download-1"
                   >
                     Download Sekarang
                   </Button>
@@ -59,6 +60,7 @@ export default function LandingPage() {
               <Link
                 to={APPLICATION_DOWNLOAD_LINK}
                 className="font-semibold text-primary hover:text-primary-hover"
+                id="download-2"
               >
                 Download Sekarang {">"}
               </Link>
@@ -84,6 +86,7 @@ export default function LandingPage() {
               <Link
                 to={APPLICATION_DOWNLOAD_LINK}
                 className="font-semibold text-primary hover:text-primary-hover"
+                id="download-3"
               >
                 Download Sekarang {">"}
               </Link>
@@ -109,6 +112,7 @@ export default function LandingPage() {
               <Link
                 to={APPLICATION_DOWNLOAD_LINK}
                 className="font-semibold text-primary hover:text-primary-hover"
+                id="download-4"
               >
                 Download Sekarang {">"}
               </Link>

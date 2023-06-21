@@ -181,7 +181,7 @@ export default function Suggestion() {
               <div className="">
                 <div className="flex flex-col items-center">
                 {selectedData.picture && !imageError ? (
-                      <img
+                      <ImageWithSkeleton
                         src={selectedData.picture}
                         alt=""
                         className="w-[105px] h-[101px] rounded-full mb-[10px]"

@@ -205,7 +205,8 @@ const UpdateWeatherPage = () => {
       <SecondaryContainer
         backTo="/admin/weathers"
         title="Edit Informasi cuaca"
-        className="pe-3">
+        className="pe-3"
+      >
         <div className="mx-8">
           <form onSubmit={handleSubmit(onSubmit)}>
             <TextField
@@ -230,7 +231,10 @@ const UpdateWeatherPage = () => {
 
             <div className="flex justify-between mb-4 mt-3">
               <div>
-                <label className="text-body-sm font-semibold" htmlFor="label">
+                <label
+                  className="text-body-sm font-semibold"
+                  htmlFor="label"
+                >
                   Label Cuaca
                 </label>
                 <div className="mb-1"></div>
@@ -251,7 +255,8 @@ const UpdateWeatherPage = () => {
                 {errors.label && (
                   <p
                     className="text-error text-caption-lg mt-1"
-                    id="errors-label-message">
+                    id="errors-label-message"
+                  >
                     <span>
                       <Info12Regular className="-mt-0.5 mr-1" />
                     </span>
@@ -279,7 +284,10 @@ const UpdateWeatherPage = () => {
                 />
               </div>
             </div>
-            <label htmlFor="deskripsi" className="text-body-lg font-semibold">
+            <label
+              htmlFor="deskripsi"
+              className="text-body-lg font-semibold"
+            >
               Deskripsi
             </label>
             <div className="mb-6">
@@ -304,7 +312,8 @@ const UpdateWeatherPage = () => {
                 {errors.deskripsi && (
                   <p
                     className="text-error text-caption-lg mt-1 "
-                    id="errors-deskripsi-message">
+                    id="errors-deskripsi-message"
+                  >
                     <span>
                       <Info12Regular className="-mt-0.5 mr-1" />
                     </span>
@@ -347,17 +356,14 @@ const UpdateWeatherPage = () => {
                 size="md"
                 disabled={isUploading || isSaving}
                 isLoading={isUploading || isSaving}
-                id="btn-submit">
+                id="btn-submit"
+              >
                 Simpan
               </Button>
             </div>
           </form>
         </div>
       </SecondaryContainer>
-      <div
-        className={`fixed bg-black/20 w-[100vw] h-[100vh] ${
-          isConfirmModalOpen || showModal.show ? "block" : "hidden"
-        } cursor-pointer top-0 bottom-0 left-0 right-0`}></div>
     </>
   );
 };

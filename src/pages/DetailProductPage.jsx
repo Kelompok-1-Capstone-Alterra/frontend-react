@@ -1,13 +1,17 @@
 import { useParams, Navigate } from "react-router-dom";
 import SecondaryContainer from "../components/layouts/SecondaryContainer";
+import { useState } from "react";
 import { toRupiah } from "../utils/functions";
 import useSWR from "swr";
 import fetcher from "../utils/fetcher";
 import Loading from "../components/Loading";
 import Cookies from "js-cookie";
+import ImageWithSkeleton from "../components/ImageWithSkeleton";
+import ImageOverlay from "../components/ImageOverlay";
 
 export default function DetailProductPage() {
   const { id } = useParams();
+  const [imageOverlay, setImageOverlay] = useState(null);
 
   const { data, isLoading, error } = useSWR(
     `${import.meta.env.VITE_API_BASE_URL}/auth/admins/products/${id}/detail`,
@@ -42,13 +46,20 @@ export default function DetailProductPage() {
           </span>
         </p>
         <div className="flex my-4 gap-5">
-          {product.product_pictures.map((image, index) => (
-            <img
-              key={index}
-              src={`${import.meta.env.VITE_API_BASE_URL}/pictures/${image}`}
-              alt="gambar"
-              className="w-[130px] h-[130px]"
-            />
+          {product.product_pictures.map((image) => (
+            <div
+              className="h-[130px] w-[130px]"
+              key={image}
+            >
+              <ImageWithSkeleton
+                className={`cursor-pointer w-full h-full object-cover`}
+                src={`${import.meta.env.VITE_API_BASE_URL}/pictures/${image}`}
+                alt="gambar"
+                width={130}
+                height={130}
+                onClick={() => setImageOverlay(image)}
+              />
+            </div>
           ))}
         </div>
         <p className="text-error font-semibold mb-5">
@@ -105,6 +116,16 @@ export default function DetailProductPage() {
           </p>
         </div>
       </div>
+      {imageOverlay && (
+        <ImageOverlay
+          isOpen={imageOverlay}
+          image={`${
+            import.meta.env.VITE_API_BASE_URL
+          }/pictures/${imageOverlay}`}
+          alt="gambar"
+          onClose={() => setImageOverlay(null)}
+        />
+      )}
     </SecondaryContainer>
   );
 }

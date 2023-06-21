@@ -1,3 +1,5 @@
+import ImageWithSkeleton from "../ImageWithSkeleton";
+
 export default function PenanamanView({ plantPlanting }) {
   const isContainer = plantPlanting?.planting_container;
   const isGround = plantPlanting?.planting_ground;
@@ -99,7 +101,7 @@ export default function PenanamanView({ plantPlanting }) {
           <section className="mt-8">
             <h5 className="font-semibold text-body-lg">Gambar pemupukkan</h5>
             <div className="text-neutral-80 mt-2">
-              <img
+              <ImageWithSkeleton
                 src={
                   plantPlanting?.ground_info?.ground_pictures?.length > 0
                     ? `${import.meta.env.VITE_API_BASE_URL}/pictures/${
@@ -108,7 +110,8 @@ export default function PenanamanView({ plantPlanting }) {
                     : ""
                 }
                 alt="Gambar penanaman tanpa pot"
-                className="w-[210px]"
+                width={210}
+                height={210}
               />
             </div>
           </section>

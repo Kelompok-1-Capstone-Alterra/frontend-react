@@ -4,6 +4,7 @@ import useSWR from "swr";
 import fetcher from "../utils/fetcher";
 import Loading from "../components/Loading";
 import Cookies from "js-cookie";
+import ImageWithSkeleton from "../components/ImageWithSkeleton";
 
 export default function DetailArticlePage() {
   const { id } = useParams();
@@ -36,10 +37,12 @@ export default function DetailArticlePage() {
             {article?.article_title}
           </h6>
           <div className="my-5">
-            <img
+            <ImageWithSkeleton
               src={`${import.meta.env.VITE_API_BASE_URL}/pictures/${
                 article?.article_pictures[0]
               }`}
+              width={302}
+              height={184}
               alt="gambar artikel"
               className="w-[302px] h-[184px]"
             />

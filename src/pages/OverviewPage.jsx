@@ -25,7 +25,7 @@ export default function OverviewPage() {
         <div className="border py-6 px-8 border-neutral-30 flex-1 h-[120px]">
           <p className="text-body-sm text-neutral-60">Total User</p>
           <div className="text-[#030712] font-bold text-h-4 text-end ms-auto block max-w-max">
-            {metricsSummary?.total_users ? (
+            {metricsSummary?.total_users !== undefined ? (
               <AnimatedNumbers
                 animateToNumber={metricsSummary?.total_users}
                 configs={(_, index) => {
@@ -40,7 +40,7 @@ export default function OverviewPage() {
         <div className="border-t py-6 px-8 border-r border-b border-neutral-30 flex-1 h-[120px]">
           <p className="text-body-sm text-neutral-60">Total Tanaman</p>
           <div className="text-[#030712] font-bold text-h-4 text-end ms-auto block max-w-max">
-            {metricsSummary?.total_plants ? (
+            {metricsSummary?.total_plants !== undefined ? (
               <AnimatedNumbers
                 animateToNumber={metricsSummary?.total_plants}
                 configs={(_, index) => {
@@ -55,7 +55,7 @@ export default function OverviewPage() {
         <div className="border-t py-6 px-8 border-r border-b border-neutral-30 flex-1 h-[120px]">
           <p className="text-body-sm text-neutral-60">Total Artikel</p>
           <div className="text-[#030712] font-bold text-h-4 text-end ms-auto block max-w-max">
-            {metricsSummary?.total_articles ? (
+            {metricsSummary?.total_articles !== undefined ? (
               <AnimatedNumbers
                 animateToNumber={metricsSummary?.total_articles}
                 configs={(_, index) => {
@@ -70,7 +70,7 @@ export default function OverviewPage() {
         <div className="border-t py-6 px-8 border-r border-b border-neutral-30 flex-1 h-[120px]">
           <p className="text-body-sm text-neutral-60">Total Produk</p>
           <div className="text-[#030712] font-bold text-h-4 text-end ms-auto block max-w-max">
-            {metricsSummary?.total_products ? (
+            {metricsSummary?.total_products !== undefined ? (
               <AnimatedNumbers
                 animateToNumber={metricsSummary?.total_products}
                 configs={(_, index) => {

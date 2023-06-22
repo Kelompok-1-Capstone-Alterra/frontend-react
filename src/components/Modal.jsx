@@ -62,6 +62,7 @@ const ConfirmModal = ({
               <Button
                 variant="outline-green"
                 className="rounded-full w-[190px] h-[44px]"
+                id="modal-cancel-button"
                 onClick={handleCancel}
               >
                 {cancelText ? cancelText : "Label"}
@@ -69,6 +70,7 @@ const ConfirmModal = ({
               <Button
                 variant="green"
                 className="rounded-full w-[190px] h-[44px]"
+                id="modal-confirm-button"
                 onClick={handleConfirm}
               >
                 {confirmText ? confirmText : "Label"}
@@ -115,6 +117,7 @@ const NotifModal = ({ isOpen, text, title, confirmText, icon, onConfirm }) => {
               <Button
                 variant="green"
                 className="rounded-full w-[190px] h-[44px]"
+                id="notif-confirm-button"
                 onClick={handleConfirm}
               >
                 {confirmText ? confirmText : "Label"}

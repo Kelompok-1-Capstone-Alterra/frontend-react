@@ -31,6 +31,7 @@ export default function FileInput({
       </label>
       <div className={`flex items-stretch text-body-sm`}>
         <label
+          id={`${id}Label`}
           htmlFor={id}
           className="w-max bg-primary text-neutral-10 rounded  py-2 px-8 z-10 cursor-pointer hover:bg-primary-hover active:bg-primary-pressed shrink-0"
         >

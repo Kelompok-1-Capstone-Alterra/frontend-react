@@ -33,10 +33,13 @@ export default function SecondaryContainer({
     >
       <div className="flex items-center gap-2.5 py-2.5 mb-8">
         <Link
-          id="backChevronIcon"
+          id="back-chevron-link"
           onClick={handleOnClick}
         >
-          <ChevronLeftRegular className="text-[32px] hover:text-info transition-colors duration-150" />
+          <ChevronLeftRegular
+            id="back-chevron-icon"
+            className="text-[32px] hover:text-info transition-colors duration-150"
+          />
         </Link>
         <h4 className="text-h-4 font-bold">{title}</h4>
       </div>

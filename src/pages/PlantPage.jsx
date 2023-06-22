@@ -126,7 +126,7 @@ export default function PlantPage() {
             </span>
             <label className="swap">
               <input
-                id="sortBtn"
+                id="sortBtnInput"
                 type="checkbox"
                 className="peer"
                 onClick={() => {
@@ -136,7 +136,10 @@ export default function PlantPage() {
                   });
                 }}
               />
-              <div className="rounded-md px-[12px] py-[8px] h-[40px] border border-[#111827] text-[#111827] peer-checked:bg-primary peer-checked:text-neutral-10 peer-checked:border-transparent">
+              <div
+                id="sortBtn"
+                className="rounded-md px-[12px] py-[8px] h-[40px] border border-[#111827] text-[#111827] peer-checked:bg-primary peer-checked:text-neutral-10 peer-checked:border-transparent"
+              >
                 A-Z
                 <Filter20Filled className="ms-2" />
               </div>
@@ -160,10 +163,11 @@ export default function PlantPage() {
           </div>
         </div>
         <Link
-          id="tambahBtn"
+          id="tambahLink"
           to="/admin/plants/create"
         >
           <Button
+            id="tambahBtn"
             size="sm"
             className={"flex rounded-md shadow-elevation-2 px-[20px] h-[48px]"}
             onClick={() => {
@@ -205,6 +209,7 @@ export default function PlantPage() {
                     <td className="flex justify-center">
                       <div className="w-[56px] h-[48px]">
                         <ImageWithSkeleton
+                          id="gambarTanaman"
                           src={
                             plant.Pictures.length > 0
                               ? `${BASE_URL}/pictures/${plant.Pictures[0]?.url}`
@@ -238,17 +243,23 @@ export default function PlantPage() {
                     </td>
                     <td>
                       <Link
-                        id={`viewIcon${plant.ID}`}
+                        id={`viewIconLink${plant.ID}`}
                         to={`/admin/plants/${plant.ID}`}
                       >
-                        <Eye20Regular className="cursor-pointer me-3 hover:text-info" />
+                        <Eye20Regular
+                          id={`viewIcon${plant.ID}`}
+                          className="cursor-pointer me-3 hover:text-info"
+                        />
                       </Link>
                       <Delete20Regular
                         id={`deleteIcon${plant.ID}`}
                         className="cursor-pointer me-3 hover:text-info"
                         onClick={() => setModalDelete(plant.ID)}
                       />
-                      <Link to={`/admin/plants/update/${plant.ID}`}>
+                      <Link
+                        id={`editIconLink${plant.ID}}`}
+                        to={`/admin/plants/update/${plant.ID}`}
+                      >
                         <Edit20Regular
                           id={`editIcon${plant.ID}}`}
                           className="cursor-pointer hover:text-info"

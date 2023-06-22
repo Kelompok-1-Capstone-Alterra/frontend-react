@@ -131,6 +131,7 @@ export default function ArticlePage() {
         </div>
         <Link
           to="/admin/articles/create"
+          id="add-article-link"
           className="justify-self-end"
         >
           <Button

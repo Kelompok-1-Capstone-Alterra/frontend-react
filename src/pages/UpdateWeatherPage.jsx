@@ -251,7 +251,16 @@ const UpdateWeatherPage = () => {
                 <FileInput
                   id="gambar"
                   label="Masukkan Gambar"
-                  rules={{ required: true }}
+                  rules={{
+                    required: true,
+                    validate: {
+                      lessThan1MB: (file) => file.size < 1000000,
+                      acceptedFormats: (file) =>
+                        ["image/jpeg", "image/png", "image/jpg"].includes(
+                          file?.type
+                        ),
+                    },
+                  }}
                   control={control}
                   name="gambar"
                   value={watch("gambar")}

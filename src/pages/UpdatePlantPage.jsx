@@ -269,7 +269,7 @@ export default function UpdatePlantPage() {
         cancelText={"Kembali"}
         title={"Informasi Ubah Data Tanaman"}
         text={"Kamu yakin ingin mengubah data tanaman ini?"}
-        confirmText={"Simpan"}
+        confirmText={"Ubah"}
         icon={"info"}
         isOpen={isConfirmModalOpen}
         onCancel={() => {

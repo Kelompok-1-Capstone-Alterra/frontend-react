@@ -74,7 +74,7 @@ export default function UpdateProductPage() {
     text: "",
     title: "",
   });
-  const { uploadImage, getImage, isLoading: imageLoading } = useImage();
+  const { uploadImage, deleteImage, isLoading: imageLoading } = useImage();
   const { updateProduct, isLoading: uploadLoading } = useProduct();
   const [imageOverlay, setImageOverlay] = useState(null);
 
@@ -113,8 +113,26 @@ export default function UpdateProductPage() {
   };
 
   const saveProduct = async (data) => {
+    const oldPictures = product?.product_pictures.map((pic) => {
+      return { url: pic };
+    });
     let newPictures = [];
     if (data.picture.length > 0) {
+      //delete old pictures
+      const deletePromises = product?.product_pictures.map(
+        async (pic) => await deleteImage(pic)
+      );
+      try {
+        await Promise.all(deletePromises);
+      } catch (err) {
+        setNotifModal({
+          show: true,
+          icon: "info",
+          title: "Aksi Gagal",
+          text: "Data produk kamu gagal diubah",
+        });
+        return;
+      }
       const formData = new FormData();
       for (let i = 0; i < data.picture.length; i++) {
         formData.append("pictures", data.picture[i]);
@@ -133,43 +151,10 @@ export default function UpdateProductPage() {
       newPictures = urlsArray.map((url) => {
         return { url };
       });
-    } else {
-      try {
-        const promises = product?.product_pictures.map(async (pic) => {
-          const response = await getImage(pic);
-          const blob = await response.data;
-          const file = new File([blob], pic, { type: blob.type });
-          const formData = new FormData();
-          formData.append("pictures", file);
-          const responseUpload = await uploadImage(formData);
-          if (responseUpload.status !== 200) {
-            setNotifModal({
-              show: true,
-              icon: "info",
-              title: "Aksi Gagal",
-              text: "Data produk kamu gagal diubah",
-            });
-            return;
-          }
-          return responseUpload?.data?.urls[0];
-        });
-        const results = await Promise.all(promises);
-        newPictures = results.map((result) => {
-          return { url: result };
-        });
-      } catch (err) {
-        setNotifModal({
-          show: true,
-          icon: "info",
-          title: "Aksi Gagal",
-          text: "Data produk kamu gagal diubah",
-        });
-        return;
-      }
     }
     //update the product
     const res = await updateProduct(product?.id, {
-      product_pictures: newPictures,
+      product_pictures: newPictures.length > 0 ? newPictures : oldPictures,
       product_name: data.name,
       product_category: data.category.value,
       product_description: data.description,

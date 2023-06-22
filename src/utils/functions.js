@@ -128,17 +128,8 @@ export function dataURLtoFile(dataurl, filename) {
 
 // Function inspired from https://stackoverflow.com/questions/8085004/iterate-through-nested-javascript-objects
 export const iterateConvertFileToBase64 = async (obj) => {
-  const newObj = {
-    ...obj,
-    planting_info: {
-      ...obj.planting_info,
-      container_info: { ...obj.planting_info.container_info },
-      ground_info: { ...obj.planting_info.ground_info },
-    },
-    fertilizing_info: { ...obj.fertilizing_info },
-    watering_info: { ...obj.watering_info },
-    temperature_info: { ...obj.temperature_info },
-  };
+  // Deep clone object
+  const newObj = structuredClone(obj);
 
   const stack = [newObj];
   while (stack?.length > 0) {

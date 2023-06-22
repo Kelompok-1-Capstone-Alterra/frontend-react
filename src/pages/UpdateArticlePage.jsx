@@ -38,16 +38,21 @@ export default function UpdateArticlePage() {
     title: "",
   });
   const [editorFocus, setEditorFocus] = useState(false);
-  const { uploadImage, getImage, isLoading: isUploading } = useImages();
+  const {
+    uploadImage,
+    getImage,
+    deleteImage,
+    isLoading: isUploading,
+  } = useImages();
   const [selectedImageFile, setSelectedImageFile] = useState(null);
   const { updateArticle, isLoading: isUpdating } = useArticle();
+  const [defaultPicture, setDefaultPicture] = useState(null);
   const { data, isLoading, error } = useSWR(
     `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/${id}/detail`,
     (url) => fetcher(url, Cookies.get("token"))
   );
 
   const article = data?.data;
-
   useEffect(() => {
     register("description", {
       required: true,
@@ -69,6 +74,7 @@ export default function UpdateArticlePage() {
       if (article) {
         setValue("article_title", article.article_title);
         setValue("description", article.article_description);
+        setDefaultPicture(article.article_pictures[0]);
         const response = await getImage(article.article_pictures[0]);
         if (response.status === 200) {
           const fileName = `artikel.${response.data.type.split("/")[1]}`;
@@ -89,20 +95,26 @@ export default function UpdateArticlePage() {
   }, [article]);
 
   const saveData = async (data) => {
-    const formPicture = new FormData();
-    formPicture.append("pictures", selectedImageFile);
-    const upload = await uploadImage(formPicture);
-    if (upload.status !== 200) {
-      setShowModal({
-        show: true,
-        icon: "info",
-        text: "Data artikel kamu gagal disimpan",
-        title: "Aksi Gagal",
-      });
-      return;
+    let imageUrl = article.article_pictures[0];
+    if (defaultPicture !== article.article_pictures[0]) {
+      await deleteImage(article.article_pictures[0]);
+      const formPicture = new FormData();
+      formPicture.append("pictures", selectedImageFile);
+      const upload = await uploadImage(formPicture);
+      console.log(upload);
+      if (upload.status !== 200) {
+        setShowModal({
+          show: true,
+          icon: "info",
+          text: "Data artikel kamu gagal disimpan",
+          title: "Aksi Gagal",
+        });
+        return;
+      }
+      //change the image url
+      imageUrl = upload.data.urls[0];
     }
-    //save the image url
-    const imageUrl = upload.data.urls[0];
+
     // update
     const save = await updateArticle(id, {
       article_title: data.article_title,
@@ -113,6 +125,7 @@ export default function UpdateArticlePage() {
       ],
       article_description: data.description,
     });
+    console.log(save);
 
     if (save.status !== 200) {
       setShowModal({
@@ -196,6 +209,7 @@ export default function UpdateArticlePage() {
               control={control}
               onChange={(e) => {
                 setSelectedImageFile(e.target.files[0]);
+                setDefaultPicture(null);
               }}
               name="article_image"
               message={

@@ -41,8 +41,23 @@ const useImage = () => {
     }
   };
 
+  const deleteImage = async (imageUrl) => {
+    setIsLoading(true);
+    try {
+      const res = await axiosInstance.delete(
+        `${import.meta.env.VITE_API_BASE_URL}/pictures/${imageUrl}`
+      );
+      return res;
+    } catch (err) {
+      return err.response;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     uploadImage,
+    deleteImage,
     getImage,
     isLoading,
   };

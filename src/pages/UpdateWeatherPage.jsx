@@ -41,7 +41,7 @@ const UpdateWeatherPage = () => {
   const [formData, setFormData] = useState(null);
   const [weatherOptions, setWeatherOptions] = useState([]);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
-  const { uploadImage, getImage, isLoading: isUploading } = useImage();
+  const { uploadImage, deleteImage, isLoading: isUploading } = useImage();
   const { updateWeather, isLoading: isSaving } = useWeather();
   const { fetchWeather } = useWeather();
   const url = `${
@@ -53,29 +53,14 @@ const UpdateWeatherPage = () => {
   const weatherData = data?.data;
 
   const fetchWeatherData = async () => {
-    try {
-      if (weatherData) {
-        setValue("judul", weatherData.weather_title);
-        setValue("label", {
-          label: weatherData.weather_label,
-          value: weatherData.weather_label,
-        });
-        setValue("deskripsi", weatherData.weather_description);
-        const response = await getImage(weatherData.weather_pictures[0]);
-        if (response.status === 200) {
-          // Nama file bedasarkan label
-          const fileName = ` ${weatherData.weather_label}.${
-            response.data.type.split("/")[1]
-          }`;
-          const file = new File([response.data], fileName, {
-            type: response.data.type,
-          });
-          setValue("gambar", file);
-          setSelectedImageFile(response.data);
-        }
-      }
-    } catch (error) {
-      console.error("Terjadi kesalahan:", error);
+    if (weatherData) {
+      setValue("judul", weatherData.weather_title);
+      setValue("label", {
+        label: weatherData.weather_label,
+        value: weatherData.weather_label,
+      });
+      setValue("deskripsi", weatherData.weather_description);
+      setValue("gambar", weatherData.weather_pictures[0]);
     }
   };
 
@@ -142,21 +127,24 @@ const UpdateWeatherPage = () => {
   };
 
   const handleConfirmModal = async () => {
-    const formPicture = new FormData();
-    formPicture.append("pictures", selectedImageFile);
-    const upload = await uploadImage(formPicture);
-    if (upload.status !== 200) {
-      setShowModal({
-        show: true,
-        icon: "info",
-        text: "Informasi Cuaca gagal ditambahkan",
-        title: "Aksi Gagal",
-      });
-      return;
-    }
+    let imageUrl = formData.gambar;
+    if (selectedImageFile) {
+      await deleteImage(weatherData.weather_pictures[0]);
+      const formPicture = new FormData();
+      formPicture.append("pictures", selectedImageFile);
+      const upload = await uploadImage(formPicture);
+      if (upload.status !== 200) {
+        setShowModal({
+          show: true,
+          icon: "info",
+          text: "Informasi Cuaca gagal ditambahkan",
+          title: "Aksi Gagal",
+        });
+        return;
+      }
 
-    //save the image url
-    const imageUrl = upload.data.urls[0];
+      imageUrl = upload.data.urls[0];
+    }
     // update
     const saveEdit = await updateWeather(id, {
       weather_title: formData.judul,
@@ -205,8 +193,7 @@ const UpdateWeatherPage = () => {
       <SecondaryContainer
         backTo="/admin/weathers"
         title="Edit Informasi cuaca"
-        className="pe-3"
-      >
+        className="pe-3">
         <div className="mx-8">
           <form onSubmit={handleSubmit(onSubmit)}>
             <TextField
@@ -231,10 +218,7 @@ const UpdateWeatherPage = () => {
 
             <div className="flex justify-between mb-4 mt-3">
               <div>
-                <label
-                  className="text-body-sm font-semibold"
-                  htmlFor="label"
-                >
+                <label className="text-body-sm font-semibold" htmlFor="label">
                   Label Cuaca
                 </label>
                 <div className="mb-1"></div>
@@ -255,8 +239,7 @@ const UpdateWeatherPage = () => {
                 {errors.label && (
                   <p
                     className="text-error text-caption-lg mt-1"
-                    id="errors-label-message"
-                  >
+                    id="errors-label-message">
                     <span>
                       <Info12Regular className="-mt-0.5 mr-1" />
                     </span>
@@ -284,10 +267,7 @@ const UpdateWeatherPage = () => {
                 />
               </div>
             </div>
-            <label
-              htmlFor="deskripsi"
-              className="text-body-lg font-semibold"
-            >
+            <label htmlFor="deskripsi" className="text-body-lg font-semibold">
               Deskripsi
             </label>
             <div className="mb-6">
@@ -312,8 +292,7 @@ const UpdateWeatherPage = () => {
                 {errors.deskripsi && (
                   <p
                     className="text-error text-caption-lg mt-1 "
-                    id="errors-deskripsi-message"
-                  >
+                    id="errors-deskripsi-message">
                     <span>
                       <Info12Regular className="-mt-0.5 mr-1" />
                     </span>
@@ -356,8 +335,7 @@ const UpdateWeatherPage = () => {
                 size="md"
                 disabled={isUploading || isSaving}
                 isLoading={isUploading || isSaving}
-                id="btn-submit"
-              >
+                id="btn-submit">
                 Simpan
               </Button>
             </div>

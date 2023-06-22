@@ -88,6 +88,7 @@ const WeatherManagementPage = () => {
             <Button
               size="lg"
               className="px-4"
+              id="btn-add-weather"
               onClick={() => navigate("/admin/weathers/create")}>
               Tambah Informasi Cuaca
             </Button>

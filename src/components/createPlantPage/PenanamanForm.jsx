@@ -6,10 +6,7 @@ import LokasiPenanamanCheckbox from "./LokasiPenanamanCheckbox";
 import PlantingWithPotForm from "./PlantingWithPotForm";
 import PlantingWithoutPotForm from "./PlantingWithoutPot";
 import { addPlantDataState } from "../../utils/recoil_atoms";
-import {
-  iterateConvertFileToBase64,
-  // convertFileToBase64,
-} from "../../utils/functions";
+import { iterateConvertFileToBase64 } from "../../utils/functions";
 import useScrollToTop from "../../hooks/useScrollToTop";
 
 const PenanamanForm = forwardRef(function PenanamanForm(

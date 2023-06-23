@@ -12,6 +12,7 @@ import { iterateConvertFileToBase64 } from "../../utils/functions";
 import useScrollToTop from "../../hooks/useScrollToTop";
 
 const fertilizingLimitOptions = [
+  { value: 2, label: "2 kali" },
   { value: 3, label: "3 Kali" },
   { value: 4, label: "4 Kali" },
   { value: 5, label: "5 Kali" },

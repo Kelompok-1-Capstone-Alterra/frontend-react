@@ -22,6 +22,7 @@ import EmptySearch from "../assets/EmptyArticleSearch.png";
 import ImageOverlay from "../components/ImageOverlay";
 import Loading from "../components/Loading";
 import ImageWithSkeleton from "../components/ImageWithSkeleton";
+import useImage from "../hooks/useImage";
 
 const ITEMS_PER_PAGE = 8;
 const DEBOUNCE_DELAY = 500;
@@ -52,12 +53,14 @@ export default function ArticlePage() {
     title: "",
   });
   const [modalDelete, setModalDelete] = useState(false);
+  const { deleteImage } = useImage();
   const { deleteArticle } = useArticle();
   const [imageOverlay, setImageOverlay] = useState({
     isOpen: false,
     image: null,
   });
 
+  // handle search input change
   const handleInputChange = (event) => {
     const newKeyword = event.target.value;
     setFilter({
@@ -86,6 +89,7 @@ export default function ArticlePage() {
   const handleDelete = async (id) => {
     setModalDelete(false);
 
+    // jika artikel yang dihapus adalah artikel terakhir di halaman terakhir, maka halaman akan dikurangi 1
     if (filteredArticles?.length === 1 && currentPage > 1) {
       setFilter((prev) => ({
         ...prev,
@@ -93,6 +97,13 @@ export default function ArticlePage() {
       }));
     }
 
+    // delete image on storage
+    const article = articles?.find((article) => article.id === id);
+    if (article?.article_pictures?.length > 0) {
+      await deleteImage(article.article_pictures[0]);
+    }
+
+    // delete article on database
     const del = await deleteArticle(id);
     if (del.status !== 200) {
       setShowModal({

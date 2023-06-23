@@ -25,7 +25,6 @@ export const handleImagesUpload = async (
     if (!image) {
       return null;
     }
-    // console.log(defaultPictures);
 
     // If image is default, don't upload
     if (image.name === databaseImageUrls[key]) {
@@ -33,9 +32,9 @@ export const handleImagesUpload = async (
     }
 
     if (isUpdate) {
-    await deleteImage(databaseImageUrls[key]);
+      await deleteImage(databaseImageUrls[key]);
     }
-  
+
     const formData = new FormData();
     formData.append("pictures", image);
 

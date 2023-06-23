@@ -14,7 +14,6 @@ import fetcher from "../utils/fetcher";
 import Loading from "../components/Loading";
 
 export default function DetailPlantPage() {
-  // const plants = useLoaderData();
   const param = useParams();
   const { data, isLoading } = useSWR(
     `${import.meta.env.VITE_API_BASE_URL}/auth/admins/plants/${
@@ -23,7 +22,7 @@ export default function DetailPlantPage() {
     (url) => fetcher(url, Cookies.get("token"))
   );
   const plant = data?.data;
-  console.log(plant);
+
   const [activeTabIndex, setActiveTabIndex] = useState(0);
 
   const tabs = [

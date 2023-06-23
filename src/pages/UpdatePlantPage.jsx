@@ -151,8 +151,6 @@ export default function UpdatePlantPage() {
           plant.temperature_info.temperature_pictures?.[0]?.url,
       };
 
-      console.log(databaseImageUrls);
-
       const imageUrls = await handleImagesUpload(
         images,
         uploadImage,

@@ -228,8 +228,10 @@ export default function PlantPage() {
                         />
                       </div>
                     </td>
-                    <td className="text-left ps-3">
-                      {plant.Name} ({plant.Latin})
+                    <td className="max-w-[20ch] text-left ps-3">
+                      <div className=" line-clamp-2">
+                        {plant.Name} ({plant.Latin})
+                      </div>
                     </td>
                     <td className="max-w-[25ch] text-left px-2">
                       <div className=" line-clamp-2">

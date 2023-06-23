@@ -31,7 +31,7 @@ export const handleImagesUpload = async (
       return [key, image.name];
     }
 
-    if (isUpdate) {
+    if (isUpdate && databaseImageUrls[key] && deleteImage) {
       await deleteImage(databaseImageUrls[key]);
     }
 

@@ -40,7 +40,12 @@ export default function UpdatePlantPage() {
   const resetAddPlantData = useResetRecoilState(addPlantDataState);
   const navigate = useNavigate();
   const { updatePlant, isLoading: isSaving } = usePlant();
-  const { uploadImage, getImage, isLoading: isUploading } = useImage();
+  const {
+    uploadImage,
+    getImage,
+    deleteImage,
+    isLoading: isUploading,
+  } = useImage();
   const location = useLocation();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [notifModal, setNotifModal] = useState({
@@ -64,6 +69,7 @@ export default function UpdatePlantPage() {
         temperature_pictures:
           plant.temperature_info.temperature_pictures?.[0]?.url,
       };
+
       let imagesFiles = {};
 
       getPlantImages(imageUrls, getImage)
@@ -132,7 +138,27 @@ export default function UpdatePlantPage() {
         temperature_pictures: data.temperature_info.temperature_pictures,
       };
 
-      const imageUrls = await handleImagesUpload(images, uploadImage);
+      const databaseImageUrls = {
+        plant_pictures: plant.plant_pictures?.[0]?.url,
+        container_pictures:
+          plant.planting_info?.container_info?.container_pictures?.[0]?.url,
+        ground_pictures:
+          plant.planting_info?.ground_info?.ground_pictures?.[0]?.url,
+        fertilizing_pictures:
+          plant.fertilizing_info.fertilizing_pictures?.[0]?.url,
+        watering_pictures: plant.watering_info.watering_pictures?.[0]?.url,
+        temperature_pictures:
+          plant.temperature_info.temperature_pictures?.[0]?.url,
+      };
+
+      console.log(databaseImageUrls);
+
+      const imageUrls = await handleImagesUpload(
+        images,
+        uploadImage,
+        databaseImageUrls,
+        deleteImage
+      );
 
       const newData = generatePlantSubmitData(data, imageUrls);
 

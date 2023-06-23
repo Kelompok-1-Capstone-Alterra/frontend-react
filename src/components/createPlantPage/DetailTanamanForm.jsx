@@ -2,11 +2,11 @@ import { useEffect, useState, useImperativeHandle, forwardRef } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { Info12Regular } from "@fluentui/react-icons";
 import ReactQuill from "react-quill";
+import { useRecoilValue } from "recoil";
 
 import TextField from "../TextField";
 import FileInput from "../FileInput";
 import { MODULES } from "../../constants";
-import { useRecoilValue } from "recoil";
 import { addPlantDataState } from "../../utils/recoil_atoms";
 import { iterateConvertFileToBase64 } from "../../utils/functions";
 import useScrollToTop from "../../hooks/useScrollToTop";

@@ -42,12 +42,6 @@ const DetailWeatherPage = () => {
             id={`detail-image-${weathers.id}`}
             className="mb-3"
           />
-          {/* <img
-            src={`https://34.128.85.215:8080/pictures/${weathers.weather_pictures[0]}`}
-            alt="Gambar Cuaca"
-            className="w-[262px] h-36 mb-3"
-            id={`detail-image-${weathers.id}`}
-          /> */}
           <div
             className="styled-content"
             id={`detail-description-${weathers.id}`}

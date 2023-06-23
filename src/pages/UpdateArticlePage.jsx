@@ -38,15 +38,8 @@ export default function UpdateArticlePage() {
     title: "",
   });
   const [editorFocus, setEditorFocus] = useState(false);
-  const {
-    uploadImage,
-    getImage,
-    deleteImage,
-    isLoading: isUploading,
-  } = useImages();
-  const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const { uploadImage, deleteImage, isLoading: isUploading } = useImages();
   const { updateArticle, isLoading: isUpdating } = useArticle();
-  const [defaultPicture, setDefaultPicture] = useState(null);
   const { data, isLoading, error } = useSWR(
     `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/${id}/detail`,
     (url) => fetcher(url, Cookies.get("token"))
@@ -70,23 +63,15 @@ export default function UpdateArticlePage() {
   const navigate = useNavigate();
 
   const fetchArticleData = async () => {
-    try {
-      if (article) {
-        setValue("article_title", article.article_title);
-        setValue("description", article.article_description);
-        setDefaultPicture(article.article_pictures[0]);
-        const response = await getImage(article.article_pictures[0]);
-        if (response.status === 200) {
-          const fileName = `artikel.${response.data.type.split("/")[1]}`;
-          const file = new File([response.data], fileName, {
-            type: response.data.type,
-          });
-          setValue("article_image", file);
-          setSelectedImageFile(response.data);
-        }
-      }
-    } catch (error) {
-      console.error("Terjadi kesalahan:", error);
+    if (article) {
+      setValue("article_title", article.article_title);
+      setValue("description", article.article_description);
+      const fileName = article.article_pictures[0];
+      const extension = article.article_pictures[0].split(".")[1];
+      const file = new File(["defaultPicture"], fileName, {
+        type: `image/${extension}`,
+      });
+      setValue("article_image", file);
     }
   };
 
@@ -96,12 +81,11 @@ export default function UpdateArticlePage() {
 
   const saveData = async (data) => {
     let imageUrl = article.article_pictures[0];
-    if (defaultPicture !== article.article_pictures[0]) {
+    if (data.article_image.name !== article.article_pictures[0]) {
       await deleteImage(article.article_pictures[0]);
       const formPicture = new FormData();
-      formPicture.append("pictures", selectedImageFile);
+      formPicture.append("pictures", data.article_image);
       const upload = await uploadImage(formPicture);
-      console.log(upload);
       if (upload.status !== 200) {
         setShowModal({
           show: true,
@@ -125,8 +109,6 @@ export default function UpdateArticlePage() {
       ],
       article_description: data.description,
     });
-    console.log(save);
-
     if (save.status !== 200) {
       setShowModal({
         show: true,
@@ -207,10 +189,6 @@ export default function UpdateArticlePage() {
                 },
               }}
               control={control}
-              onChange={(e) => {
-                setSelectedImageFile(e.target.files[0]);
-                setDefaultPicture(null);
-              }}
               name="article_image"
               message={
                 <p className="text-caption-lg">

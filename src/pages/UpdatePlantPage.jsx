@@ -157,7 +157,8 @@ export default function UpdatePlantPage() {
         images,
         uploadImage,
         databaseImageUrls,
-        deleteImage
+        deleteImage,
+        true
       );
 
       const newData = generatePlantSubmitData(data, imageUrls);

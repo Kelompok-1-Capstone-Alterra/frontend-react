@@ -14,12 +14,28 @@ export const toBase64 = (file) =>
     reader.onerror = (error) => reject(error);
   });
 
-export const handleImagesUpload = async (images, uploadImage) => {
+export const handleImagesUpload = async (
+  images,
+  uploadImage,
+  databaseImageUrls = {},
+  deleteImage = null,
+  isUpdate = false
+) => {
   const imagePromises = Object.entries(images).map(async ([key, image]) => {
     if (!image) {
       return null;
     }
+    // console.log(defaultPictures);
 
+    // If image is default, don't upload
+    if (image.name === databaseImageUrls[key]) {
+      return [key, image.name];
+    }
+
+    if (isUpdate) {
+    await deleteImage(databaseImageUrls[key]);
+    }
+  
     const formData = new FormData();
     formData.append("pictures", image);
 
@@ -37,32 +53,23 @@ export const handleImagesUpload = async (images, uploadImage) => {
   return imageUrls;
 };
 
-export const getPlantImages = async (imageUrls, getImage) => {
-  const imagePromises = Object.entries(imageUrls).map(
-    async ([key, imageUrl]) => {
-      if (!imageUrl) {
-        return null;
-      }
-
-      const response = await getImage(imageUrl);
-      if (response.status !== 200) {
-        throw new Error(
-          `Failed to get image for ${key}: ${response.statusText}`
-        );
-      }
-
-      const fileSuffix = response.data.type.split("/")[1];
-      const file = new File([response.data], `${key}.${fileSuffix}`, {
-        type: response.data.type,
-      });
-
-      return [key, file];
+export const getPlantImages = async (imageUrls) => {
+  const imageArray = Object.entries(imageUrls).map(([key, imageUrl]) => {
+    if (!imageUrl) {
+      return null;
     }
-  );
 
-  const imageResults = await Promise.all(imagePromises);
+    const fileName = imageUrl;
+    const extension = imageUrl.split(".")[1];
+    const file = new File(["defaultPicture"], fileName, {
+      type: `image/${extension}`,
+    });
+
+    return [key, file];
+  });
+
   // Filter out null values and turn array of arrays into object
-  const images = Object.fromEntries(imageResults.filter(Boolean));
+  const images = Object.fromEntries(imageArray.filter(Boolean));
 
   return images;
 };

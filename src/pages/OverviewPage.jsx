@@ -99,7 +99,7 @@ export default function OverviewPage() {
                   className="text-center border-b text-caption-lg text-neutral-80"
                 >
                   <td className="py-4">{weather.location}</td>
-                  <td>{weather.temperature}</td>
+                  <td>{weather.temperature + "&#8451;"}</td>
                   <td>{weather.label}</td>
                 </tr>
               ))}

@@ -206,7 +206,7 @@ export default function ProductsPage() {
     title: "",
   });
   const [activeTabIndex, setActiveTabIndex] = useState(0); // 0: semua, 1: etalase, 2: arsip
-  const { deleteProduct } = useProduct();
+  const { deleteProduct, deleteProductImage } = useProduct();
   const [imageOverlay, setImageOverlay] = useState(null);
 
   const getUrl = (tab, keyword) => {
@@ -279,6 +279,26 @@ export default function ProductsPage() {
 
   const handleDelete = async (id) => {
     setConfirmModalId(null);
+
+    let hasError = false;
+    const responses = await deleteProductImage(id);
+    responses.forEach((response) => {
+      if (response.status !== 200) {
+        console.log("error");
+        setNotifModal({
+          show: true,
+          icon: "info",
+          text: "Aksi Gagal",
+          title: "Data produk kamu gagal dihapus",
+        });
+        hasError = true;
+      }
+    });
+
+    if (hasError) {
+      return;
+    }
+
     const result = await deleteProduct(id);
 
     if (filteredProducts?.length === 1 && currentPage > 1) {

@@ -60,7 +60,12 @@ const UpdateWeatherPage = () => {
         value: weatherData.weather_label,
       });
       setValue("deskripsi", weatherData.weather_description);
-      setValue("gambar", weatherData.weather_pictures[0]);
+      const fileName = weatherData.weather_pictures[0];
+      const extension = weatherData.weather_pictures[0].split(".")[1];
+      const file = new File(["defaultPicture"], fileName, {
+        type: `image/${extension}`,
+      });
+      setValue("gambar", file);
     }
   };
 
@@ -127,7 +132,7 @@ const UpdateWeatherPage = () => {
   };
 
   const handleConfirmModal = async () => {
-    let imageUrl = formData.gambar;
+    let imageUrl = weatherData.weather_pictures[0];
     if (selectedImageFile) {
       await deleteImage(weatherData.weather_pictures[0]);
       const formPicture = new FormData();
@@ -251,7 +256,16 @@ const UpdateWeatherPage = () => {
                 <FileInput
                   id="gambar"
                   label="Masukkan Gambar"
-                  rules={{ required: true }}
+                  rules={{
+                    required: true,
+                    validate: {
+                      lessThan1MB: (file) => file.size < 1000000,
+                      acceptedFormats: (file) =>
+                        ["image/jpeg", "image/png", "image/jpg"].includes(
+                          file?.type
+                        ),
+                    },
+                  }}
                   control={control}
                   name="gambar"
                   value={watch("gambar")}

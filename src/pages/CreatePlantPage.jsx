@@ -80,6 +80,7 @@ export default function CreatePlantPage() {
         title: "Tambah Tanaman",
       });
     } catch (error) {
+      console.log(error);
       setNotifModal({
         show: true,
         icon: "info",

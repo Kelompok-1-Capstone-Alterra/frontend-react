@@ -56,10 +56,31 @@ export default function PlantPage() {
     isOpen: false,
     image: null,
   });
-  const { deletePlant } = usePlant();
+  const { deletePlant, deletePlantImage } = usePlant();
 
   const handleDelete = async (id) => {
     setModalDelete(false);
+
+    let hasError = false;
+    const imageResponses = await deletePlantImage(id);
+
+    imageResponses.forEach((response) => {
+      if (response && response?.status !== 200) {
+        console.log("error");
+        setShowModal({
+          show: true,
+          icon: "info",
+          text: "Aksi Gagal",
+          title: "Data produk kamu gagal dihapus",
+        });
+        hasError = true;
+      }
+    });
+
+    if (hasError) {
+      return;
+    }
+    
     const response = await deletePlant(id);
 
     if (filteredPlant.length === 1 && currentPage > 1) {

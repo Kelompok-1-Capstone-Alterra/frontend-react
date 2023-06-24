@@ -12,28 +12,28 @@ import Error404 from "./pages/errors/404";
 import Error403 from "./pages/errors/403";
 import Error401 from "./pages/errors/401";
 
-import Login from "./pages/Login";
-import LandingPage from "./pages/LandingPage";
-import ArticlePage from "./pages/ArticlePage";
-import CreateArticlePage from "./pages/CreateArticlePage";
-import DetailArticlePage from "./pages/DetailArticlePage";
-import UpdateArticlePage from "./pages/UpdateArticlePage";
+import Login from "./pages/login/Login";
+import LandingPage from "./pages/landing_page/LandingPage";
+import ArticlePage from "./pages/article/ArticlePage";
+import CreateArticlePage from "./pages/article/CreateArticlePage";
+import DetailArticlePage from "./pages/article/DetailArticlePage";
+import UpdateArticlePage from "./pages/article/UpdateArticlePage";
 
-import CreatePlantPage from "./pages/CreatePlantPage";
-import PlantPage from "./pages/PlantPage";
-import DetailPlantPage from "./pages/DetailPlantPage";
-import UpdatePlantPage from "./pages/UpdatePlantPage";
+import CreatePlantPage from "./pages/plant/CreatePlantPage";
+import PlantPage from "./pages/plant/PlantPage";
+import DetailPlantPage from "./pages/plant/DetailPlantPage";
+import UpdatePlantPage from "./pages/plant/UpdatePlantPage";
 
-import ProductsPage from "./pages/ProductsPage";
-import CreateProductPage from "./pages/CreateProductPage";
-import DetailProductPage from "./pages/DetailProductPage";
-import UpdateProductPage from "./pages/UpdateProductPage";
-import CreateWeatherPage from "./pages/CreateWeatherPage";
-import DetailWeatherPage from "./pages/DetailWeatherPage";
-import UpdateWeatherPage from "./pages/UpdateWeatherPage";
-import WeatherManagementPage from "./pages/WeatherManagementPage";
-import OverviewPage from "./pages/OverviewPage";
-import SuggestionPage from "./pages/SuggestionPage";
+import ProductsPage from "./pages/product/ProductsPage";
+import CreateProductPage from "./pages/product/CreateProductPage";
+import DetailProductPage from "./pages/product/DetailProductPage";
+import UpdateProductPage from "./pages/product/UpdateProductPage";
+import CreateWeatherPage from "./pages/weather/CreateWeatherPage";
+import DetailWeatherPage from "./pages/weather/DetailWeatherPage";
+import UpdateWeatherPage from "./pages/weather/UpdateWeatherPage";
+import WeatherManagementPage from "./pages/weather/WeatherManagementPage";
+import OverviewPage from "./pages/overview/OverviewPage";
+import SuggestionPage from "./pages/suggestion/SuggestionPage";
 
 const router = createBrowserRouter([
   {

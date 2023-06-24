@@ -1,19 +1,24 @@
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Info12Regular } from "@fluentui/react-icons";
 import { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import Button from "../components/Button";
-import TextField from "../components/TextField";
-import { MODULES } from "../constants";
+import Button from "../../components/Button";
+import TextField from "../../components/TextField";
+import { MODULES } from "../../constants";
 import { useNavigate } from "react-router-dom";
-import FileInput from "../components/FileInput";
-import { NotifModal, ConfirmModal } from "../components/Modal";
-import SecondaryContainer from "../components/layouts/SecondaryContainer";
-import useImages from "../hooks/useImage";
-import useArticle from "../hooks/useArticle";
+import FileInput from "../../components/FileInput";
+import { NotifModal, ConfirmModal } from "../../components/Modal";
+import SecondaryContainer from "../../components/layouts/SecondaryContainer";
+import useImages from "../../hooks/useImage";
+import useArticle from "../../hooks/useArticle";
+import useSWR from "swr";
+import Cookies from "js-cookie";
+import fetcher from "../../utils/fetcher";
+import { useParams } from "react-router-dom";
+import Loading from "../../components/Loading";
 
-export default function CreateArticlePage() {
+export default function UpdateArticlePage() {
   const {
     register,
     handleSubmit,
@@ -25,17 +30,22 @@ export default function CreateArticlePage() {
     control,
   } = useForm();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const { id } = useParams();
   const [showModal, setShowModal] = useState({
     show: false,
     icon: "",
     text: "",
     title: "",
   });
-
   const [editorFocus, setEditorFocus] = useState(false);
-  const { uploadImage, isLoading: isUploading } = useImages();
-  const { createArticle, isLoading: isSaving } = useArticle();
+  const { uploadImage, deleteImage, isLoading: isUploading } = useImages();
+  const { updateArticle, isLoading: isUpdating } = useArticle();
+  const { data, isLoading, error } = useSWR(
+    `${import.meta.env.VITE_API_BASE_URL}/auth/admins/articles/${id}/detail`,
+    (url) => fetcher(url, Cookies.get("token"))
+  );
 
+  const article = data?.data;
   useEffect(() => {
     register("description", {
       required: true,
@@ -52,24 +62,45 @@ export default function CreateArticlePage() {
 
   const navigate = useNavigate();
 
-  const saveData = async (data) => {
-    const formData = new FormData();
-    formData.append("pictures", data.article_image);
-    const upload = await uploadImage(formData);
-
-    if (upload.status !== 200) {
-      setShowModal({
-        show: true,
-        icon: "info",
-        text: "Data artikel kamu gagal disimpan",
-        title: "Aksi Gagal",
+  const fetchArticleData = async () => {
+    if (article) {
+      setValue("article_title", article.article_title);
+      setValue("description", article.article_description);
+      const fileName = article.article_pictures[0];
+      const extension = article.article_pictures[0].split(".")[1];
+      const file = new File(["defaultPicture"], fileName, {
+        type: `image/${extension}`,
       });
-      return;
+      setValue("article_image", file);
+    }
+  };
+
+  useEffect(() => {
+    fetchArticleData();
+  }, [article]);
+
+  const saveData = async (data) => {
+    let imageUrl = article.article_pictures[0];
+    if (data.article_image.name !== article.article_pictures[0]) {
+      await deleteImage(article.article_pictures[0]);
+      const formPicture = new FormData();
+      formPicture.append("pictures", data.article_image);
+      const upload = await uploadImage(formPicture);
+      if (upload.status !== 200) {
+        setShowModal({
+          show: true,
+          icon: "info",
+          text: "Data artikel kamu gagal disimpan",
+          title: "Aksi Gagal",
+        });
+        return;
+      }
+      //change the image url
+      imageUrl = upload.data.urls[0];
     }
 
-    const imageUrl = upload.data.urls[0];
-
-    const save = await createArticle({
+    // update
+    const save = await updateArticle(id, {
       article_title: data.article_title,
       article_pictures: [
         {
@@ -77,10 +108,7 @@ export default function CreateArticlePage() {
         },
       ],
       article_description: data.description,
-      article_view: 0,
-      article_like: 0,
     });
-
     if (save.status !== 200) {
       setShowModal({
         show: true,
@@ -90,12 +118,11 @@ export default function CreateArticlePage() {
       });
       return;
     }
-
     setShowModal({
       show: true,
       icon: "success",
-      text: "Data artikel kamu berhasil disimpan",
-      title: "Tambah Artikel",
+      text: "Artikel berhasil di edit",
+      title: "Edit Artikel",
     });
   };
 
@@ -103,10 +130,19 @@ export default function CreateArticlePage() {
     setIsConfirmModalOpen(true);
   };
 
+  if (isLoading)
+    return (
+      <div className="h-screen w-full flex justify-center items-center">
+        <Loading />
+      </div>
+    );
+
+  if (error) navigate("/admin/articles");
+
   return (
     <SecondaryContainer
       backTo="/admin/articles"
-      title="Tambah Artikel"
+      title="Edit Artikel"
       className={"pe-3"}
     >
       <form
@@ -141,10 +177,7 @@ export default function CreateArticlePage() {
             <FileInput
               id="article-image"
               label="Gambar Artikel"
-              value={useWatch({
-                name: "article_image",
-                control: control,
-              })}
+              value={watch("article_image")}
               rules={{
                 required: true,
                 validate: {
@@ -207,8 +240,8 @@ export default function CreateArticlePage() {
             type="submit"
             variant={"green"}
             size="md"
-            disabled={isUploading || isSaving}
-            isLoading={isUploading || isSaving}
+            disabled={isUploading || isUpdating}
+            isLoading={isUploading || isUpdating}
             className={"rounded-full"}
           >
             Simpan
@@ -217,9 +250,9 @@ export default function CreateArticlePage() {
 
         <ConfirmModal
           cancelText={"Batal"}
-          title={"Informasi Simpan Data Artikel"}
-          text={"Kamu yakin ingin menyimpan data artikel ini?"}
-          confirmText={"Simpan"}
+          title={"Informasi Ubah Data Artikel"}
+          text={"Kamu yakin ingin mengubah data artikel ini?"}
+          confirmText={"Ubah"}
           icon={"info"}
           isOpen={isConfirmModalOpen}
           onCancel={() => {

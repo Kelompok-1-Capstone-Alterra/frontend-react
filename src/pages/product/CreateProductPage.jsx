@@ -1,84 +1,48 @@
-import {
-  DismissCircle28Filled,
-  Image24Regular,
-  Info12Regular,
-} from "@fluentui/react-icons";
-import SecondaryContainer from "../components/layouts/SecondaryContainer";
-import { NotifModal, ConfirmModal } from "../components/Modal";
-import { useNavigate, useParams } from "react-router-dom";
+import { Image24Regular, Info12Regular } from "@fluentui/react-icons";
+import SecondaryContainer from "../../components/layouts/SecondaryContainer";
+import { ConfirmModal, NotifModal } from "../../components/Modal";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import TextField from "../components/TextField";
-import MySelect from "../components/MySelect";
-import TextFieldGroup from "../components/TextFieldGroup";
-import { useForm, Controller } from "react-hook-form";
-import Button from "../components/Button";
+import TextField from "../../components/TextField";
+import MySelect from "../../components/MySelect";
+import TextFieldGroup from "../../components/TextFieldGroup";
+import { Controller, useForm } from "react-hook-form";
+import Button from "../../components/Button";
 import ReactQuill from "react-quill";
-import { MODULES } from "../constants";
+import { MODULES } from "../../constants";
 import "react-quill/dist/quill.snow.css";
-import { Navigate } from "react-router-dom";
-import useImage from "../hooks/useImage";
-import useProduct from "../hooks/useProduct";
-// import axios from "axios";
-import useSWR from "swr";
+import useImage from "../../hooks/useImage";
+import useProduct from "../../hooks/useProduct";
 import Cookies from "js-cookie";
-import fetcher from "../utils/fetcher";
-import Loading from "../components/Loading";
-import ImageWithSkeleton from "../components/ImageWithSkeleton";
-import ImageOverlay from "../components/ImageOverlay";
 
-const options = [
-  { value: "Alat Tani", label: "Alat Tani" },
-  { value: "Bibit", label: "Bibit" },
-  { value: "Pestisida", label: "Pestisida" },
-  { value: "Pupuk", label: "Pupuk" },
-];
-
-export default function UpdateProductPage() {
-  // const product = useLoaderData();
-  const { id } = useParams();
-
-  const { data, error, isLoading } = useSWR(
-    `${import.meta.env.VITE_API_BASE_URL}/auth/admins/products/${id}/detail`,
-    (url) => fetcher(url, Cookies.get("token"))
-  );
-
-  const product = data?.data;
-
-  const defaultOption = options.find(
-    (option) => option.value === product?.product_category
-  );
-
+export default function CreateProductPage() {
   const {
     register,
     handleSubmit,
     getValues,
     setValue,
     reset,
-    clearErrors,
     trigger,
     watch,
     control,
     formState: { errors },
   } = useForm();
 
+  const { uploadImage, isLoading: loadingImage } = useImage();
+  const { createProduct, isLoading: loadingProduct } = useProduct();
+
   const [editorFocus, setEditorFocus] = useState(false);
-  let editorContent = watch("description");
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const defaultPictures = product?.product_pictures.map(
-    (pic) => `${import.meta.env.VITE_API_BASE_URL}/pictures/${pic}`
-  );
-  const [pictures, setPictures] = useState([]);
   const [notifModal, setNotifModal] = useState({
     show: false,
     icon: "",
     text: "",
     title: "",
   });
-  const { uploadImage, deleteImage, isLoading: imageLoading } = useImage();
-  const { updateProduct, isLoading: uploadLoading } = useProduct();
-  const [imageOverlay, setImageOverlay] = useState(null);
 
   const navigate = useNavigate();
+
+  const images = watch("picture");
 
   useEffect(() => {
     register("description", {
@@ -87,96 +51,64 @@ export default function UpdateProductPage() {
     });
   }, [register]);
 
-  useEffect(() => {
-    if (product) {
-      reset({
-        name: product?.product_name,
-        category: defaultOption,
-        status: product?.product_status ? "etalase" : "arsip",
-        price: product?.product_price,
-        unit: product?.product_unit,
-        brand: product?.product_brand,
-        weight: product?.product_weight,
-        condition: product?.product_condition,
-        form: product?.product_form,
-        sellerName: product?.product_seller_name,
-        sellerPhone: product?.product_seller_phone.substring(1),
-      });
-      setValue("description", product?.product_description);
-    }
-    setValue("description", product?.product_description);
-  }, [product, setValue]);
-
   const onEditorStateChange = (editorState) => {
     setValue("description", editorState);
     trigger("description");
   };
 
-  const saveProduct = async (data) => {
-    const oldPictures = product?.product_pictures.map((pic) => {
-      return { url: pic };
-    });
-    let newPictures = [];
-    if (data.picture.length > 0) {
-      //delete old pictures
-      const deletePromises = product?.product_pictures.map(
-        async (pic) => await deleteImage(pic)
-      );
-      try {
-        await Promise.all(deletePromises);
-      } catch (err) {
-        setNotifModal({
-          show: true,
-          icon: "info",
-          title: "Aksi Gagal",
-          text: "Data produk kamu gagal diubah",
-        });
-        return;
-      }
-      const formData = new FormData();
-      for (let i = 0; i < data.picture.length; i++) {
-        formData.append("pictures", data.picture[i]);
-      }
-      const responseUpload = await uploadImage(formData);
-      if (responseUpload.status !== 200) {
-        setNotifModal({
-          show: true,
-          icon: "info",
-          title: "Aksi Gagal",
-          text: "Data produk kamu gagal diubah",
-        });
-        return;
-      }
-      const urlsArray = responseUpload?.data?.urls;
-      newPictures = urlsArray.map((url) => {
-        return { url };
-      });
+  let editorContent = watch("description");
+
+  const saveProduct = async (product) => {
+    //upload the image
+    const formData = new FormData();
+    for (let i = 0; i < product.picture.length; i++) {
+      formData.append("pictures", product.picture[i]);
     }
-    //update the product
-    const res = await updateProduct(product?.id, {
-      product_pictures: newPictures.length > 0 ? newPictures : oldPictures,
-      product_name: data.name,
-      product_category: data.category.value,
-      product_description: data.description,
-      product_price: Number(data.price),
-      product_status: Boolean(data.status === "etalase"),
-      product_brand: data.brand,
-      product_condition: data.condition,
-      product_unit: Number(data.unit),
-      product_weight: Number(data.weight),
-      product_form: data.form,
-      product_seller_name: data.sellerName,
-      product_seller_phone: `+${data.sellerPhone}`,
-      category: data.category.value,
-      status: data.status === "etalase" ? true : false,
+    const responseUpload = await uploadImage(formData);
+    if (responseUpload.status !== 200) {
+      setNotifModal({
+        show: true,
+        icon: "info",
+        text: "Data produk kamu gagal ditambahkan",
+        title: "Aksi Gagal",
+      });
+      return;
+    }
+
+    //get the url
+    const urlsArray = responseUpload?.data?.urls;
+    const product_pictures = urlsArray.map((url) => {
+      return { url };
     });
+
+    //create the product
+    const res = await createProduct(
+      {
+        product_pictures,
+        product_name: product.name,
+        product_category: product.category.value,
+        product_description: product.description,
+        product_price: Number(product.price),
+        product_status: Boolean(product.status === "etalase"),
+        product_brand: product.brand,
+        product_condition: product.condition,
+        product_unit: Number(product.unit),
+        product_weight: Number(product.weight),
+        product_form: product.form,
+        product_seller_name: product.sellerName,
+        product_seller_phone: `+${product.sellerPhone}`,
+        product_seen: 0,
+        admin_id: 1,
+      },
+      Cookies.get("token")
+    );
 
     if (res.status !== 200) {
       setNotifModal({
         show: true,
         icon: "info",
+        text: "Data produk kamu gagal ditambahkan",
         title: "Aksi Gagal",
-        text: "Data produk kamu gagal diubah",
       });
       return;
     }
@@ -184,8 +116,10 @@ export default function UpdateProductPage() {
     setNotifModal({
       show: true,
       icon: "success",
-      title: "Ubah Data Produk",
-      text: "Data produk berhasil diubah",
+      text: `Data produk kamu berhasil ditambahkan ke ${
+        product.status === "etalase" ? "etalase" : "arsip"
+      }`,
+      title: "Tambah Produk",
     });
   };
 
@@ -193,19 +127,17 @@ export default function UpdateProductPage() {
     setIsConfirmModalOpen(true);
   };
 
-  if (isLoading)
-    return (
-      <div className="h-screen w-full flex justify-center items-center">
-        <Loading />
-      </div>
-    );
-
-  if (error) return <Navigate to="/admin/products" />;
+  const options = [
+    { value: "Alat Tani", label: "Alat Tani" },
+    { value: "Bibit", label: "Bibit" },
+    { value: "Pestisida", label: "Pestisida" },
+    { value: "Pupuk", label: "Pupuk" },
+  ];
 
   return (
     <SecondaryContainer
       backTo="/admin/products"
-      title="Edit Produk"
+      title="Tambah Produk"
       className={"pe-3"}
     >
       <div className="mx-8">
@@ -216,7 +148,7 @@ export default function UpdateProductPage() {
               <div className="flex flex-col my-5">
                 <p className="font-semibold text-body-s mb-2.5">Foto Produk</p>
                 <div>
-                  <div className="flex items-center gap-5">
+                  <div className="flex gap-5">
                     <div>
                       <label
                         id="image-input-label"
@@ -228,10 +160,7 @@ export default function UpdateProductPage() {
                         } flex flex-col justify-center items-center text-center p-5 text-body-sm`}
                       >
                         <Image24Regular />
-                        Tambahkan Foto (
-                        {pictures?.length
-                          ? pictures.length
-                          : defaultPictures.length}
+                        Tambahkan Foto ({images?.length ? images.length : "0"}
                         /5)
                       </label>
                       <input
@@ -239,70 +168,35 @@ export default function UpdateProductPage() {
                         id="picture-input"
                         className="hidden"
                         multiple
-                        accept="image/png, image/jpeg, image/jpg"
+                        accept="image/*"
                         {...register("picture", {
+                          required: {
+                            value: true,
+                            message: "Gambar tidak boleh kosong",
+                          },
                           validate: (value) => {
-                            if (value === null) return true;
                             const files = Array.from(value);
                             if (files.length > 5) {
+                              setValue("picture", null);
                               return "Gambar produk tidak boleh lebih dari 5";
                             }
-
-                            return true;
-                          },
-                          onChange: (e) => {
-                            const files = Array.from(e.target.files);
-                            const urls = files.map((file) =>
-                              URL.createObjectURL(file)
-                            );
-                            setPictures(urls);
                           },
                         })}
                       />
                     </div>
-                    <div className="flex gap-5 overflow-auto">
-                      {pictures?.length > 0
-                        ? [...pictures].map((picture, index) => (
-                            <div
-                              key={index}
-                              className="relative w-[132px] h-[132px] overflow-hidden"
-                            >
-                              <img
-                                src={picture}
-                                onClick={() => setImageOverlay(picture)}
-                                alt="product"
-                                className="w-full h-full object-cover cursor-pointer"
-                              />
-                            </div>
-                          ))
-                        : [...defaultPictures].map((picture, index) => (
-                            <div
-                              key={index}
-                              className="relative w-[132px] h-[132px] overflow-hidden"
-                            >
-                              <ImageWithSkeleton
-                                onClick={() => setImageOverlay(picture)}
-                                src={picture}
-                                width={132}
-                                height={132}
-                                className={
-                                  "cursor-pointer object-cover w-full h-full"
-                                }
-                                alt="product"
-                              />
-                            </div>
-                          ))}
-                    </div>
-                    {pictures?.length > 0 && (
-                      <DismissCircle28Filled
-                        className="text-error hover:text-error-hover cursor-pointer"
-                        onClick={() => {
-                          setValue("picture", []);
-                          setPictures([]);
-                          clearErrors("picture");
-                        }}
-                      />
-                    )}
+                    {images?.length > 0 &&
+                      [...images].map((image, index) => (
+                        <div
+                          key={index}
+                          className="relative w-[132px] h-[132px] overflow-hidden"
+                        >
+                          <img
+                            src={URL.createObjectURL(image)}
+                            alt="product"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ))}
                   </div>
                 </div>
                 {errors.picture && (
@@ -366,6 +260,7 @@ export default function UpdateProductPage() {
                     )}
                     name="category"
                     control={control}
+                    defaultValue=""
                     rules={{
                       required: {
                         value: true,
@@ -393,7 +288,6 @@ export default function UpdateProductPage() {
                       <input
                         type="radio"
                         id="radio-etalase"
-                        defaultChecked={product.status === true}
                         name="status"
                         value={"etalase"}
                         className={`radio ${
@@ -415,7 +309,6 @@ export default function UpdateProductPage() {
                         type="radio"
                         id="radio-arsip"
                         value={"arsip"}
-                        defaultChecked={product.status === false}
                         name="status"
                         className={`radio ${
                           errors?.status?.message
@@ -537,6 +430,7 @@ export default function UpdateProductPage() {
                   label={"Merek"}
                   placeholder="Masukkan merek"
                   name="brand"
+                  autoComplete="off"
                   type="text"
                   id="product-brand"
                   isError={errors.brand}
@@ -592,6 +486,7 @@ export default function UpdateProductPage() {
                   label={"Kondisi"}
                   placeholder="Masukkan kondisi"
                   name="condition"
+                  autoComplete="off"
                   id="product-condition"
                   isError={errors.condition}
                   register={{
@@ -617,6 +512,7 @@ export default function UpdateProductPage() {
                 <TextField
                   label={"Wujud"}
                   placeholder="Masukkan wujud"
+                  autoComplete="off"
                   name="form"
                   id="product-form"
                   topOption={"Optional"}
@@ -636,6 +532,7 @@ export default function UpdateProductPage() {
                   placeholder="Masukkan nama"
                   name="sellerName"
                   id="seller-name"
+                  autoComplete="off"
                   isError={errors.sellerName}
                   register={{
                     ...register("sellerName", {
@@ -715,18 +612,18 @@ export default function UpdateProductPage() {
               className={"rounded-full"}
               id="submit-button"
               type="submit"
+              disabled={loadingImage || loadingProduct}
+              isLoading={loadingImage || loadingProduct}
               size="md"
-              disabled={imageLoading || uploadLoading}
-              isLoading={imageLoading || uploadLoading}
             >
               Simpan
             </Button>
           </div>
           <ConfirmModal
             cancelText={"Batal"}
-            title={"Informasi Ubah Data Produk"}
-            text={"Kamu yakin ingin mengubah data produk ini?"}
-            confirmText={"Ubah"}
+            title={"Informasi Simpan Data Produk"}
+            text={"Kamu yakin ingin menyimpan produk ini?"}
+            confirmText={"Simpan"}
             icon={"info"}
             isOpen={isConfirmModalOpen}
             onCancel={() => {
@@ -746,7 +643,7 @@ export default function UpdateProductPage() {
             onConfirm={() => {
               setNotifModal({
                 show: false,
-                isSuccess: false,
+                icon: "",
                 text: "",
                 title: "",
               });
@@ -756,13 +653,6 @@ export default function UpdateProductPage() {
           />
         </form>
       </div>
-      {imageOverlay && (
-        <ImageOverlay
-          image={imageOverlay}
-          onClose={() => setImageOverlay(null)}
-          isOpen={imageOverlay}
-        />
-      )}
     </SecondaryContainer>
   );
 }

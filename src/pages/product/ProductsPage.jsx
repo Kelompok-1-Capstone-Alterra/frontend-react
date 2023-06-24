@@ -1,9 +1,9 @@
-import TextField from "../components/TextField";
-import Table from "../components/Table";
-import Tab from "../components/Tab";
+import TextField from "../../components/TextField";
+import Table from "../../components/Table";
+import Tab from "../../components/Tab";
 import { useState } from "react";
-import MainContainer from "../components/layouts/MainContainer";
-import Button from "../components/Button";
+import MainContainer from "../../components/layouts/MainContainer";
+import Button from "../../components/Button";
 import {
   Add20Filled,
   Eye20Regular,
@@ -11,18 +11,18 @@ import {
   Edit20Regular,
 } from "@fluentui/react-icons";
 import useSWR from "swr";
-import PaginationButton from "../components/PaginationButton";
-import { ConfirmModal, NotifModal } from "../components/Modal";
-import EmptyProduct from "../assets/img/products/EmptyProduct.png";
+import PaginationButton from "../../components/PaginationButton";
+import { ConfirmModal, NotifModal } from "../../components/Modal";
+import EmptyProduct from "../../assets/img/products/EmptyProduct.png";
 import { Link } from "react-router-dom";
-import fetcher from "../utils/fetcher";
-import { toRupiah } from "../utils/functions";
+import fetcher from "../../utils/fetcher";
+import { toRupiah } from "../../utils/functions";
 import Cookies from "js-cookie";
-import useProduct from "../hooks/useProduct";
-import useDebounce from "../hooks/useDebounce";
-import ImageOverlay from "../components/ImageOverlay";
-import Loading from "../components/Loading";
-import ImageWithSkeleton from "../components/ImageWithSkeleton";
+import useProduct from "../../hooks/useProduct";
+import useDebounce from "../../hooks/useDebounce";
+import ImageOverlay from "../../components/ImageOverlay";
+import Loading from "../../components/Loading";
+import ImageWithSkeleton from "../../components/ImageWithSkeleton";
 
 const ITEMS_PER_PAGE = 8;
 const DEBOUNCE_DELAY = 500;

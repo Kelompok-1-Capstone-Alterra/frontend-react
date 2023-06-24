@@ -1,6 +1,6 @@
 import { useState } from "react";
 import useSWR from "swr";
-import Table from "../components/Table";
+import Table from "../../components/Table";
 import { Link } from "react-router-dom";
 import {
   Add16Filled,
@@ -12,20 +12,20 @@ import {
 import { useResetRecoilState } from "recoil";
 import Cookies from "js-cookie";
 
-import MainContainer from "../components/layouts/MainContainer";
-import PaginationButton from "../components/PaginationButton";
-import { ConfirmModal, NotifModal } from "../components/Modal";
-import Button from "../components/Button";
-import TextField from "../components/TextField";
-import PlantSearchEmpty from "../assets/img/plants/PlantSearchEmpty.png";
-import EmptyPlant from "../assets/img/plants/EmptyPlant.png";
-import useDebounce from "../hooks/useDebounce";
-import fetcher from "../utils/fetcher";
-import usePlant from "../hooks/usePlant";
-import { addPlantDataState } from "../utils/recoil_atoms";
-import Loading from "../components/Loading";
-import ImageOverlay from "../components/ImageOverlay";
-import ImageWithSkeleton from "../components/ImageWithSkeleton";
+import MainContainer from "../../components/layouts/MainContainer";
+import PaginationButton from "../../components/PaginationButton";
+import { ConfirmModal, NotifModal } from "../../components/Modal";
+import Button from "../../components/Button";
+import TextField from "../../components/TextField";
+import PlantSearchEmpty from "../../assets/img/plants/PlantSearchEmpty.png";
+import EmptyPlant from "../../assets/img/plants/EmptyPlant.png";
+import useDebounce from "../../hooks/useDebounce";
+import fetcher from "../../utils/fetcher";
+import usePlant from "../../hooks/usePlant";
+import { addPlantDataState } from "../../utils/recoil_atoms";
+import Loading from "../../components/Loading";
+import ImageOverlay from "../../components/ImageOverlay";
+import ImageWithSkeleton from "../../components/ImageWithSkeleton";
 
 const PLANT_PER_PAGE = 8;
 const DEBOUNCE_DELAY = 500;

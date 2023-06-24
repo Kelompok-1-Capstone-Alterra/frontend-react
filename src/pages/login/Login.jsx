@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import Button from "../components/Button";
-import gambar from "../assets/img/login/Login.webp";
-import logo from "../assets/img/Logo.png";
-import TextField from "../components/TextField";
+import Button from "../../components/Button";
+import gambar from "../../assets/img/login/Login.webp";
+import logo from "../../assets/img/Logo.png";
+import TextField from "../../components/TextField";
 import { Eye24Regular, EyeOff24Regular } from "@fluentui/react-icons";
 import { useNavigate } from "react-router-dom";
-import Alert from "../components/Alert";
+import Alert from "../../components/Alert";
 import Cookies from "js-cookie";
 import { useEffect } from "react";
-import useAuth from "../hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
 import { AnimatePresence } from "framer-motion";
 
 function Login() {

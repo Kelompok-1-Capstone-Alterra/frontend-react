@@ -1,13 +1,13 @@
 import { useParams, Navigate } from "react-router-dom";
-import SecondaryContainer from "../components/layouts/SecondaryContainer";
+import SecondaryContainer from "../../components/layouts/SecondaryContainer";
 import { useState } from "react";
-import { toRupiah } from "../utils/functions";
+import { toRupiah } from "../../utils/functions";
 import useSWR from "swr";
-import fetcher from "../utils/fetcher";
-import Loading from "../components/Loading";
+import fetcher from "../../utils/fetcher";
+import Loading from "../../components/Loading";
 import Cookies from "js-cookie";
-import ImageWithSkeleton from "../components/ImageWithSkeleton";
-import ImageOverlay from "../components/ImageOverlay";
+import ImageWithSkeleton from "../../components/ImageWithSkeleton";
+import ImageOverlay from "../../components/ImageOverlay";
 
 export default function DetailProductPage() {
   const { id } = useParams();

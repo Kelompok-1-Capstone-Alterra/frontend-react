@@ -1,10 +1,10 @@
 import { useParams } from "react-router-dom";
-import fetcher from "../utils/fetcher";
+import fetcher from "../../utils/fetcher";
 import Cookies from "js-cookie";
 import useSWR from "swr";
-import SecondaryContainer from "../components/layouts/SecondaryContainer";
-import ImageWithSkeleton from "../components/ImageWithSkeleton";
-import Loading from "../components/Loading";
+import SecondaryContainer from "../../components/layouts/SecondaryContainer";
+import ImageWithSkeleton from "../../components/ImageWithSkeleton";
+import Loading from "../../components/Loading";
 
 const DetailWeatherPage = () => {
   const { id } = useParams();

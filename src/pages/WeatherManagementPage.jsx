@@ -18,6 +18,7 @@ import { NotifModal } from "../components/Modal";
 import Loading from "../components/Loading";
 import ImageOverlay from "../components/ImageOverlay";
 import ImageWithSkeleton from "../components/ImageWithSkeleton";
+import useImage from "../hooks/useImage";
 
 const WeatherManagementPage = () => {
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ const WeatherManagementPage = () => {
   });
 
   const { deleteWeather } = useWeather();
-
+  const { deleteImage } = useImage();
   const handleDelete = (itemId) => {
     setDeleteItemId(itemId);
     setShowConfirmModal(true);
@@ -56,6 +57,10 @@ const WeatherManagementPage = () => {
 
   const handleConfirmDelete = async () => {
     setShowConfirmModal(false);
+    const weather = weathers.find((weather) => weather.id == deleteItemId);
+    if (weather?.weather_pictures?.length > 0) {
+      await deleteImage(weather.weather_pictures[0]);
+    }
     const del = await deleteWeather(deleteItemId);
     if (del.status !== 200) {
       setShowModal({

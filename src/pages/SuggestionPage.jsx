@@ -32,7 +32,6 @@ export default function Suggestion() {
   const [filter, setFilter] = useState({ currentPage: 1 });
   const [showModal, setShowModal] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
-  const [imageError, setImageError] = useState(false);
 
   const { currentPage } = filter;
   const support = data?.data;
@@ -78,7 +77,7 @@ export default function Suggestion() {
     const endDateValue = e.target.value ? new Date(e.target.value) : null;
     setEndDate(endDateValue);
   };
-  console.log(data);
+
   return (
     <MainContainer>
       <h4 className="text-h-4 font-bold">Masukan & Saran</h4>
@@ -180,16 +179,19 @@ export default function Suggestion() {
             <div className="flex">
               <div className="">
                 <div className="flex flex-col items-center">
-                {selectedData.picture && !imageError ? (
+                  {selectedData.picture ? (
+                    <div className="w-[105px] h-[101px] rounded-full mb-[10px]">
                       <ImageWithSkeleton
-                        src={selectedData.picture}
+                        src={`${import.meta.env.VITE_API_BASE_URL}/pictures/${
+                          selectedData.picture
+                        }`}
                         alt=""
-                        className="w-[105px] h-[101px] rounded-full mb-[10px]"
-                        onError={() => setImageError(true)}
+                        className="rounded-full object-cover w-full h-full"
                       />
-                    ) : (
-                      renderAvatarPlaceHolder(selectedData.name)
-                    )}
+                    </div>
+                  ) : (
+                    renderAvatarPlaceHolder(selectedData.name)
+                  )}
                   <div className="text-center">
                     <p>{selectedData.name}</p>
                     <p>{selectedData.email}</p>
@@ -206,7 +208,6 @@ export default function Suggestion() {
               </div>
             </div>
           </motion.div>
-             
         </motion.div>
       )}
       <div

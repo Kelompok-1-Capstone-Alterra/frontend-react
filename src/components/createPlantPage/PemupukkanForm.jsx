@@ -12,7 +12,7 @@ import { iterateConvertFileToBase64 } from "../../utils/functions";
 import useScrollToTop from "../../hooks/useScrollToTop";
 
 const fertilizingLimitOptions = [
-  { value: 2, label: "2 kali" },
+  { value: 2, label: "2 Kali" },
   { value: 3, label: "3 Kali" },
   { value: 4, label: "4 Kali" },
   { value: 5, label: "5 Kali" },
@@ -20,6 +20,7 @@ const fertilizingLimitOptions = [
 ];
 
 const fertilizingPeriodOptions = [
+  { value: 7, label: "7 Hari Sekali" },
   { value: 10, label: "10 Hari Sekali" },
   { value: 15, label: "15 Hari Sekali" },
   { value: 20, label: "20 Hari Sekali" },

@@ -91,15 +91,15 @@ export default function PlantPage() {
   const { currentPage, isSort, search } = filterState;
 
   let totalPlant = data?.data?.length;
-  let filteredPlant = data?.data;
+  let filteredPlant = structuredClone(data?.data);
 
-  filteredPlant = filteredPlant?.sort((a, b) => {
-    if (isSort) {
+  if (isSort) {
+    filteredPlant = filteredPlant?.sort((a, b) => {
       return a.Name.localeCompare(b.Name);
-    } else {
-      return a.ID - b.ID;
-    }
-  });
+    });
+  } else {
+    filteredPlant = structuredClone(data?.data);
+  }
 
   const totalPages = Math.ceil(filteredPlant?.length / PLANT_PER_PAGE);
 

@@ -3,7 +3,7 @@ import { SignOut24Regular } from "@fluentui/react-icons";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 
-import AdminImage from "./../../assets/Admin Image.png";
+import AdminImage from "./../../assets/img/AdminImage.png";
 
 export default function MainContainer({ children }) {
   const navigate = useNavigate();
@@ -52,7 +52,10 @@ export default function MainContainer({ children }) {
             onClick={handleLogOut}
             id="logout-button"
           >
-            <SignOut24Regular className="hover:text-info transition-colors duration-150" id="logout-icon" />
+            <SignOut24Regular
+              className="hover:text-info transition-colors duration-150"
+              id="logout-icon"
+            />
           </button>
         </div>
       </div>

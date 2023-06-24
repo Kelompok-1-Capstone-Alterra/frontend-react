@@ -17,8 +17,8 @@ import PaginationButton from "../components/PaginationButton";
 import { ConfirmModal, NotifModal } from "../components/Modal";
 import Button from "../components/Button";
 import TextField from "../components/TextField";
-import PlantSearchEmpty from "../assets/PlantSearchEmpty.png";
-import EmptyPlant from "../assets/EmptyPlant.png";
+import PlantSearchEmpty from "../assets/img/plants/PlantSearchEmpty.png";
+import EmptyPlant from "../assets/img/plants/EmptyPlant.png";
 import useDebounce from "../hooks/useDebounce";
 import fetcher from "../utils/fetcher";
 import usePlant from "../hooks/usePlant";
@@ -80,7 +80,7 @@ export default function PlantPage() {
     if (hasError) {
       return;
     }
-    
+
     const response = await deletePlant(id);
 
     if (filteredPlant.length === 1 && currentPage > 1) {

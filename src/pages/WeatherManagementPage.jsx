@@ -2,7 +2,7 @@ import { useState } from "react";
 import Button from "../components/Button";
 import Table from "../components/Table";
 import useSWR from "swr";
-import image from "../assets/illustrasi.png";
+import image from "../assets/img/weathers/EmptyWeather.png";
 import {
   Eye20Regular,
   Delete20Regular,
@@ -94,7 +94,8 @@ const WeatherManagementPage = () => {
               size="lg"
               className="px-4"
               id="btn-add-weather"
-              onClick={() => navigate("/admin/weathers/create")}>
+              onClick={() => navigate("/admin/weathers/create")}
+            >
               Tambah Informasi Cuaca
             </Button>
           </div>
@@ -104,7 +105,10 @@ const WeatherManagementPage = () => {
               <>
                 <div className="flex flex-col justify-center items-center mt-16">
                   <div>
-                    <img src={image} alt="gambar" />
+                    <img
+                      src={image}
+                      alt="gambar"
+                    />
                   </div>
                   <p className=" text-body-lg text-[#637381]">
                     Informasi cuaca masih kosong
@@ -116,11 +120,13 @@ const WeatherManagementPage = () => {
               <Table
                 id="table"
                 headers={["No", "Gambar", "Label", "Judul", "Aksi"]}
-                className={"overflow-y-scroll mt-7 w-full overflow-x-hidden"}>
+                className={"overflow-y-scroll mt-7 w-full overflow-x-hidden"}
+              >
                 {weathers.map((item, index) => (
                   <tr
                     key={item.id}
-                    className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80">
+                    className="text-center border-b border-neutral-30 text-caption-lg text-neutral-80"
+                  >
                     <td className="text-caption-lg">{index + 1}</td>
                     <td className="flex justify-center">
                       <div className="w-[88px] h-[51px]">
@@ -142,12 +148,14 @@ const WeatherManagementPage = () => {
                     </td>
                     <td
                       className="text-caption-lg  text-neutral-80"
-                      id={`weather-label-${item.id}`}>
+                      id={`weather-label-${item.id}`}
+                    >
                       {item.weather_label}
                     </td>
                     <td
                       className="text-caption-lg  text-neutral-80"
-                      id={`weather-title-${item.id}`}>
+                      id={`weather-title-${item.id}`}
+                    >
                       {item.weather_title}
                     </td>
                     <td className="space-x-3">

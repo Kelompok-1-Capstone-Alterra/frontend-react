@@ -1,13 +1,16 @@
 import Button from "../Button";
-import Logo from "../../assets/Logo.png";
+import Logo from "../../assets/img/Logo.png";
 import { Link } from "react-router-dom";
 import { APPLICATION_DOWNLOAD_LINK } from "../../constants";
 
 export default function Navbar() {
   return (
     <nav className="sticky top-0 flex items-center justify-between px-12 py-[18px] bg-white">
-      <Link to={"/"} >
-        <div className="flex items-center gap-2" id="logo-button">
+      <Link to={"/"}>
+        <div
+          className="flex items-center gap-2"
+          id="logo-button"
+        >
           <img
             src={Logo}
             className="w-10"

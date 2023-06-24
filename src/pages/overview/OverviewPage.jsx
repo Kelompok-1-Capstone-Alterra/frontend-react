@@ -15,8 +15,8 @@ export default function OverviewPage() {
   );
 
   const metricsSummary = data?.data.metrics_summary;
-  const plantSummary = data?.data.plant_summary.plant;
-  const weatherSummer = data?.data.weather_summary;
+  const plantSummary = data?.data.plant_summary.plant.slice(0, 10);
+  const weatherSummer = data?.data.weather_summary.slice(0, 10);
 
   return (
     <MainContainer>

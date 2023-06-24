@@ -49,7 +49,7 @@ export default function PenanamanView({ plantPlanting }) {
             </div>
           </section>
           <section className="mt-8">
-            <h5 className="font-semibold text-body-lg">Gambar pemupukkan</h5>
+            <h5 className="font-semibold text-body-lg">Gambar Tanaman</h5>
             <div className="text-neutral-80 mt-2">
               <img
                 src={
@@ -99,7 +99,7 @@ export default function PenanamanView({ plantPlanting }) {
             </div>
           </section>
           <section className="mt-8">
-            <h5 className="font-semibold text-body-lg">Gambar pemupukkan</h5>
+            <h5 className="font-semibold text-body-lg">Gambar Tanaman</h5>
             <div className="text-neutral-80 mt-2">
               <ImageWithSkeleton
                 src={

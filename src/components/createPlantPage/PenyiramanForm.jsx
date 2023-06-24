@@ -96,7 +96,7 @@ const PenyiramanForm = forwardRef(function PenyiramanForm(
                 errors={errors.watering_info?.watering_period}
                 field={field}
                 options={wateringPeriodOptions}
-                placeholder="Pilih penyiraman"
+                placeholder="Pilih waktu penyiraman"
                 className="max-w-[421px] mt-1"
               />
             )}

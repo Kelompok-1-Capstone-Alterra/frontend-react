@@ -1,4 +1,4 @@
-import gambar from "../../assets/404.png";
+import gambar from "../../assets/img/errors/404.png";
 import Button from "../../components/Button";
 import { Link } from "react-router-dom";
 

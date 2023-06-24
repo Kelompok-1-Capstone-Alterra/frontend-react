@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Button from "../components/Button";
-import gambar from "../assets/Login.webp";
-import logo from "../assets/Logo.png";
+import gambar from "../assets/img/login/Login.webp";
+import logo from "../assets/img/Logo.png";
 import TextField from "../components/TextField";
 import { Eye24Regular, EyeOff24Regular } from "@fluentui/react-icons";
 import { useNavigate } from "react-router-dom";

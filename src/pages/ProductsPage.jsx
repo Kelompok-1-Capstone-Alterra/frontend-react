@@ -13,7 +13,7 @@ import {
 import useSWR from "swr";
 import PaginationButton from "../components/PaginationButton";
 import { ConfirmModal, NotifModal } from "../components/Modal";
-import EmptyProduct from "../assets/EmptyProduct.png";
+import EmptyProduct from "../assets/img/products/EmptyProduct.png";
 import { Link } from "react-router-dom";
 import fetcher from "../utils/fetcher";
 import { toRupiah } from "../utils/functions";

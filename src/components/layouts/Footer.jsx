@@ -1,4 +1,4 @@
-import Logo from "../../assets/Logo.png";
+import Logo from "../../assets/img/Logo.png";
 import { Link } from "react-router-dom";
 
 export default function Footer() {

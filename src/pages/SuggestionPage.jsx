@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { useState } from "react";
 import PaginationButton from "../components/PaginationButton";
 import MainContainer from "../components/layouts/MainContainer";
-import gambar from "../assets/support.png";
+import gambar from "../assets/img/suggestions/EmptySuggestion.png";
 import Cookies from "js-cookie";
 import fetcher from "../utils/fetcher";
 import Loading from "../components/Loading";

@@ -8,7 +8,7 @@ import {
   ChatHelp20Regular,
 } from "@fluentui/react-icons";
 
-import logoAdmin from "./../../assets/Logo Admin.png";
+import logoAdmin from "./../../assets/img/LogoAdmin.png";
 import { useEffect, useRef } from "react";
 import { useLocation, Link } from "react-router-dom";
 

@@ -1,14 +1,14 @@
 import { Eye20Regular, Dismiss20Filled } from "@fluentui/react-icons";
-import Table from "../components/Table";
+import Table from "../../components/Table";
 import useSWR from "swr";
 import { useState } from "react";
-import PaginationButton from "../components/PaginationButton";
-import MainContainer from "../components/layouts/MainContainer";
-import gambar from "../assets/img/suggestions/EmptySuggestion.png";
+import PaginationButton from "../../components/PaginationButton";
+import MainContainer from "../../components/layouts/MainContainer";
+import gambar from "../../assets/img/suggestions/EmptySuggestion.png";
 import Cookies from "js-cookie";
-import fetcher from "../utils/fetcher";
-import Loading from "../components/Loading";
-import ImageWithSkeleton from "../components/ImageWithSkeleton";
+import fetcher from "../../utils/fetcher";
+import Loading from "../../components/Loading";
+import ImageWithSkeleton from "../../components/ImageWithSkeleton";
 import { motion } from "framer-motion";
 
 const renderAvatarPlaceHolder = (name) => {

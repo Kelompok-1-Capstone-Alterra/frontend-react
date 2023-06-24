@@ -1,10 +1,10 @@
 import { Navigate, useParams } from "react-router-dom";
-import SecondaryContainer from "../components/layouts/SecondaryContainer";
+import SecondaryContainer from "../../components/layouts/SecondaryContainer";
 import useSWR from "swr";
-import fetcher from "../utils/fetcher";
-import Loading from "../components/Loading";
+import fetcher from "../../utils/fetcher";
+import Loading from "../../components/Loading";
 import Cookies from "js-cookie";
-import ImageWithSkeleton from "../components/ImageWithSkeleton";
+import ImageWithSkeleton from "../../components/ImageWithSkeleton";
 
 export default function DetailArticlePage() {
   const { id } = useParams();

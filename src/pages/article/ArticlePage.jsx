@@ -1,4 +1,4 @@
-import Button from "../components/Button";
+import Button from "../../components/Button";
 import {
   Add20Regular,
   Edit20Regular,
@@ -7,22 +7,22 @@ import {
 } from "@fluentui/react-icons";
 import Cookies from "js-cookie";
 import { useState } from "react";
-import TextField from "../components/TextField";
+import TextField from "../../components/TextField";
 import { Link } from "react-router-dom";
-import MainContainer from "../components/layouts/MainContainer";
-import Table from "../components/Table";
-import { ConfirmModal, NotifModal } from "../components/Modal";
-import PaginationButton from "../components/PaginationButton";
+import MainContainer from "../../components/layouts/MainContainer";
+import Table from "../../components/Table";
+import { ConfirmModal, NotifModal } from "../../components/Modal";
+import PaginationButton from "../../components/PaginationButton";
 import useSWR from "swr";
-import useDebounce from "../hooks/useDebounce";
-import fetcher from "../utils/fetcher";
-import useArticle from "../hooks/useArticle";
-import EmptyArticle from "../assets/img/articles/EmptyArticle.png";
-import EmptySearch from "../assets/img/articles/EmptyArticleSearch.png";
-import ImageOverlay from "../components/ImageOverlay";
-import Loading from "../components/Loading";
-import ImageWithSkeleton from "../components/ImageWithSkeleton";
-import useImage from "../hooks/useImage";
+import useDebounce from "../../hooks/useDebounce";
+import fetcher from "../../utils/fetcher";
+import useArticle from "../../hooks/useArticle";
+import EmptyArticle from "../../assets/img/articles/EmptyArticle.png";
+import EmptySearch from "../../assets/img/articles/EmptyArticleSearch.png";
+import ImageOverlay from "../../components/ImageOverlay";
+import Loading from "../../components/Loading";
+import ImageWithSkeleton from "../../components/ImageWithSkeleton";
+import useImage from "../../hooks/useImage";
 
 const ITEMS_PER_PAGE = 8;
 const DEBOUNCE_DELAY = 500;

@@ -1,24 +1,24 @@
 import { useState } from "react";
-import Button from "../components/Button";
-import Table from "../components/Table";
+import Button from "../../components/Button";
+import Table from "../../components/Table";
 import useSWR from "swr";
-import image from "../assets/img/weathers/EmptyWeather.png";
+import image from "../../assets/img/weathers/EmptyWeather.png";
 import {
   Eye20Regular,
   Delete20Regular,
   Edit20Regular,
 } from "@fluentui/react-icons";
 import { useNavigate } from "react-router-dom";
-import { ConfirmModal } from "../components/Modal";
-import MainContainer from "../components/layouts/MainContainer";
-import fetcher from "../utils/fetcher";
+import { ConfirmModal } from "../../components/Modal";
+import MainContainer from "../../components/layouts/MainContainer";
+import fetcher from "../../utils/fetcher";
 import Cookies from "js-cookie";
-import useWeather from "../hooks/useWeather";
-import { NotifModal } from "../components/Modal";
-import Loading from "../components/Loading";
-import ImageOverlay from "../components/ImageOverlay";
-import ImageWithSkeleton from "../components/ImageWithSkeleton";
-import useImage from "../hooks/useImage";
+import useWeather from "../../hooks/useWeather";
+import { NotifModal } from "../../components/Modal";
+import Loading from "../../components/Loading";
+import ImageOverlay from "../../components/ImageOverlay";
+import ImageWithSkeleton from "../../components/ImageWithSkeleton";
+import useImage from "../../hooks/useImage";
 
 const WeatherManagementPage = () => {
   const navigate = useNavigate();

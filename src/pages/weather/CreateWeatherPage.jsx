@@ -1,22 +1,22 @@
 import { useState, useEffect } from "react";
 import { Info12Regular } from "@fluentui/react-icons";
 import { Controller, useForm } from "react-hook-form";
-import TextField from "../components/TextField";
-import Button from "../components/Button";
+import TextField from "../../components/TextField";
+import Button from "../../components/Button";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useNavigate } from "react-router-dom";
-import { ConfirmModal, NotifModal } from "../components/Modal";
+import { ConfirmModal, NotifModal } from "../../components/Modal";
 import useSWR from "swr";
-import FileInput from "../components/FileInput";
-import MySelect from "../components/MySelect";
-import SecondaryContainer from "../components/layouts/SecondaryContainer";
-import { MODULES } from "../constants";
+import FileInput from "../../components/FileInput";
+import MySelect from "../../components/MySelect";
+import SecondaryContainer from "../../components/layouts/SecondaryContainer";
+import { MODULES } from "../../constants";
 import Cookies from "js-cookie";
-import fetcher from "../utils/fetcher";
-import useWeather from "../hooks/useWeather";
-import useImages from "../hooks/useImage";
-import Loading from "../components/Loading";
+import fetcher from "../../utils/fetcher";
+import useWeather from "../../hooks/useWeather";
+import useImages from "../../hooks/useImage";
+import Loading from "../../components/Loading";
 
 const CreateWeatherPage = () => {
   const {

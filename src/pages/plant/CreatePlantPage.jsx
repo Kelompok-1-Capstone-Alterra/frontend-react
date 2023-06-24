@@ -4,24 +4,24 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilState, useResetRecoilState, useRecoilCallback } from "recoil";
 import { motion, AnimatePresence } from "framer-motion";
 
-import Button from "../components/Button";
-import useMultistepForm from "../hooks/useMultistepForm";
-import Step from "../components/Step";
-import SecondaryContainer from "../components/layouts/SecondaryContainer";
-import DetailTanamanForm from "../components/createPlantPage/DetailTanamanForm";
-import PenanamanForm from "../components/createPlantPage/PenanamanForm";
-import PemupukkanForm from "../components/createPlantPage/PemupukkanForm";
-import PenyiramanForm from "../components/createPlantPage/PenyiramanForm";
-import TemperaturForm from "../components/createPlantPage/TemperaturForm";
-import { addPlantDataState } from "../utils/recoil_atoms";
-import { ConfirmModal, NotifModal } from "../components/Modal";
-import usePlant from "../hooks/usePlant";
+import Button from "../../components/Button";
+import useMultistepForm from "../../hooks/useMultistepForm";
+import Step from "../../components/Step";
+import SecondaryContainer from "../../components/layouts/SecondaryContainer";
+import DetailTanamanForm from "../../components/createPlantPage/DetailTanamanForm";
+import PenanamanForm from "../../components/createPlantPage/PenanamanForm";
+import PemupukkanForm from "../../components/createPlantPage/PemupukkanForm";
+import PenyiramanForm from "../../components/createPlantPage/PenyiramanForm";
+import TemperaturForm from "../../components/createPlantPage/TemperaturForm";
+import { addPlantDataState } from "../../utils/recoil_atoms";
+import { ConfirmModal, NotifModal } from "../../components/Modal";
+import usePlant from "../../hooks/usePlant";
 import {
   handleImagesUpload,
   generatePlantSubmitData,
   iterateConvertBase64ToFile,
-} from "../utils/functions";
-import useImage from "../hooks/useImage";
+} from "../../utils/functions";
+import useImage from "../../hooks/useImage";
 
 export default function CreatePlantPage() {
   const [addPlantData, setAddPlantData] = useRecoilState(addPlantDataState);

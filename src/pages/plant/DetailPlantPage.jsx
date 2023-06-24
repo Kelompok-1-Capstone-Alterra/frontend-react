@@ -3,15 +3,15 @@ import { useState } from "react";
 import useSWR from "swr";
 import Cookies from "js-cookie";
 
-import Tab from "../components/Tab";
-import SecondaryContainer from "../components/layouts/SecondaryContainer";
-import DetailTanamanView from "../components/detailPlantPage/DetailTanamanView";
-import PenanamanView from "../components/detailPlantPage/PenanamanView";
-import PemupukkanView from "../components/detailPlantPage/PemupukkanView";
-import PenyiramanView from "../components/detailPlantPage/PenyiramanView";
-import TemperaturView from "../components/detailPlantPage/TemperaturView";
-import fetcher from "../utils/fetcher";
-import Loading from "../components/Loading";
+import Tab from "../../components/Tab";
+import SecondaryContainer from "../../components/layouts/SecondaryContainer";
+import DetailTanamanView from "../../components/detailPlantPage/DetailTanamanView";
+import PenanamanView from "../../components/detailPlantPage/PenanamanView";
+import PemupukkanView from "../../components/detailPlantPage/PemupukkanView";
+import PenyiramanView from "../../components/detailPlantPage/PenyiramanView";
+import TemperaturView from "../../components/detailPlantPage/TemperaturView";
+import fetcher from "../../utils/fetcher";
+import Loading from "../../components/Loading";
 
 export default function DetailPlantPage() {
   const param = useParams();

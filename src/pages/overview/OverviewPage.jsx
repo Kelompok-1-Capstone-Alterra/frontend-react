@@ -3,10 +3,10 @@ import useSWR from "swr";
 import AnimatedNumbers from "react-animated-numbers";
 import Skeleton from "react-loading-skeleton";
 
-import Table from "../components/Table";
-import MainContainer from "../components/layouts/MainContainer";
-import fetcher from "../utils/fetcher";
-import Loading from "../components/Loading";
+import Table from "../../components/Table";
+import MainContainer from "../../components/layouts/MainContainer";
+import fetcher from "../../utils/fetcher";
+import Loading from "../../components/Loading";
 
 export default function OverviewPage() {
   const { data, isLoading } = useSWR(

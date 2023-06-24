@@ -1,10 +1,10 @@
-import Hero from "../assets/img/landing/Hero.png";
-import Button from "../components/Button";
+import Hero from "../../assets/img/landing/Hero.png";
+import Button from "../../components/Button";
 import { Link } from "react-router-dom";
-import { APPLICATION_DOWNLOAD_LINK } from "../constants";
-import Landing1 from "../assets/img/landing/Landing1.webp";
-import Landing2 from "../assets/img/landing/Landing2.webp";
-import Landing3 from "../assets/img/landing/Landing3.webp";
+import { APPLICATION_DOWNLOAD_LINK } from "../../constants";
+import Landing1 from "../../assets/img/landing/Landing1.webp";
+import Landing2 from "../../assets/img/landing/Landing2.webp";
+import Landing3 from "../../assets/img/landing/Landing3.webp";
 
 export default function LandingPage() {
   return (

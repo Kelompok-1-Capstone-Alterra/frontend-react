@@ -4,26 +4,26 @@ import { useRecoilState, useResetRecoilState } from "recoil";
 import Cookies from "js-cookie";
 import useSWR from "swr";
 
-import Button from "../components/Button";
-import { ConfirmModal, NotifModal } from "../components/Modal";
-import SecondaryContainer from "../components/layouts/SecondaryContainer";
-import Step from "../components/Step";
-import TemperaturForm from "../components/createPlantPage/TemperaturForm";
-import PenyiramanForm from "../components/createPlantPage/PenyiramanForm";
-import PemupukkanForm from "../components/createPlantPage/PemupukkanForm";
-import PenanamanForm from "../components/createPlantPage/PenanamanForm";
-import DetailTanamanForm from "../components/createPlantPage/DetailTanamanForm";
-import useMultistepForm from "../hooks/useMultistepForm";
-import { addPlantDataState } from "../utils/recoil_atoms";
+import Button from "../../components/Button";
+import { ConfirmModal, NotifModal } from "../../components/Modal";
+import SecondaryContainer from "../../components/layouts/SecondaryContainer";
+import Step from "../../components/Step";
+import TemperaturForm from "../../components/createPlantPage/TemperaturForm";
+import PenyiramanForm from "../../components/createPlantPage/PenyiramanForm";
+import PemupukkanForm from "../../components/createPlantPage/PemupukkanForm";
+import PenanamanForm from "../../components/createPlantPage/PenanamanForm";
+import DetailTanamanForm from "../../components/createPlantPage/DetailTanamanForm";
+import useMultistepForm from "../../hooks/useMultistepForm";
+import { addPlantDataState } from "../../utils/recoil_atoms";
 import {
   generatePlantSubmitData,
   getPlantImages,
   handleImagesUpload,
-} from "../utils/functions";
-import usePlant from "../hooks/usePlant";
-import useImage from "../hooks/useImage";
-import fetcher from "../utils/fetcher";
-import Loading from "../components/Loading";
+} from "../../utils/functions";
+import usePlant from "../../hooks/usePlant";
+import useImage from "../../hooks/useImage";
+import fetcher from "../../utils/fetcher";
+import Loading from "../../components/Loading";
 
 export default function UpdatePlantPage() {
   const param = useParams();

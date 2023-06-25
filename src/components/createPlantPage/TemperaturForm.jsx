@@ -127,7 +127,7 @@ const TemperaturForm = forwardRef(function TemperaturForm(
           <ReactQuill
             id="temperatureDescriptionField"
             theme="snow"
-            placeholder="Masukkan deskripsi informasi penyiraman tanaman"
+            placeholder="Masukkan deskripsi informasi temperature tanaman"
             value={temperatureDescriptionContent}
             onChange={onTemperatureDescriptionStateChange}
             modules={MODULES}

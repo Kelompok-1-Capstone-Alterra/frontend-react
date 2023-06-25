@@ -127,7 +127,7 @@ const DetailTanamanForm = forwardRef(function DetailTanamanForm(
             value={plantDescriptionContent}
             onChange={onPlantDescriptionStateChange}
             modules={MODULES}
-            placeholder="Masukkan deskripsi produk"
+            placeholder="Masukkan deskripsi tanaman"
             className={`h-[306px] ${
               editorFocus && !errors.plant_description ? "ql-focus" : null
             } ${errors.plant_description ? "ql-error" : null}`}
